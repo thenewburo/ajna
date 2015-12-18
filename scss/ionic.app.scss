@@ -61,6 +61,11 @@ $onBoardLogo3: "../img/onBoardLogo3.png";
 	-o-background-size: cover;
 	background-size: cover;
 
+	.row + .row {
+		margin-top: 0;
+		margin-right: auto;
+    	margin-left: auto;
+	}
 	.row.h-30 { height: 30%; }
 	.row.h-20 { height: 20%; }
 	.row.h-15 { height: 15%; }
@@ -110,8 +115,9 @@ $onBoardLogo3: "../img/onBoardLogo3.png";
 		button {
 			border-radius: 200px;
 			width: 90%;
+			padding: 0;
+			margin-bottom: 10px;
 		}
-
 		.button.button-energized.button-outline {
 			border-color: white;
 			color: white;

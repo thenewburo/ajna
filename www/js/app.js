@@ -93,15 +93,30 @@ angular.module('starter', ['ionic', 'starter.controllers', 'pascalprecht.transla
         }
     });*/
 
-    // Set the path to the translation files
-    $translateProvider.useStaticFilesLoader({
-        prefix: '../lng/locale-',
-        suffix: '.json'
+    // Contains all the translation for each language
+    $translateProvider.translations('en', {
+        UTILS: {
+            "Title": "EASY LEARNING"
+        },
+        ONBOARD: {
+            "Text-page1": "Create your own flashcards in few minutes.",
+            "Text-page2": "Study your deck whenever, wherever.",
+            "Text-page3": "Buy/Sell your decks in the Deckstore.",
+            "Skip-button": "Skip",
+            "Next-button": "Next",
+            "Done-button": "Done"
+        },
+        LOGIN: {
+            "Username": "Username",
+            "Password": "Password",
+            "Sign-in": "Sign in"
+        }
     });
 
     // English by default
+    $translateProvider.preferredLanguage("en");
+    $translateProvider.fallbackLanguage("en");
     $translateProvider.useSanitizeValueStrategy('escaped');
-    $translateProvider.preferredLanguage('EN');
 
     // if none of the above states are matched, use this as the fallback
     $urlRouterProvider.otherwise('/onBoarding1');
