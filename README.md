@@ -11,6 +11,7 @@ Kroot's project by [TheNewBuro](http://www.thenewburo.com/thecms/)
 ## Installation
 
 1) Install [NodeJS](https://nodejs.org/en/) (with the Node Package Manager)
+
 2) Install [Cordova](https://nodejs.org/en/)
 ```bash
 npm install -g cordova
