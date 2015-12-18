@@ -50,3 +50,5 @@ Run the project (it will automatically find a device like an emulator or a conne
 ```bash
 ionic run <platform>
 ```
+
+> Note: You will probably need a SDK installed on your computer (SDK Manager for Android, ...)
