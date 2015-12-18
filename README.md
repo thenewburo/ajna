@@ -52,3 +52,11 @@ ionic run <platform>
 ```
 
 > Note: You will probably need a SDK installed on your computer (SDK Manager for Android, ...)
+
+## Generate an Android APK
+
+In the project root folder, just execute
+```bash
+ionic build --release android
+```
+You can now find an unsigned APK in "platforms/android/build/outputs/apk/android-release-unsigned.apk"
