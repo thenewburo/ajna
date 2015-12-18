@@ -1,6 +1,134 @@
 // The path for our ionicons font files, relative to the built CSS in www/css
 $ionicons-font-path: "../lib/ionic/fonts" !default;
 
+// A media query file to help for the responsive part
+@import "media-queries";
+
+// Custom font
+@font-face {
+    font-family: "Comme-font";
+    src: url("../font/Comme-font.ttf");
+}
+$font-family-base: "Comme-font", sans-serif !default;
+
+// Onboard background image
+$onBoardBackgroundImage: "../img/onBoardBackground.png";
+
+// Main color
+$energized: #e2743c;
+
+// Custom radius for all the buttons
+$custom-button-radius: 50px;
+
+// Mixins for 1:1 ratio base on width and height (100% and 50%)
+@mixin maintain-ratio-width($ratio: 1 1) {
+	@if length($ratio) < 2 or length($ratio) > 2 {
+		@warn "$ratio must be a list with two values.";
+	}
+	$width: 100%;
+	$height: percentage(nth($ratio, 2) / nth($ratio, 1));
+	width: $width;
+	height: 0;
+	padding-bottom: $height;
+}
+@mixin maintain-ratio-height($ratio: 1 1) {
+	@if length($ratio) < 2 or length($ratio) > 2 {
+		@warn "$ratio must be a list with two values.";
+	}
+	$height: 100%;
+	$width: percentage(nth($ratio, 2) / nth($ratio, 1));
+	height: $height;
+	width: 0;
+	padding-right: $width;
+}
+
+
+// ---------------------------------------------------
+// --------------------- OnBoard ---------------------
+// ---------------------------------------------------
+$onBoardBackgrounLogoColor: rgba(255, 255, 255, 0.3);
+$onBoardBackgrounLogoRadius: 50%;
+$onBoardLogo1: "../img/onBoardLogo1.png";
+$onBoardLogo2: "../img/onBoardLogo2.png";
+$onBoardLogo3: "../img/onBoardLogo3.png";
+
+.onBoard {
+
+	background-color: #000000;
+	background: url($onBoardBackgroundImage) no-repeat center center fixed; 
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+
+	.row.h-30 { height: 30%; }
+	.row.h-20 { height: 20%; }
+	.row.h-15 { height: 15%; }
+	.row.h-10 { height: 10%; }
+	.row.h-5 { height: 5%; }
+
+	h1, h4 {
+		color: white;
+	}
+
+	.whiteCircleContainer {
+		height: 100%;
+		.whiteCircle {
+			background-color: $onBoardBackgrounLogoColor;
+			border-radius: $onBoardBackgrounLogoRadius;
+		}
+		.whiteCircleLogo {
+			&.page1 {
+				background: url($onBoardLogo1);
+				-moz-background-size: 100% 100%;
+				-webkit-background-size: 100% 100%;
+				background-size: 100% 100%; }
+			&.page2 {
+				background: url($onBoardLogo2);
+				-moz-background-size: 100% 100%;
+				-webkit-background-size: 100% 100%;
+				background-size: 100% 100%; }
+			&.page3 {
+				background: url($onBoardLogo3);
+				-moz-background-size: 100% 100%;
+				-webkit-background-size: 100% 100%;
+				background-size: 100% 100%; }
+		}
+		// In landscape mode, our reference to get the circle size is the height
+		@include landscape {
+			.whiteCircle { @include maintain-ratio-height(1 1); }
+			.whiteCircleLogo { @include maintain-ratio-height(1 1); position: relative; top: -100%; }
+		}
+		// In portrait mode, our reference to get the circle size is the width
+		@include portrait {
+			.whiteCircle { @include maintain-ratio-width(1 1); }
+			.whiteCircleLogo { @include maintain-ratio-width(1 1); margin-top: -100%; }
+		}
+	}
+
+	.onBoardingButtons {
+		button {
+			border-radius: 200px;
+			width: 90%;
+		}
+
+		.button.button-energized.button-outline {
+			border-color: white;
+			color: white;
+		}
+	}
+
+	.indicators i {
+		color: rgba(255, 255, 255, 0.5);
+		font-size: 14px;
+		margin: 0px 8px;
+		&.active {
+			color: #FF9F00;
+			font-size: 16px;
+		}
+	}
+}
+
+
 // Include all of Ionic
 @import "www/lib/ionic/scss/ionic";
-

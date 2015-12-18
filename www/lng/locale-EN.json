@@ -1,0 +1,18 @@
+{
+    "UTILS": {
+        "Title": "EASY LEARNING"
+    },
+    "ONBOARD": {
+        "Text-page1": "Create your own flashcards in few minutes.",
+        "Text-page2": "Study your deck whenever, wherever.",
+        "Text-page3": "Buy/Sell your decks in the Deckstore.",
+        "Skip-button": "Skip",
+        "Next-button": "Next",
+        "Done-button": "Done"
+    },
+    "LOGIN": {
+        "Username": "Username",
+        "Password": "Password",
+        "Sign-in": "Sign in"
+    }
+}
