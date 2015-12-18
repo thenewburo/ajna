@@ -4,8 +4,7 @@
   src: url("../font/Comme-font.ttf"); }
 
 .onBoard {
-  background-color: #000000;
-  background: url("../img/onBoardBackground.png") no-repeat center center fixed;
+  background: url("../img/onBoardBackground.png") no-repeat center;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
@@ -82,6 +81,32 @@
     .onBoard .indicators i.active {
       color: #FF9F00;
       font-size: 16px; }
+
+.login {
+  background: url("../img/accountBackground.png") no-repeat center;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover; }
+  .login ion-header-bar,
+  .login ion-content {
+    background: transparent; }
+    .login ion-header-bar label,
+    .login ion-content label {
+      font-size: 21px;
+      color: white;
+      border: 0;
+      border-bottom: 2px solid rgba(255, 255, 255, 0.2); }
+    .login ion-header-bar.bar .title,
+    .login ion-content.bar .title {
+      text-align: center;
+      color: white; }
+    .login ion-header-bar i, .login ion-header-bar .loginInput,
+    .login ion-content i,
+    .login ion-content .loginInput {
+      float: left;
+      margin-right: 10px;
+      color: white; }
 
 /*!
   Ionicons, v2.0.1

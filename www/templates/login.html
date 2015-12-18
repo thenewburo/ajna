@@ -1,21 +1,24 @@
-<ion-header-bar>
-    <h1 class="title">{{'UTILS.Title' | translate}}</h1>
-</ion-header-bar>
+<div class="login">
+    <ion-header-bar>
+        <h1 class="title">{{'UTILS.Title' | translate}}</h1>
+    </ion-header-bar>
 
-<ion-content>
-    <form ng-submit="doLogin()">
-        <div class="list">
-            <label class="item item-input">
-                <span class="input-label">{{'LOGIN.Username' | translate}}</span>
-                <input type="text" ng-model="loginData.username">
-            </label>
-            <label class="item item-input">
-                <span class="input-label">{{'LOGIN.Password' | translate}}</span>
-                <input type="password" ng-model="loginData.password">
-            </label>
-            <label class="item">
-                <button class="button button-block button-positive" type="submit">{{'LOGIN.Sign-in' | translate}}</button>
-            </label>
-        </div>
-    </form>
-</ion-content>
+    <ion-content>
+        <form ng-submit="doLogin()">
+            <div class="list">
+                <label class="item item-input item-floating-label">
+                    <i class="ion-person"></i>
+                    <div class="loginInput">
+                        <input type="text" placeholder="Username">
+                    </div>
+                </label>
+                <label class="item item-input item-floating-label">
+                    <i class="ion-locked"></i>
+                    <div class="loginInput">
+                        <input type="text" placeholder="Password">
+                    </div>
+                </label>
+            </div>
+        </form>
+    </ion-content>
+</div>

@@ -11,9 +11,6 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
 }
 $font-family-base: "Comme-font", sans-serif !default;
 
-// Onboard background image
-$onBoardBackgroundImage: "../img/onBoardBackground.png";
-
 // Main color
 $energized: #e2743c;
 
@@ -46,6 +43,7 @@ $custom-button-radius: 50px;
 // ---------------------------------------------------
 // --------------------- OnBoard ---------------------
 // ---------------------------------------------------
+$onBoardBackgroundImage: "../img/onBoardBackground.png";
 $onBoardBackgrounLogoColor: rgba(255, 255, 255, 0.3);
 $onBoardBackgrounLogoRadius: 50%;
 $onBoardLogo1: "../img/onBoardLogo1.png";
@@ -53,9 +51,7 @@ $onBoardLogo2: "../img/onBoardLogo2.png";
 $onBoardLogo3: "../img/onBoardLogo3.png";
 
 .onBoard {
-
-	background-color: #000000;
-	background: url($onBoardBackgroundImage) no-repeat center center fixed; 
+	background: url($onBoardBackgroundImage) no-repeat center; 
 	-webkit-background-size: cover;
 	-moz-background-size: cover;
 	-o-background-size: cover;
@@ -66,6 +62,7 @@ $onBoardLogo3: "../img/onBoardLogo3.png";
 		margin-right: auto;
     	margin-left: auto;
 	}
+
 	.row.h-30 { height: 30%; }
 	.row.h-20 { height: 20%; }
 	.row.h-15 { height: 15%; }
@@ -78,10 +75,12 @@ $onBoardLogo3: "../img/onBoardLogo3.png";
 
 	.whiteCircleContainer {
 		height: 100%;
+
 		.whiteCircle {
 			background-color: $onBoardBackgrounLogoColor;
 			border-radius: $onBoardBackgrounLogoRadius;
 		}
+
 		.whiteCircleLogo {
 			&.page1 {
 				background: url($onBoardLogo1);
@@ -128,9 +127,48 @@ $onBoardLogo3: "../img/onBoardLogo3.png";
 		color: rgba(255, 255, 255, 0.5);
 		font-size: 14px;
 		margin: 0px 8px;
+
 		&.active {
 			color: #FF9F00;
 			font-size: 16px;
+		}
+	}
+}
+
+
+// ---------------------------------------------------
+// --------------------- Account ---------------------
+// ---------------------------------------------------
+$loginBackgroundImage: "../img/accountBackground.png";
+
+.login
+{
+	background: url($loginBackgroundImage) no-repeat center; 
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+
+	ion-header-bar,
+	ion-content {
+		background: transparent;
+
+		label {
+			font-size: 21px;
+			color: white;
+			border: 0;
+			border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+		}
+
+		&.bar .title {
+			text-align: center;
+			color: white;
+		}
+
+		i, .loginInput {
+			float: left;
+			margin-right: 10px;
+			color: white;
 		}
 	}
 }
