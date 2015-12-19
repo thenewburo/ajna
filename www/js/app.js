@@ -1,9 +1,4 @@
 // Ionic Starter App
-
-// angular.module is a global place for creating, registering and retrieving Angular modules
-// 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
-// the 2nd parameter is an array of 'requires'
-// 'starter.controllers' is found in controllers.js
 angular.module('starter', ['ionic', 'starter.controllers', 'pascalprecht.translate'])
 
 .run(function($ionicPlatform) {
@@ -47,7 +42,61 @@ angular.module('starter', ['ionic', 'starter.controllers', 'pascalprecht.transla
         url: '/login',
         templateUrl: 'templates/login.html',
         controller: 'LoginCtrl'
+    })
+
+    .state('newAccount', {
+        url: '/newAccount',
+        templateUrl: 'templates/newAccount.html'
+    })
+
+    .state('myDecks', {
+        url: '/myDecks',
+        templateUrl: 'templates/myDecks.html'
     });
+
+    // Contains all the translation for each language
+    $translateProvider.translations('en', {
+        UTILS: {
+            "Title": "EASY LEARNING"
+        },
+        ONBOARD: {
+            "Text-page1": "Create your own flashcards in few minutes.",
+            "Text-page2": "Study your deck whenever, wherever.",
+            "Text-page3": "Buy/Sell your decks in the Deckstore.",
+            "Skip-button": "Skip",
+            "Next-button": "Next",
+            "Done-button": "Done"
+        },
+        LOGIN: {
+            "Username": "Username",
+            "Password": "Password",
+            "Sign-in": "Sign in",
+            "Not-reg": "Don't have an account?",
+            "Sign-up": "Sign up",
+            "Sign-facebook": "Sign in with Facebook",
+            "Sign-google": "Sign in with Google+",
+            "Sign-twitter": "Sign in with Twitter"
+        },
+        NEWACCOUNT: {
+            "New-account": "New account"
+        },
+        MYDECKS: {
+            "My-decks": "My decks"
+        }
+    });
+
+    // English by default
+    $translateProvider.preferredLanguage("en");
+    $translateProvider.fallbackLanguage("en");
+    $translateProvider.useSanitizeValueStrategy('escaped');
+
+    // if none of the above states are matched, use this as the fallback
+    $urlRouterProvider.otherwise('/onBoarding1');
+});
+
+
+
+
 /*
     .state('app', {
         url: '/app',
@@ -65,14 +114,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'pascalprecht.transla
         }
     })
 
-    .state('app.browse', {
-            url: '/browse',
-            views: {
-                'menuContent': {
-                    templateUrl: 'templates/browse.html'
-                }
-            }
-        })
+
         .state('app.playlists', {
             url: '/playlists',
             views: {
@@ -92,32 +134,3 @@ angular.module('starter', ['ionic', 'starter.controllers', 'pascalprecht.transla
             }
         }
     });*/
-
-    // Contains all the translation for each language
-    $translateProvider.translations('en', {
-        UTILS: {
-            "Title": "EASY LEARNING"
-        },
-        ONBOARD: {
-            "Text-page1": "Create your own flashcards in few minutes.",
-            "Text-page2": "Study your deck whenever, wherever.",
-            "Text-page3": "Buy/Sell your decks in the Deckstore.",
-            "Skip-button": "Skip",
-            "Next-button": "Next",
-            "Done-button": "Done"
-        },
-        LOGIN: {
-            "Username": "Username",
-            "Password": "Password",
-            "Sign-in": "Sign in"
-        }
-    });
-
-    // English by default
-    $translateProvider.preferredLanguage("en");
-    $translateProvider.fallbackLanguage("en");
-    $translateProvider.useSanitizeValueStrategy('escaped');
-
-    // if none of the above states are matched, use this as the fallback
-    $urlRouterProvider.otherwise('/onBoarding1');
-});

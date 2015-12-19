@@ -1,4 +1,16 @@
 @charset "UTF-8";
+.row.h-30 {
+  height: 30%; }
+
+.row.h-20 {
+  height: 20%; }
+
+.row.h-15 {
+  height: 15%; }
+
+.row.h-10 {
+  height: 10%; }
+
 @font-face {
   font-family: "Comme-font";
   src: url("../font/Comme-font.ttf"); }
@@ -13,67 +25,42 @@
     margin-top: 0;
     margin-right: auto;
     margin-left: auto; }
-  .onBoard .row.h-30 {
-    height: 30%; }
-  .onBoard .row.h-20 {
-    height: 20%; }
-  .onBoard .row.h-15 {
-    height: 15%; }
-  .onBoard .row.h-10 {
-    height: 10%; }
-  .onBoard .row.h-5 {
-    height: 5%; }
   .onBoard h1, .onBoard h4 {
     color: white; }
-  .onBoard .whiteCircleContainer {
-    height: 100%; }
-    .onBoard .whiteCircleContainer .whiteCircle {
-      background-color: rgba(255, 255, 255, 0.3);
-      border-radius: 50%; }
-    .onBoard .whiteCircleContainer .whiteCircleLogo.page1 {
-      background: url("../img/onBoardLogo1.png");
-      -moz-background-size: 100% 100%;
-      -webkit-background-size: 100% 100%;
-      background-size: 100% 100%; }
-    .onBoard .whiteCircleContainer .whiteCircleLogo.page2 {
-      background: url("../img/onBoardLogo2.png");
-      -moz-background-size: 100% 100%;
-      -webkit-background-size: 100% 100%;
-      background-size: 100% 100%; }
-    .onBoard .whiteCircleContainer .whiteCircleLogo.page3 {
-      background: url("../img/onBoardLogo3.png");
-      -moz-background-size: 100% 100%;
-      -webkit-background-size: 100% 100%;
-      background-size: 100% 100%; }
-    @media only screen and (orientation: landscape) {
-      .onBoard .whiteCircleContainer .whiteCircle {
-        height: 100%;
-        width: 0;
-        padding-right: 100%; }
-      .onBoard .whiteCircleContainer .whiteCircleLogo {
-        height: 100%;
-        width: 0;
-        padding-right: 100%;
-        position: relative;
-        top: -100%; } }
-    @media only screen and (orientation: portrait) {
-      .onBoard .whiteCircleContainer .whiteCircle {
-        width: 100%;
-        height: 0;
-        padding-bottom: 100%; }
-      .onBoard .whiteCircleContainer .whiteCircleLogo {
-        width: 100%;
-        height: 0;
-        padding-bottom: 100%;
-        margin-top: -100%; } }
+  .onBoard .whiteCircle {
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    margin-left: auto;
+    margin-right: auto;
+    height: 100px;
+    width: 100px; }
+    @media (min-width: 768px) {
+      .onBoard .whiteCircle {
+        height: 150px;
+        width: 150px; } }
+    @media (min-width: 992px) {
+      .onBoard .whiteCircle {
+        height: 200px;
+        width: 200px; } }
+    @media (min-width: 1200px) {
+      .onBoard .whiteCircle {
+        height: 250px;
+        width: 250px; } }
+    .onBoard .whiteCircle img {
+      width: 50%;
+      height: 50%;
+      margin-left: 25%;
+      margin-top: 25%; }
   .onBoard .onBoardingButtons button {
-    border-radius: 200px;
+    border-radius: 50px;
+    box-shadow: 2px 2px 10px 0px rgba(50, 50, 50, 0.5);
     width: 90%;
     padding: 0;
     margin-bottom: 10px; }
   .onBoard .onBoardingButtons .button.button-energized.button-outline {
     border-color: white;
-    color: white; }
+    color: white;
+    box-shadow: 0; }
   .onBoard .indicators i {
     color: rgba(255, 255, 255, 0.5);
     font-size: 14px;
@@ -88,25 +75,81 @@
   -moz-background-size: cover;
   -o-background-size: cover;
   background-size: cover; }
-  .login ion-header-bar,
+  .login h1.title {
+    color: white; }
   .login ion-content {
-    background: transparent; }
-    .login ion-header-bar label,
+    background: transparent;
+    top: 20%; }
     .login ion-content label {
       font-size: 21px;
-      color: white;
+      color: rgba(255, 255, 255, 0.7);
       border: 0;
-      border-bottom: 2px solid rgba(255, 255, 255, 0.2); }
-    .login ion-header-bar.bar .title,
-    .login ion-content.bar .title {
+      margin-bottom: 20px; }
+    .login ion-content .loginIcon {
+      padding-bottom: 5px;
       text-align: center;
-      color: white; }
-    .login ion-header-bar i, .login ion-header-bar .loginInput,
-    .login ion-content i,
+      border: 0; }
     .login ion-content .loginInput {
       float: left;
-      margin-right: 10px;
+      margin: 0;
+      border-bottom: 2px solid rgba(255, 255, 255, 0.2); }
+      .login ion-content .loginInput input[type="text"], .login ion-content .loginInput input[type="password"] {
+        color: white; }
+    .login ion-content .loginHelpButton {
+      text-align: center;
+      margin-top: 5px;
+      border-bottom: 2px solid rgba(255, 255, 255, 0.2); }
+    .login ion-content .loginSignIn {
+      border-radius: 50px;
+      box-shadow: 2px 2px 10px 0px rgba(50, 50, 50, 0.5);
+      width: 90%;
+      margin-left: 5%;
+      padding: 0;
+      margin-bottom: 20px; }
+    .login ion-content .loginNotReg {
+      text-align: center;
+      color: rgba(255, 255, 255, 0.7); }
+      .login ion-content .loginNotReg a, .login ion-content .loginNotReg a:hover, .login ion-content .loginNotReg a:focus, .login ion-content .loginNotReg a:active {
+        color: white;
+        text-decoration: none; }
+    .login ion-content .socialMediaButton {
+      border-radius: 50px;
+      width: 90%;
+      margin-left: 5%;
+      margin-bottom: 10px;
       color: white; }
+      .login ion-content .socialMediaButton.activated {
+        background-color: transparent; }
+      .login ion-content .socialMediaButton .socialMediaButtonLogo {
+        border-radius: 50px;
+        font-size: 32px;
+        color: white;
+        width: 49px;
+        height: 49px;
+        margin: 2px 10px 0px -10px;
+        float: left; }
+        .login ion-content .socialMediaButton .socialMediaButtonLogo.facebook {
+          background-color: #3d5e96; }
+        .login ion-content .socialMediaButton .socialMediaButtonLogo.google {
+          background-color: #ba3b39; }
+        .login ion-content .socialMediaButton .socialMediaButtonLogo.twitter {
+          background-color: #63ade9; }
+
+.newAccount {
+  background: url("../img/accountBackground.png") no-repeat center;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover; }
+  .newAccount .bar.bar-header {
+    background-color: transparent; }
+    .newAccount .bar.bar-header button, .newAccount .bar.bar-header .h1.title {
+      color: white; }
+
+.myDecks .bar.bar-header {
+  background-color: #FF732B; }
+  .myDecks .bar.bar-header button, .myDecks .bar.bar-header .h1.title {
+    color: white; }
 
 /*!
   Ionicons, v2.0.1

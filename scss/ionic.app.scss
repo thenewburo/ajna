@@ -3,6 +3,10 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
 
 // A media query file to help for the responsive part
 @import "media-queries";
+.row.h-30 { height: 30%; }
+.row.h-20 { height: 20%; }
+.row.h-15 { height: 15%; }
+.row.h-10 { height: 10%; }
 
 // Custom font
 @font-face {
@@ -14,48 +18,36 @@ $font-family-base: "Comme-font", sans-serif !default;
 // Main color
 $energized: #e2743c;
 
-// Custom radius for all the buttons
+// Custom radius and shadow for all the buttons
 $custom-button-radius: 50px;
+$custom-button-shadow: 2px 2px 10px 0px rgba(50, 50, 50, 0.5);
 
-// Mixins for 1:1 ratio base on width and height (100% and 50%)
-@mixin maintain-ratio-width($ratio: 1 1) {
-	@if length($ratio) < 2 or length($ratio) > 2 {
-		@warn "$ratio must be a list with two values.";
-	}
-	$width: 100%;
-	$height: percentage(nth($ratio, 2) / nth($ratio, 1));
-	width: $width;
-	height: 0;
-	padding-bottom: $height;
+// Mixin for a full page background
+@mixin full-background($url) {
+	background: url($url) no-repeat center; 
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
 }
-@mixin maintain-ratio-height($ratio: 1 1) {
-	@if length($ratio) < 2 or length($ratio) > 2 {
-		@warn "$ratio must be a list with two values.";
-	}
-	$height: 100%;
-	$width: percentage(nth($ratio, 2) / nth($ratio, 1));
-	height: $height;
-	width: 0;
-	padding-right: $width;
-}
+
 
 
 // ---------------------------------------------------
 // --------------------- OnBoard ---------------------
 // ---------------------------------------------------
 $onBoardBackgroundImage: "../img/onBoardBackground.png";
+
+$onBoardBackgrounLogoSizeXS: 100px;
+$onBoardBackgrounLogoSizeSM: 150px;
+$onBoardBackgrounLogoSizeMD: 200px;
+$onBoardBackgrounLogoSizeLG: 250px;
+
 $onBoardBackgrounLogoColor: rgba(255, 255, 255, 0.3);
 $onBoardBackgrounLogoRadius: 50%;
-$onBoardLogo1: "../img/onBoardLogo1.png";
-$onBoardLogo2: "../img/onBoardLogo2.png";
-$onBoardLogo3: "../img/onBoardLogo3.png";
 
 .onBoard {
-	background: url($onBoardBackgroundImage) no-repeat center; 
-	-webkit-background-size: cover;
-	-moz-background-size: cover;
-	-o-background-size: cover;
-	background-size: cover;
+	@include full-background($onBoardBackgroundImage);
 
 	.row + .row {
 		margin-top: 0;
@@ -63,56 +55,35 @@ $onBoardLogo3: "../img/onBoardLogo3.png";
     	margin-left: auto;
 	}
 
-	.row.h-30 { height: 30%; }
-	.row.h-20 { height: 20%; }
-	.row.h-15 { height: 15%; }
-	.row.h-10 { height: 10%; }
-	.row.h-5 { height: 5%; }
-
 	h1, h4 {
 		color: white;
 	}
 
-	.whiteCircleContainer {
-		height: 100%;
+	.whiteCircle {
+		background-color: $onBoardBackgrounLogoColor;
+		border-radius: $onBoardBackgrounLogoRadius;
+		margin-left: auto;
+		margin-right: auto;
 
-		.whiteCircle {
-			background-color: $onBoardBackgrounLogoColor;
-			border-radius: $onBoardBackgrounLogoRadius;
-		}
+		height: $onBoardBackgrounLogoSizeXS;
+		width: $onBoardBackgrounLogoSizeXS;
 
-		.whiteCircleLogo {
-			&.page1 {
-				background: url($onBoardLogo1);
-				-moz-background-size: 100% 100%;
-				-webkit-background-size: 100% 100%;
-				background-size: 100% 100%; }
-			&.page2 {
-				background: url($onBoardLogo2);
-				-moz-background-size: 100% 100%;
-				-webkit-background-size: 100% 100%;
-				background-size: 100% 100%; }
-			&.page3 {
-				background: url($onBoardLogo3);
-				-moz-background-size: 100% 100%;
-				-webkit-background-size: 100% 100%;
-				background-size: 100% 100%; }
-		}
-		// In landscape mode, our reference to get the circle size is the height
-		@include landscape {
-			.whiteCircle { @include maintain-ratio-height(1 1); }
-			.whiteCircleLogo { @include maintain-ratio-height(1 1); position: relative; top: -100%; }
-		}
-		// In portrait mode, our reference to get the circle size is the width
-		@include portrait {
-			.whiteCircle { @include maintain-ratio-width(1 1); }
-			.whiteCircleLogo { @include maintain-ratio-width(1 1); margin-top: -100%; }
+		@media (min-width: 768px) { height: $onBoardBackgrounLogoSizeSM; width: $onBoardBackgrounLogoSizeSM; }
+		@media (min-width: 992px) { height: $onBoardBackgrounLogoSizeMD; width: $onBoardBackgrounLogoSizeMD; }
+		@media (min-width: 1200px) { height: $onBoardBackgrounLogoSizeLG; width: $onBoardBackgrounLogoSizeLG; }
+
+		img {
+			width: 50%;
+			height: 50%;
+			margin-left: 25%;
+			margin-top: 25%;
 		}
 	}
 
 	.onBoardingButtons {
 		button {
-			border-radius: 200px;
+			border-radius: $custom-button-radius;
+			box-shadow: $custom-button-shadow;
 			width: 90%;
 			padding: 0;
 			margin-bottom: 10px;
@@ -120,6 +91,7 @@ $onBoardLogo3: "../img/onBoardLogo3.png";
 		.button.button-energized.button-outline {
 			border-color: white;
 			color: white;
+			box-shadow: 0;
 		}
 	}
 
@@ -136,42 +108,124 @@ $onBoardLogo3: "../img/onBoardLogo3.png";
 }
 
 
+
 // ---------------------------------------------------
-// --------------------- Account ---------------------
+// ---------------------- Login ----------------------
 // ---------------------------------------------------
 $loginBackgroundImage: "../img/accountBackground.png";
+$lineColor: rgba(255, 255, 255, 0.2);
+$transparentWhiteColor: rgba(255,255,255,0.7);
 
 .login
 {
-	background: url($loginBackgroundImage) no-repeat center; 
-	-webkit-background-size: cover;
-	-moz-background-size: cover;
-	-o-background-size: cover;
-	background-size: cover;
+	@include full-background($loginBackgroundImage);
 
-	ion-header-bar,
+	h1.title { color: white; }
+
 	ion-content {
 		background: transparent;
+		top: 20%;
 
 		label {
 			font-size: 21px;
-			color: white;
+			color: $transparentWhiteColor;
 			border: 0;
-			border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+			margin-bottom: 20px;
 		}
 
-		&.bar .title {
+		.loginIcon {
+			padding-bottom: 5px;
 			text-align: center;
-			color: white;
+			border: 0;
 		}
 
-		i, .loginInput {
+		.loginInput {
 			float: left;
-			margin-right: 10px;
+			margin: 0;
+			input[type="text"], input[type="password"] { color: white; }
+			border-bottom: 2px solid $lineColor;
+		}
+
+		.loginHelpButton {
+			text-align: center;
+			margin-top: 5px;
+			border-bottom: 2px solid $lineColor;
+		}
+
+		.loginSignIn {
+			border-radius: $custom-button-radius;
+			box-shadow: $custom-button-shadow;
+			width: 90%;
+			margin-left: 5%;
+			padding: 0;
+			margin-bottom: 20px;
+		}
+
+		.loginNotReg {
+			text-align: center;
+			color: $transparentWhiteColor;
+
+			a, a:hover, a:focus, a:active {
+				color: white;
+				text-decoration: none;
+			}
+		}
+
+		.socialMediaButton {
+			border-radius: $custom-button-radius;
+			width: 90%;
+			margin-left: 5%;
+			margin-bottom: 10px;
 			color: white;
+
+			&.activated { background-color: transparent; }
+
+			.socialMediaButtonLogo {
+				border-radius: $custom-button-radius;
+				font-size: 32px;
+				color: white;
+				width: 49px;
+				height: 49px;
+				margin: 2px 10px 0px -10px;
+				float: left;
+
+				&.facebook { background-color: #3d5e96; }
+				&.google { background-color: #ba3b39; }
+				&.twitter { background-color: #63ade9; }
+			}
 		}
 	}
 }
+
+
+// ---------------------------------------------------
+// ------------------- New account -------------------
+// ---------------------------------------------------
+.newAccount {
+
+	@include full-background($loginBackgroundImage);
+
+	.bar.bar-header {
+		background-color: transparent;
+
+		button, .h1.title { color: white; }
+	}
+}
+
+
+
+// ---------------------------------------------------
+// --------------------- My decks --------------------
+// ---------------------------------------------------
+.myDecks {
+	
+	.bar.bar-header {
+		background-color: #FF732B;
+
+		button, .h1.title { color: white; }
+	}
+}
+
 
 
 // Include all of Ionic
