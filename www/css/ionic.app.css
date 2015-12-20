@@ -78,6 +78,18 @@
     .addSomethingButton.bar.bar-footer.bar-balanced .button.button-energized i {
       font-size: 20px; }
 
+.onBoardingButtons button {
+  border-radius: 50px;
+  box-shadow: 2px 2px 10px 0px rgba(50, 50, 50, 0.5);
+  width: 90%;
+  padding: 0;
+  margin-bottom: 10px; }
+
+.onBoardingButtons .button.button-energized.button-outline {
+  border-color: white;
+  color: white;
+  box-shadow: none; }
+
 .onBoard {
   background: url("../img/onBoardBackground.png") no-repeat center;
   -webkit-background-size: cover;
@@ -90,16 +102,6 @@
     margin-left: auto; }
   .onBoard h1, .onBoard h4 {
     color: white; }
-  .onBoard .onBoardingButtons button {
-    border-radius: 50px;
-    box-shadow: 2px 2px 10px 0px rgba(50, 50, 50, 0.5);
-    width: 90%;
-    padding: 0;
-    margin-bottom: 10px; }
-  .onBoard .onBoardingButtons .button.button-energized.button-outline {
-    border-color: white;
-    color: white;
-    box-shadow: none; }
   .onBoard .indicators i {
     color: rgba(255, 255, 255, 0.5);
     font-size: 14px;
@@ -197,13 +199,15 @@ ion-side-menus ion-side-menu-content ion-nav-bar .bar.bar-stable {
   ion-side-menus ion-side-menu-content ion-nav-bar .bar.bar-stable .button.button-clear, ion-side-menus ion-side-menu-content ion-nav-bar .bar.bar-stable .title {
     color: white; }
 
-.myDecks ion-content .list .item p {
-  margin-top: 6px; }
-  .myDecks ion-content .list .item p i {
-    font-size: 30px;
-    float: left;
-    margin-right: 5px;
-    margin-top: -5px; }
+.myDecks ion-content {
+  margin-bottom: 65px; }
+  .myDecks ion-content .list .item p {
+    margin-top: 6px; }
+    .myDecks ion-content .list .item p i {
+      font-size: 30px;
+      float: left;
+      margin-right: 5px;
+      margin-top: -5px; }
 
 .myDecksPopover.popover {
   height: auto;
@@ -238,9 +242,34 @@ ion-side-menus ion-side-menu-content ion-nav-bar .bar.bar-stable {
 .list > .item.tagInputLabel {
   border-top: 0;
   margin-top: 1px; }
+  .list > .item.tagInputLabel > input {
+    padding-left: 20px; }
   .list > .item.tagInputLabel > .icon.ion-ios-search.placeholder-icon {
     float: left;
-    margin-top: 6px; }
+    margin-top: 6px;
+    margin-bottom: -30px; }
+
+.createDeck input {
+  width: 100%; }
+
+.createCard input {
+  width: 100%; }
+
+.createCard select {
+  border-style: none;
+  padding: 10px;
+  color: #e2743c; }
+
+.createCard .selectRow {
+  text-align: center;
+  color: #e2743c;
+  padding: 10px 0px; }
+
+.createCard .onBoardingButtons .button.button-energized.button-outline {
+  border-color: #e2743c;
+  color: #e2743c; }
+  .createCard .onBoardingButtons .button.button-energized.button-outline.activated {
+    color: white; }
 
 /*!
   Ionicons, v2.0.1

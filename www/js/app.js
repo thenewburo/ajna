@@ -103,7 +103,7 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'pascalprecht.tra
             }
         },
         data: {
-            permission: false
+            permission: true
         }
     })
 
@@ -117,7 +117,7 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'pascalprecht.tra
             }
         },
         data: {
-            permission: false
+            permission: true
         }
     });
 
@@ -127,15 +127,17 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'pascalprecht.tra
     // Contains all the translation for each language
     $translateProvider.translations('en', {
         UTILS: {
-            "Title": "EASY LEARNING"
+            "Title": "EASY LEARNING",
+            "Tags": "Tags",
+            "Done-button": "Done",
+            "Success": "Success"
         },
         ONBOARD: {
             "Text-page1": "Create your own flashcards in few minutes.",
             "Text-page2": "Study your deck whenever, wherever.",
             "Text-page3": "Buy/Sell your decks in the Deckstore.",
             "Skip-button": "Skip",
-            "Next-button": "Next",
-            "Done-button": "Done"
+            "Next-button": "Next"
         },
         LOGIN: {
             "Username": "Username",
@@ -165,10 +167,15 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'pascalprecht.tra
             "Create-deck": "Create a new deck",
             "Add-card": "Add a card",
             "Deck-name": "Deck name",
-            "Tags": "Tags"
+            "Deck-created": "The deck and his card have been created successfully"
         },
         CREATECARD: {
-            "Create-card": "Create a new card"
+            "Create-card": "Create a new card",
+            "Type": "Type",
+            "Question": "Question",
+            "Answer": "Answer",
+            "Frequency": "Frequency",
+            "Edit": "Edit"
         },
         ERROR: {
             "Error": "Error",

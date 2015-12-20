@@ -114,6 +114,21 @@ $whiteCircleBackgrounLogoRadius: 50%;
 	}
 }
 
+.onBoardingButtons {
+	button {
+		border-radius: $custom-button-radius;
+		box-shadow: $custom-button-shadow;
+		width: 90%;
+		padding: 0;
+		margin-bottom: 10px;
+	}
+	.button.button-energized.button-outline {
+		border-color: white;
+		color: white;
+		box-shadow: none;
+	}
+}
+
 
 
 // ---------------------------------------------------
@@ -130,21 +145,6 @@ $whiteCircleBackgrounLogoRadius: 50%;
 
 	h1, h4 {
 		color: white;
-	}
-
-	.onBoardingButtons {
-		button {
-			border-radius: $custom-button-radius;
-			box-shadow: $custom-button-shadow;
-			width: 90%;
-			padding: 0;
-			margin-bottom: 10px;
-		}
-		.button.button-energized.button-outline {
-			border-color: white;
-			color: white;
-			box-shadow: none;
-		}
 	}
 
 	.indicators i {
@@ -294,6 +294,8 @@ ion-side-menus {
 
 	ion-content {
 
+	    margin-bottom: 65px;
+
 		.list .item p {
 
 			margin-top: 6px;
@@ -352,10 +354,14 @@ ion-side-menus {
 	>.item.tagInputLabel {
 		border-top: 0;
 		margin-top: 1px;
+
+		>input { padding-left: 20px; }
+
 		>.icon.ion-ios-search.placeholder-icon {
 
 			float: left;
 			margin-top: 6px;
+			margin-bottom: -30px;
 		}
 	}
 }
@@ -367,6 +373,7 @@ ion-side-menus {
 // ---------------------------------------------------
 .createDeck {
 	
+	input { width: 100%; }
 }
 
 
@@ -374,7 +381,26 @@ ion-side-menus {
 // ------------------- Create card -------------------
 // ---------------------------------------------------
 .createCard {
-	
+
+	input { width: 100%; }
+
+	select {
+		border-style: none;
+		padding: 10px;
+		color: $energized;
+	}
+
+	.selectRow {
+		text-align: center;
+		color: $energized;
+		padding: 10px 0px;
+	}
+
+	.onBoardingButtons .button.button-energized.button-outline {
+		border-color: $energized;
+		color: $energized;
+		&.activated { color: white; }
+	}
 }
 
 

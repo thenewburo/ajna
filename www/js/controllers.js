@@ -118,57 +118,14 @@ angular.module('controllers', [])
 	};
 })
 
-.controller('MyDecksCtrl', function($scope, $ionicPopover) {
+.controller('MyDecksCtrl', function($scope, $ionicPopover, DeckService) {
 	// User's decks
 	$scope.myDecks = [];
 
-	$scope.myDecks.push(
-		{
-			id: 0,
-			name: 'First deck example',
-			image: '',
-			tags: [],
-			isFavorite: false,
-			cards: [
-				{
-					id: 0,
-					type: 'Question',
-					question: 'What year are we in?',
-					answer: '2015',
-					frequency: 1,
-					tags: [],
-					seen: false
-				},
-				{
-					id: 1,
-					type: 'Question',
-					question: 'What is the next year?',
-					answer: '2016',
-					frequency: 1,
-					tags: [],
-					seen: false
-				}
-			]
-		},
-		{
-			id: 1,
-			name: 'Second deck example',
-			image: '',
-			tags: [],
-			isFavorite: true,
-			cards: [
-				{
-					id: 1,
-					type: 'Question',
-					question: 'What year are we in?',
-					answer: '2015',
-					frequency: 1,
-					tags: [],
-					seen: false
-				}
-			]
-		}
-	);
+	// Ask our deckService to get all the decks
+	$scope.myDecks = DeckService.getDecks();
+
+	console.log($scope.myDecks);
 
 	// Get the number of unseen cards
 	$scope.numberUnseenCards = function(deck) {
@@ -180,7 +137,7 @@ angular.module('controllers', [])
 		return nb;
 	};
 
-	// .fromTemplateUrl() method
+	// Get the popover template
 	$ionicPopover.fromTemplateUrl('myDecksPopover.html', {
 		scope: $scope
 	}).then(function(popover) {
@@ -202,13 +159,7 @@ angular.module('controllers', [])
 
 .controller('CreateDeckCtrl', function($scope, $state, $translate, PopupService, TagService) {
 	// Variable that contains our new deck informations
-	$scope.currentDeck = {
-		name: '',
-		image: '',
-		tags: [],
-		isFavorite: false,
-		cards: []
-	};
+	$scope.currentDeck = { name: '', image: '', tags: [], isFavorite: false, cards: [] };
 	// Variable used to display the tags results (autocomplete) and store the user input
 	$scope.search = { value: "", foundTags: [] };
 
@@ -232,13 +183,17 @@ angular.module('controllers', [])
 		if ($scope.currentDeck.name.length > 0) {
 			// Redirect to the 'Create new card' page, and pass as parameter the new deck
 			$state.go("menu.createCard", { deck: $scope.currentDeck });
+			$scope.currentDeck = { name: '', image: '', tags: [], isFavorite: false, cards: [] };
 		}
 		else
 			PopupService.showAlert($translate.instant('CREATEDECK.Create-deck'), $translate.instant('ERROR.No-deck-name'));
 	};
 })
 
-.controller('CreateCardCtrl', function($scope, $stateParams, $state, $translate, PopupService) {
+.controller('CreateCardCtrl', function($scope, $stateParams, $state, $translate, PopupService, TagService, DeckService, $ionicHistory) {
+	$scope.currentCard = { type: 'Question', question: '', answer: '', frequency: 1, tags: [], seen: false };
+	// Variable used to display the tags results (autocomplete) and store the user input
+	$scope.search = { value: "", foundTags: [] };
 	// We get the deck sent in parameter (we will add the card in that deck)
 	$scope.currentDeck = $stateParams.deck;
 
@@ -247,4 +202,41 @@ angular.module('controllers', [])
 		PopupService.showAlert($translate.instant('ERROR.Error'), $translate.instant('ERROR.Cannot-get-deck'));
 		$state.go("menu.createDeck")
 	}
+
+	$scope.searchForTags = function() {
+		// We use our TagService to get all the tags that match with the search variable
+		$scope.search.foundTags = TagService.searchTags($scope.search.value, $scope.currentCard.tags);
+	};
+
+	// Add the tag in the deck list, and clear the search object
+	$scope.addTag = function(tag) {
+		TagService.addTag(tag, $scope.currentCard, $scope.search);
+	};
+
+	// Remove the tag in the deck list
+	$scope.removeTag = function(tag) {
+		TagService.removeTag(tag, $scope.currentCard, $scope.search);
+	};
+
+	// Create the deck with the card in it
+	$scope.createCard = function() {
+		if ($scope.currentCard.question.length > 0 && $scope.currentCard.answer.length > 0) {
+			// Add the card in the deck
+			$scope.currentDeck.cards.push($scope.currentCard);
+			// Add the deck in our list of decks
+			DeckService.addDeck(_.extend({}, $scope.currentDeck));
+			// Reset the datas for the next time
+			$scope.currentCard = { type: 'Question', question: '', answer: '', frequency: 1, tags: [], seen: false };
+			// Display a message to say we created the new deck
+			PopupService.showAlert($translate.instant('UTILS.Success'), $translate.instant('CREATEDECK.Deck-created'));
+			// Make the next page the root history
+			$ionicHistory.nextViewOptions({
+				disableBack: true
+			});
+			// Redirect to the 'My decks' page
+			$state.go("menu.myDecks");
+		}
+		else
+			PopupService.showAlert($translate.instant('CREATECARD.Create-card'), $translate.instant('ERROR.Error-fields'));
+	};
 });

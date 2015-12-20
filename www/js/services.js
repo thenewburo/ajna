@@ -118,4 +118,75 @@ angular.module('services', [])
 				search.foundTags.push(tag);
 		}
 	};
+})
+
+// This factory is used to manage the decks
+.factory('DeckService', function() {
+	// Temp variable to simulate the ID incremented by the database
+	var fakeID = 5;
+	// Get all the decks from our database
+	var decks = [
+	{
+		id: 0,
+		name: 'First deck example',
+		image: '',
+		tags: [],
+		isFavorite: false,
+		cards: [
+			{
+				id: 2,
+				type: 'Question',
+				question: 'What year are we in?',
+				answer: '2015',
+				frequency: 1,
+				tags: [],
+				seen: false
+			},
+			{
+				id: 3,
+				type: 'Question',
+				question: 'What is the next year?',
+				answer: '2016',
+				frequency: 1,
+				tags: [],
+				seen: false
+			}
+		]
+	},
+	{
+		id: 1,
+		name: 'Second deck example',
+		image: '',
+		tags: [],
+		isFavorite: true,
+		cards: [
+			{
+				id: 4,
+				type: 'Question',
+				question: 'What year are we in?',
+				answer: '2015',
+				frequency: 1,
+				tags: [],
+				seen: false
+			}
+		]
+	}];
+
+	return {
+		// Returns all the decks
+		getDecks: function() {
+			return decks;
+		},
+		// Add a new deck
+		addDeck: function(deck) {
+			deck.id = fakeID++;
+			angular.forEach(deck.cards, function(c) {
+				c.id = fakeID++;
+			});
+			decks.push(deck);
+		},
+		removeDeck: function(deck) {
+			decks = _.reject(decks, function(curDeck) { return curDeck == deck; });
+		}
+	};
 });

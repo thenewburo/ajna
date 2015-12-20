@@ -10,5 +10,68 @@
 
     <!-- Content -->
 	<ion-content>
+		<!-- If we come from the creation or edition of a deck -->
+		<div class="selectRow">
+			<span>{{currentDeck.name}}</span>
+		</div>
+
+		<div class="list listNoBottomPadding">
+            <!-- Type -->
+            <div class="item">
+            	<span>{{'CREATECARD.Type' | translate}}
+                <select>
+					<option selected>Question</option>
+				</select>
+            </div>
+
+            <!-- Question -->
+            <div class="item">
+                <input type="text" ng-model="currentCard.question" placeholder="{{'CREATECARD.Question' | translate}}">
+            </div>
+
+            <!-- Answer -->
+            <div class="item">
+                <input type="text" ng-model="currentCard.answer" placeholder="{{'CREATECARD.Answer' | translate}}">
+            </div>
+
+            <!-- Frequency -->
+            <div class="item">
+            	<span>{{'CREATECARD.Frequency' | translate}}
+                <select>
+                	<option>Never</option>
+					<option selected>Sometimes</option>
+					<option>Often</option>
+				</select>
+            </div>
+
+            <!-- Tags -->
+            <div class="item tagLabel" ng-show="currentCard.tags.length > 0">
+                <div class="tagBadge" ng-repeat="tagName in currentCard.tags" ng-click="removeTag(tagName)">
+                    {{tagName}} <i class="ion-close-circled"></i>
+                </div>
+            </div>
+            <div class="item tagInputLabel">
+                <i class="icon ion-ios-search placeholder-icon"></i>
+                <input type="search" placeholder="{{'UTILS.Tags' | translate}}" ng-model="search.value" ng-change="searchForTags()">
+            </div>
+            <!-- Autocomplete results -->
+            <div class="list autoCompleteTagsList">
+                <a class="item" ng-repeat="result in search.foundTags" ng-click="addTag(result)">{{result}}</a>
+            </div>
+        </div>
+
+		<!-- Edit and done button -->
+		<div class="row text-center h-20 onBoardingButtons">
+		    <div class="col-xs-0 col-sm-2 col-md-2 col-lg-3"></div>
+		    <div class="col-xs-6 col-sm-3 col-md-3 col-lg-2 col-bottom">
+		        <button class="button button-outline button-large button-energized">{{'CREATECARD.Edit' | translate}}</button>
+		    </div>
+		    <div class="col-xs-0 col-sm-2 col-md-2 col-lg-2"></div>
+		    <div class="col-xs-6 col-sm-3 col-md-3 col-lg-2 col-bottom">
+		        <button ng-click="createCard()" class="button button-large button-energized">{{'UTILS.Done-button' | translate}}</button>
+		    </div>
+		    <div class="col-xs-0 col-sm-2 col-md-2 col-lg-3"></div>
+		</div>
+
 	</ion-content>
 </ion-view>
