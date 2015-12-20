@@ -11,26 +11,43 @@ angular.module('controllers', [])
 	// The user's login data
 	$scope.loginData = {};
 
+	// This function checks all the fields and returns 0 if everything is correct, else returns an error code
+	checkLoginFields = function() {
+		// One of the fields is empty
+		if (!$scope.loginData.username || $scope.loginData.username.length <= 0 ||
+			!$scope.loginData.password || $scope.loginData.password.length <= 0)
+			return 1;
+		return 0;
+	};
+
 	// Perform the login action when the user submits the login form
 	$scope.login = function() {
-		// Try to connect the user
-		if ($scope.loginData.username && $scope.loginData.username.length > 0 &&
-			$scope.loginData.password && $scope.loginData.password.length > 0) {
-			if (UserService.connect($scope.loginData.username, $scope.loginData.password)) {
-				// Reset the fields
-				$scope.loginData = {};
-				// Make the next page the root history
-				$ionicHistory.nextViewOptions({
-					disableBack: true
-				});
-				// Redirect to 'My decks' page
-				$state.go("menu.myDecks");
-			}
-			else
-				PopupService.showAlert($translate.instant('LOGIN.Sign-in'), $translate.instant('ERROR.Cannot-connect'));
+		// Check all the fields, then use the return code to execute the good actions
+		switch (checkLoginFields()) {
+
+			// Everything is correct, we can try to connect but still check for an error
+			case 0:
+				if (UserService.connect($scope.loginData.username, $scope.loginData.password)) {
+					// Reset the fields
+					$scope.loginData = {};
+					// Make the next page the root history
+					$ionicHistory.nextViewOptions({
+						disableBack: true
+					});
+					// Redirect to 'My decks' page
+					$state.go("menu.myDecks");
+				}
+				else
+					PopupService.showAlert($translate.instant('LOGIN.Sign-in'), $translate.instant('ERROR.Cannot-connect'));
+				break;
+
+			// An error happened
+			case 1:
+				PopupService.showAlert($translate.instant('LOGIN.Sign-in'), $translate.instant('ERROR.Error-fields'));
+				break;
+
+			default:
 		}
-		else
-			PopupService.showAlert($translate.instant('LOGIN.Sign-in'), $translate.instant('ERROR.Error-fields'));
 	};
 })
 
@@ -38,7 +55,7 @@ angular.module('controllers', [])
 	// Variable to temporarily store the user's data
 	$scope.accountData = {};
 
-	// This function tests all the fields and returns 0 if everything is correct, else returns an error code
+	// This function checks all the fields and returns 0 if everything is correct, else returns an error code
 	checkAccoutFields = function() {
 		// One of the fields is empty
 		if (!$scope.accountData.username || $scope.accountData.username.length <= 0 ||
@@ -81,7 +98,6 @@ angular.module('controllers', [])
 				break;
 
 			default:
-				break;
 		}
 	};
 })
@@ -162,7 +178,7 @@ angular.module('controllers', [])
 				nb++;
 		});
 		return nb;
-	}
+	};
 
 	// .fromTemplateUrl() method
 	$ionicPopover.fromTemplateUrl('myDecksPopover.html', {
@@ -184,10 +200,51 @@ angular.module('controllers', [])
 	});
 })
 
-.controller('CreateDeckCtrl', function($scope) {
+.controller('CreateDeckCtrl', function($scope, $state, $translate, PopupService, TagService) {
+	// Variable that contains our new deck informations
+	$scope.currentDeck = {
+		name: '',
+		image: '',
+		tags: [],
+		isFavorite: false,
+		cards: []
+	};
+	// Variable used to display the tags results (autocomplete) and store the user input
+	$scope.search = { value: "", foundTags: [] };
 
+	$scope.searchForTags = function() {
+		// We use our TagService to get all the tags that match with the search variable
+		$scope.search.foundTags = TagService.searchTags($scope.search.value, $scope.currentDeck.tags);
+	};
+
+	// Add the tag in the deck list, and clear the search object
+	$scope.addTag = function(tag) {
+		TagService.addTag(tag, $scope.currentDeck, $scope.search);
+	};
+
+	// Remove the tag in the deck list
+	$scope.removeTag = function(tag) {
+		TagService.removeTag(tag, $scope.currentDeck, $scope.search);
+	};
+
+	$scope.goToCreateCard = function() {
+		// Check the user put at least a name for the deck
+		if ($scope.currentDeck.name.length > 0) {
+			// Redirect to the 'Create new card' page, and pass as parameter the new deck
+			$state.go("menu.createCard", { deck: $scope.currentDeck });
+		}
+		else
+			PopupService.showAlert($translate.instant('CREATEDECK.Create-deck'), $translate.instant('ERROR.No-deck-name'));
+	};
 })
 
-.controller('CreateCardCtrl', function($scope) {
+.controller('CreateCardCtrl', function($scope, $stateParams, $state, $translate, PopupService) {
+	// We get the deck sent in parameter (we will add the card in that deck)
+	$scope.currentDeck = $stateParams.deck;
 
+	// Check we successfully got the deck
+	if ($scope.currentDeck == undefined) {
+		PopupService.showAlert($translate.instant('ERROR.Error'), $translate.instant('ERROR.Cannot-get-deck'));
+		$state.go("menu.createDeck")
+	}
 });

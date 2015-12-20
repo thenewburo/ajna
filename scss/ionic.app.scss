@@ -47,16 +47,20 @@ $menuHeaderBackgroung: "../img/menuHeaderBackground.png";
 .row.h-15 { height: 15%; }
 .row.h-10 { height: 10%; }
 
+.list.listNoBottomPadding>.item { padding-bottom: 0; }
+
 $whiteCircleBackgrounLogoSizeXS: 100px;
 $whiteCircleBackgrounLogoSizeSM: 150px;
 $whiteCircleBackgrounLogoSizeMD: 200px;
 $whiteCircleBackgrounLogoSizeLG: 250px;
 
 $whiteCircleBackgrounLogoColor: rgba(255, 255, 255, 0.3);
+$whiteCircleDarkerBackgrounLogoColor: rgba(100, 100, 100, 0.3);
 $whiteCircleBackgrounLogoRadius: 50%;
 
 .whiteCircle {
 	background-color: $whiteCircleBackgrounLogoColor;
+	&.darker { background-color: $whiteCircleDarkerBackgrounLogoColor; }
 	border-radius: $whiteCircleBackgrounLogoRadius;
 	margin-left: auto;
 	margin-right: auto;
@@ -321,6 +325,41 @@ ion-side-menus {
 		}
 	}
 }
+
+
+// ---------------------------------------------------
+// ---------------------- Tags -----------------------
+// ---------------------------------------------------
+.list {
+	&.autoCompleteTagsList>.item {
+		background-color: #FAFAFA;
+	}
+
+	>.item.tagLabel {
+		border-bottom: 0;
+		>.tagBadge {
+			float: left;
+			font-size: 14px;
+			padding: 3px 5px;
+			margin-right: 10px;
+			margin-top: 10px;
+			border-radius: 5px;
+			background-color: #f0f0f0;
+			i { margin-left: 3px; font-size: 15px; }
+		}
+	}
+
+	>.item.tagInputLabel {
+		border-top: 0;
+		margin-top: 1px;
+		>.icon.ion-ios-search.placeholder-icon {
+
+			float: left;
+			margin-top: 6px;
+		}
+	}
+}
+
 
 
 // ---------------------------------------------------

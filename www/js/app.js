@@ -27,6 +27,7 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'pascalprecht.tra
 .config(function($stateProvider, $urlRouterProvider, $translateProvider) {
 
     // Here we define all the routes
+    // The permission field is used to know if the user has to be logged in to access this page
     $stateProvider
     .state('onBoarding1', {
         url: '/onBoarding1',
@@ -102,12 +103,13 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'pascalprecht.tra
             }
         },
         data: {
-            permission: true
+            permission: false
         }
     })
 
     .state('menu.createCard', {
         url: '/createCard',
+        params: { deck: null },
         views: {
             'menuContent': {
                 templateUrl: 'templates/createCard.html',
@@ -115,7 +117,7 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'pascalprecht.tra
             }
         },
         data: {
-            permission: true
+            permission: false
         }
     });
 
@@ -161,16 +163,21 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'pascalprecht.tra
         },
         CREATEDECK: {
             "Create-deck": "Create a new deck",
-            "Add-card": "Add a card"
+            "Add-card": "Add a card",
+            "Deck-name": "Deck name",
+            "Tags": "Tags"
         },
         CREATECARD: {
             "Create-card": "Create a new card"
         },
         ERROR: {
-            "Cannot-connect": "Error, username and password do not match",
+            "Error": "Error",
+            "Cannot-connect": "Error, please check your username or password",
             "Email-used": "Error, that email address is already used",
             "Error-fields": "Error, please fill all the fields",
-            "Email-incorrect": "Error, please enter a correct email address"
+            "Email-incorrect": "Error, please enter a correct email address",
+            "No-deck-name": "Error, please enter a name for the deck",
+            "Cannot-get-deck": "Error, impossible to find the deck"
         }
     });
 

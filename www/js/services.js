@@ -67,4 +67,55 @@ angular.module('services', [])
 			user = {};
 		}
 	};
+})
+
+// This factory is used to manage the tags for a deck or a card
+.factory('TagService', function() {
+	// Get all the tags from our database
+	var tags = ["Math", "French", "English", "American", "History", "Geography", "Biology"];
+
+	return {
+		// This function returns all the tags that match with the string passed in parameter
+		// but ignore all the tags which are in the array passed in parameter
+		searchTags: function(searchStr, ignoreArray) {
+			var res = [];
+			if (searchStr == undefined || searchStr.length <= 0)
+				return res;
+			angular.forEach(tags, function(currentTag) {
+				// If we found a tag that match with the search string, we push it in the res array
+				if (currentTag.toLowerCase().indexOf(searchStr.toLowerCase()) > -1)
+					res.push(currentTag);
+			});
+			// We want to remove all the tag(s) that are in the 'res' and in the 'ignoreArray'
+			res = _.difference(res, ignoreArray);
+			return res;
+		},
+		// Add the tag in the tags array, and clear the search object
+		addTag: function(tag, tagsContainer, search) {
+			// We check the tag is not already in our list
+			var alreadyIn = false;
+			angular.forEach(tagsContainer.tags, function(cur) {
+				if (tag.toLowerCase() == cur.toLowerCase()) {
+					alreadyIn = true;
+					return;
+				}
+			});
+			// if not, we push it to the tagsContainer list
+			if (alreadyIn == false) {
+				tagsContainer.tags.push(tag);
+				search.value = "";
+				search.foundTags = [];
+			}
+		},
+		// Remove a tag from our tags array, then check if we have to put it in the search object
+		removeTag: function(tag, tagsContainer, search) {
+			// Save the length to check if we have removed an item
+			var lengthBefore = tagsContainer.tags.length;
+			// We remove the tag from our list
+			tagsContainer.tags = _.reject(tagsContainer.tags, function(curTag) { return curTag == tag; });
+			// If we have removed the tag, check if we should add it to the autocomplete results
+			if (lengthBefore != tagsContainer.tags.length && search.value.length > 0 && tag.toLowerCase().indexOf(search.value.toLowerCase()) > -1)
+				search.foundTags.push(tag);
+		}
+	};
 });

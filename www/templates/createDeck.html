@@ -10,6 +10,33 @@
 
     <!-- Content -->
 	<ion-content>
+        <div class="list listNoBottomPadding">
+            <!-- Deck name -->
+            <div class="item">
+                <input type="text" ng-model="currentDeck.name" placeholder="{{'CREATEDECK.Deck-name' | translate}}">
+            </div>
+            <!-- Tags -->
+            <div class="item tagLabel" ng-show="currentDeck.tags.length > 0">
+                <div class="tagBadge" ng-repeat="tagName in currentDeck.tags" ng-click="removeTag(tagName)">
+                    {{tagName}} <i class="ion-close-circled"></i>
+                </div>
+            </div>
+            <div class="item tagInputLabel">
+                <i class="icon ion-ios-search placeholder-icon"></i>
+                <input type="search" placeholder="{{'CREATEDECK.Tags' | translate}}" ng-model="search.value" ng-change="searchForTags()">
+            </div>
+            <!-- Autocomplete results -->
+            <div class="list autoCompleteTagsList">
+                <a class="item" ng-repeat="result in search.foundTags" ng-click="addTag(result)">{{result}}</a>
+            </div>
+        </div>
+
+        <!-- Image uploader -->
+        <div class="row h-30">
+            <div class="whiteCircle darker">
+                <img src="img/uploadImageLogo.png">
+            </div>
+        </div>
 	</ion-content>
 
     <!-- Add card button -->
@@ -18,7 +45,7 @@
             <div class="col col-center">
                 {{'CREATEDECK.Add-card' | translate}}
             </div>
-            <button class="button button-large button-energized" ui-sref="menu.createCard()">
+            <button class="button button-large button-energized" ng-click="goToCreateCard()">
                 <i class="ion-plus"></i>
             </button>
         </div>
