@@ -92,6 +92,24 @@ $whiteCircleBackgrounLogoRadius: 50%;
 	}
 }
 
+.addSomethingButton.bar.bar-footer.bar-balanced {
+	background-color: transparent;
+	border: 0;
+	height: auto;
+	color: black;
+
+	.col { text-align: right; margin-right: 10px; }
+
+	.button.button-energized {
+		border-radius: $custom-button-radius;
+		box-shadow: $custom-button-shadow;
+		padding: 3px 0px 0px 0px;
+		height: 45px;
+		width: 45px;
+		i { font-size: 20px; }
+	}
+}
+
 
 
 // ---------------------------------------------------
@@ -283,24 +301,6 @@ ion-side-menus {
 			}
 		}
 	}
-
-	.bar.bar-footer.bar-balanced {
-		background-color: transparent;
-		border: 0;
-		height: auto;
-		color: black;
-
-		.col { text-align: right; margin-right: 10px; }
-
-		.button.button-energized {
-			border-radius: $custom-button-radius;
-			box-shadow: $custom-button-shadow;
-			padding: 3px 0px 0px 0px;
-			height: 45px;
-			width: 45px;
-			i { font-size: 20px; }
-		}
-	}
 }
 .myDecksPopover.popover {
 	height: auto;
@@ -326,6 +326,17 @@ ion-side-menus {
 // ---------------------------------------------------
 // ------------------- Create deck -------------------
 // ---------------------------------------------------
+.createDeck {
+	
+}
+
+
+// ---------------------------------------------------
+// ------------------- Create card -------------------
+// ---------------------------------------------------
+.createCard {
+	
+}
 
 
 

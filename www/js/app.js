@@ -104,6 +104,19 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'pascalprecht.tra
         data: {
             permission: true
         }
+    })
+
+    .state('menu.createCard', {
+        url: '/createCard',
+        views: {
+            'menuContent': {
+                templateUrl: 'templates/createCard.html',
+                controller: 'CreateCardCtrl'
+            }
+        },
+        data: {
+            permission: true
+        }
     });
 
     // if none of the above states are matched, use this as the fallback
@@ -147,7 +160,11 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'pascalprecht.tra
             "Import-deck": "Import deck"
         },
         CREATEDECK: {
-            "Create-deck": "Create a new deck"
+            "Create-deck": "Create a new deck",
+            "Add-card": "Add a card"
+        },
+        CREATECARD: {
+            "Create-card": "Create a new card"
         },
         ERROR: {
             "Cannot-connect": "Error, username and password do not match",

@@ -1,10 +1,13 @@
 angular.module('controllers', [])
 
-.controller('OnBoardingCtrl', function($scope) {
-
+.controller('OnBoardingCtrl', function($scope, $ionicHistory) {
+	// Make the next page the root history, so we can't use the back button to come back to the previous page
+	$ionicHistory.nextViewOptions({
+		disableBack: true
+	});
 })
 
-.controller('LoginCtrl', function($scope, $state, $translate, UserService, PopupService) {
+.controller('LoginCtrl', function($scope, $state, $translate, $ionicHistory, UserService, PopupService) {
 	// The user's login data
 	$scope.loginData = {};
 
@@ -14,7 +17,13 @@ angular.module('controllers', [])
 		if ($scope.loginData.username && $scope.loginData.username.length > 0 &&
 			$scope.loginData.password && $scope.loginData.password.length > 0) {
 			if (UserService.connect($scope.loginData.username, $scope.loginData.password)) {
+				// Reset the fields
 				$scope.loginData = {};
+				// Make the next page the root history
+				$ionicHistory.nextViewOptions({
+					disableBack: true
+				});
+				// Redirect to 'My decks' page
 				$state.go("menu.myDecks");
 			}
 			else
@@ -77,7 +86,7 @@ angular.module('controllers', [])
 	};
 })
 
-.controller('MenuCtrl', function($scope, $state, UserService) {
+.controller('MenuCtrl', function($scope, $state, $ionicHistory, UserService) {
 	$scope.UserService = UserService;
 
 	// Redirect to "My decks" page
@@ -88,6 +97,7 @@ angular.module('controllers', [])
 	// Disconnect the user
 	$scope.logout = function() {
 		UserService.disconnect();
+
 		$state.go("login");
 	};
 })
@@ -175,5 +185,9 @@ angular.module('controllers', [])
 })
 
 .controller('CreateDeckCtrl', function($scope) {
+
+})
+
+.controller('CreateCardCtrl', function($scope) {
 
 });
