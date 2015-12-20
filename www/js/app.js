@@ -1,19 +1,19 @@
 // Ionic Starter App
-angular.module('starter', ['ionic', 'starter.controllers', 'pascalprecht.translate'])
+angular.module('starter', ['ionic', 'controllers', 'services', 'pascalprecht.translate'])
 
 .run(function($ionicPlatform, $rootScope, $state, UserService) {
     $ionicPlatform.ready(function() {
         // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
         // for form inputs)
         if (window.cordova && window.cordova.plugins.Keyboard) {
-            cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
-            cordova.plugins.Keyboard.disableScroll(true);
+            //cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
+            //cordova.plugins.Keyboard.disableScroll(true);
 
         }
         if (window.StatusBar) {
-            // org.apache.cordova.statusbar required
-            StatusBar.hide();
+            StatusBar.styleDefault();
         }
+        ionic.Platform.isFullScreen = true;
     });
     // Every time the user change to another page
     $rootScope.$on('$stateChangeStart', function(event, toState, toStateParams) {
@@ -26,6 +26,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'pascalprecht.transla
 
 .config(function($stateProvider, $urlRouterProvider, $translateProvider) {
 
+    // Here we define all the routes
     $stateProvider
     .state('onBoarding1', {
         url: '/onBoarding1',
@@ -96,13 +97,17 @@ angular.module('starter', ['ionic', 'starter.controllers', 'pascalprecht.transla
         url: '/createDeck',
         views: {
             'menuContent': {
-                templateUrl: 'templates/createDeck.html'
+                templateUrl: 'templates/createDeck.html',
+                controller: 'CreateDeckCtrl'
             }
         },
         data: {
             permission: true
         }
     });
+
+    // if none of the above states are matched, use this as the fallback
+    $urlRouterProvider.otherwise('/onBoarding1');
 
     // Contains all the translation for each language
     $translateProvider.translations('en', {
@@ -122,7 +127,6 @@ angular.module('starter', ['ionic', 'starter.controllers', 'pascalprecht.transla
             "Password": "Password",
             "Sign-in": "Sign in",
             "Not-reg": "Don't have an account?",
-            "Sign-up": "Sign up",
             "Logout": "Logout",
             "Sign-facebook": "Sign in with Facebook",
             "Sign-google": "Sign in with Google+",
@@ -133,27 +137,28 @@ angular.module('starter', ['ionic', 'starter.controllers', 'pascalprecht.transla
             "Name": "Name",
             "Email": "Email",
             "Account-created": "Your account has been created successfully",
+            "Sign-up": "Sign up"
         },
         MYDECKS: {
             "My-decks": "My decks",
             "Unseen-cards": "unseen card(s)",
-            "Add-deck": "Add a deck"
+            "Add-deck": "Add a deck",
+            "Refresh-decks": "Refresh decks",
+            "Import-deck": "Import deck"
         },
         CREATEDECK: {
             "Create-deck": "Create a new deck"
         },
         ERROR: {
-            "Cannot-connect": "Error: username and password do not match",
-            "Email-used": "Error: that email address is already used",
-            "Error-fields": "Error: please fill all the fields"
+            "Cannot-connect": "Error, username and password do not match",
+            "Email-used": "Error, that email address is already used",
+            "Error-fields": "Error, please fill all the fields",
+            "Email-incorrect": "Error, please enter a correct email address"
         }
     });
 
-    // English by default
+    // English language by default
     $translateProvider.preferredLanguage("en");
     $translateProvider.fallbackLanguage("en");
     $translateProvider.useSanitizeValueStrategy('escaped');
-
-    // if none of the above states are matched, use this as the fallback
-    $urlRouterProvider.otherwise('/onBoarding1');
 });

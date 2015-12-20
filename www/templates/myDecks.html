@@ -1,4 +1,30 @@
 <ion-view view-title="{{'MYDECKS.My-decks' | translate}}" class="myDecks">
+
+	<!-- Header -->
+    <ion-nav-bar class="bar-stable" align-title="center">
+        <ion-nav-back-button></ion-nav-back-button>
+        <ion-nav-buttons side="left">
+            <button class="button button-icon button-clear ion-navicon" menu-toggle="left"></button>
+        </ion-nav-buttons>
+        <ion-nav-buttons side="right">
+            <button class="button button-icon button-clear ion-ios-more" ng-click="openPopover($event)"></button>
+        </ion-nav-buttons>
+    </ion-nav-bar>
+
+    <!-- Popover (top right button) -->
+	<script id="myDecksPopover.html" type="text/ng-template">
+		<ion-popover-view class="myDecksPopover">
+			<ion-content>
+				<div class="list">
+					<a class="item popItem">{{'MYDECKS.Refresh-decks' | translate}}</a>
+					<a class="item popItem">{{'MYDECKS.Import-deck' | translate}}</a>
+					<a class="item popItem lastItem">Other actions</a>
+				</div>
+			</ion-content>
+		</ion-popover-view>
+	</script>
+
+    <!-- Content -->
 	<ion-content>
 		<ul class="list">
 			<a ng-repeat="deck in myDecks" class="item item-avatar" href="#">
@@ -11,6 +37,7 @@
 		</ul>
 	</ion-content>
 
+	<!-- Add deck button -->
 	<div class="bar bar-footer bar-balanced">
 		<div class="row">
 			<div class="col col-center">

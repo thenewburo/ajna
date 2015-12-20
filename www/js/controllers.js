@@ -1,4 +1,4 @@
-angular.module('starter.controllers', [])
+angular.module('controllers', [])
 
 .controller('OnBoardingCtrl', function($scope) {
 
@@ -29,36 +29,70 @@ angular.module('starter.controllers', [])
 	// Variable to temporarily store the user's data
 	$scope.accountData = {};
 
+	// This function tests all the fields and returns 0 if everything is correct, else returns an error code
+	checkAccoutFields = function() {
+		// One of the fields is empty
+		if (!$scope.accountData.username || $scope.accountData.username.length <= 0 ||
+			!$scope.accountData.email || $scope.accountData.email.length <= 0 ||
+			!$scope.accountData.password || $scope.accountData.password.length <= 0)
+			return 1;
+
+		// Email address is not well formated
+		var patt = /\S+@\S+\.\S+/;
+		if (patt.test($scope.accountData.email) == false)
+			return 2;
+
+		return 0;
+	};
+
 	// Create a new account
 	$scope.createAccount = function() {
-		// Check all the fields
-		if ($scope.accountData.username && $scope.accountData.username.length > 0 &&
-			$scope.accountData.email && $scope.accountData.email.length > 0 &&
-			$scope.accountData.password && $scope.accountData.password.length > 0) {
-			// Try to create an account
-			if (UserService.createAccount($scope.accountData.username, $scope.accountData.email, $scope.accountData.password)) {
-				$state.go("login");
-				PopupService.showAlert($translate.instant('NEWACCOUNT.New-account'), $translate.instant('NEWACCOUNT.Account-created'));
-			}
-			else
-				PopupService.showAlert($translate.instant('NEWACCOUNT.New-account'), $translate.instant('ERROR.Email-used'));
+		// Check all the fields, then use the return code to execute the good actions
+		switch (checkAccoutFields()) {
+
+			// Everything is correct, we can try to create the account but still check if email address not already used
+			case 0:
+				// Try to create an account
+				if (UserService.createAccount($scope.accountData.username, $scope.accountData.email, $scope.accountData.password)) {
+					$state.go("login");
+					PopupService.showAlert($translate.instant('NEWACCOUNT.New-account'), $translate.instant('NEWACCOUNT.Account-created'));
+				}
+				else
+					PopupService.showAlert($translate.instant('NEWACCOUNT.New-account'), $translate.instant('ERROR.Email-used'));
+				break;
+
+			// One field is empty
+			case 1:
+				PopupService.showAlert($translate.instant('NEWACCOUNT.New-account'), $translate.instant('ERROR.Error-fields'));
+				break;
+
+			// Email address is not well formated
+			case 2:
+				PopupService.showAlert($translate.instant('NEWACCOUNT.New-account'), $translate.instant('ERROR.Email-incorrect'));
+				break;
+
+			default:
+				break;
 		}
-		else
-			PopupService.showAlert($translate.instant('NEWACCOUNT.New-account'), $translate.instant('ERROR.Error-fields'));
 	};
 })
 
 .controller('MenuCtrl', function($scope, $state, UserService) {
 	$scope.UserService = UserService;
 
+	// Redirect to "My decks" page
+	$scope.goToMyDecks = function() {
+		$state.go("menu.myDecks");
+	};
+
 	// Disconnect the user
 	$scope.logout = function() {
 		UserService.disconnect();
 		$state.go("login");
-	}
+	};
 })
 
-.controller('MyDecksCtrl', function($scope) {
+.controller('MyDecksCtrl', function($scope, $ionicPopover) {
 	// User's decks
 	$scope.myDecks = [];
 
@@ -119,74 +153,27 @@ angular.module('starter.controllers', [])
 		});
 		return nb;
 	}
+
+	// .fromTemplateUrl() method
+	$ionicPopover.fromTemplateUrl('myDecksPopover.html', {
+		scope: $scope
+	}).then(function(popover) {
+		$scope.popover = popover;
+	});
+
+
+	$scope.openPopover = function($event) {
+		$scope.popover.show($event);
+	};
+	$scope.closePopover = function() {
+		$scope.popover.hide();
+	};
+	//Cleanup the popover when we're done with it!
+	$scope.$on('$destroy', function() {
+		$scope.popover.remove();
+	});
 })
 
-// This factory is used to display popups
-.factory('PopupService', function($ionicPopup) {
-	return {
-		// Display a 'OK' popup with the title and message passed in parameters
-		showAlert: function(title, message) {
-			var alertPopup = $ionicPopup.alert({
-				title: title,
-				template: message
-			});
-		}
-	};
-})
+.controller('CreateDeckCtrl', function($scope) {
 
-// This factory is used to manage the users
-.factory('UserService', function() {
-	var user = {};
-	var isConnected = false;
-	// Simulate our database
-	var users = [{ username: "root", email: "root@root.com", password: "root" }];
-
-	return {
-		// Return the current username
-		getUsername: function() {
-			return user.username;
-		},
-		// Return the current email
-		getEmail: function() {
-			return user.email;
-		},
-		// Return true if the user is connected, else false
-		isUserConnected: function() {
-			return isConnected;
-		},
-		// Try to create a new user if the email is not already used
-		createAccount: function(name, mail, pass) {
-			var alreadyUsed = false;
-			angular.forEach(users, function(cur) {
-				if (cur.mail == mail) {
-					alreadyUsed = true;
-					return;
-				}
-			});
-			if (alreadyUsed)
-				return false;
-			users.push({ username: name, email: mail, password: pass});
-			user = { username: name, email: mail };
-			console.log(users);
-			return true;
-		},
-		// Look in our database if the user exists
-		connect: function(name, pass) {
-			if (isConnected)
-				return isConnected;
-			angular.forEach(users, function(cur) {
-				if (cur.username == name && cur.password == pass)
-				{
-					user = { username: cur.username, email: cur.email };
-					isConnected = true;
-					return;
-				}
-			});
-			return isConnected;
-		},
-		// Disconnect the user
-		disconnect: function() {
-			user = {};
-		}
-	};
 });

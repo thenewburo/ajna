@@ -40,6 +40,22 @@
     margin-left: 25%;
     margin-top: 25%; }
 
+.popup .popup-head {
+  background: url("../img/headerBackground.png"); }
+  .popup .popup-head h3 {
+    color: white; }
+
+.popup .popup-body {
+  background-color: white; }
+
+.popup .popup-buttons {
+  background-color: white; }
+  .popup .popup-buttons button {
+    border-radius: 50px;
+    background-color: #e2743c; }
+    .popup .popup-buttons button.activated {
+      background-color: #df6426; }
+
 .onBoard {
   background: url("../img/onBoardBackground.png") no-repeat center;
   -webkit-background-size: cover;
@@ -61,7 +77,7 @@
   .onBoard .onBoardingButtons .button.button-energized.button-outline {
     border-color: white;
     color: white;
-    box-shadow: 0; }
+    box-shadow: none; }
   .onBoard .indicators i {
     color: rgba(255, 255, 255, 0.5);
     font-size: 14px;
@@ -183,6 +199,19 @@ ion-side-menus ion-side-menu-content ion-nav-bar .bar.bar-stable {
     width: 45px; }
     .myDecks .bar.bar-footer.bar-balanced .button.button-energized i {
       font-size: 20px; }
+
+.myDecksPopover.popover {
+  height: auto;
+  width: auto; }
+  .myDecksPopover.popover ion-content {
+    position: relative;
+    background-color: white; }
+    .myDecksPopover.popover ion-content .item.popItem {
+      background-color: white;
+      border: 0; }
+      .myDecksPopover.popover ion-content .item.popItem:not(.lastItem) {
+        border-bottom: 1px solid #ddd;
+        margin-bottom: 1px; }
 
 /*!
   Ionicons, v2.0.1

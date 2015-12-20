@@ -1,16 +1,6 @@
 <ion-side-menus enable-menu-with-back-views="false">
     <!-- Main content (when menu hidden) -->
     <ion-side-menu-content>
-        <!-- Header -->
-        <ion-nav-bar class="bar-stable" align-title="center">
-            <ion-nav-back-button></ion-nav-back-button>
-            <ion-nav-buttons side="left">
-                <button class="button button-icon button-clear ion-navicon" menu-toggle="left"></button>
-            </ion-nav-buttons>
-            <ion-nav-buttons side="right">
-                <button class="button button-icon button-clear ion-ios-more"></button>
-            </ion-nav-buttons>
-        </ion-nav-bar>
         <!-- Content -->
         <ion-nav-view name="menuContent"></ion-nav-view>
     </ion-side-menu-content>
@@ -26,7 +16,7 @@
         </ion-header-bar>
         <ion-content>
             <ion-list>
-                <ion-item menu-close ui-sref="menu.myDecks()">
+                <ion-item menu-close ng-click="goToMyDecks()">
                     {{'MYDECKS.My-decks' | translate}}
                 </ion-item>
                 <ion-item menu-close ng-click="logout()">

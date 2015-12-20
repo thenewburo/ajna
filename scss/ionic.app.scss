@@ -13,6 +13,7 @@ $font-family-base: "Comme-font", sans-serif !default;
 
 // Main color
 $energized: #e2743c;
+$energized-activated: #df6426;
 
 // Custom radius and shadow for all the buttons
 $custom-button-radius: 50px;
@@ -26,6 +27,16 @@ $custom-button-shadow: 2px 2px 10px 0px rgba(50, 50, 50, 0.5);
 	-o-background-size: cover;
 	background-size: cover;
 }
+
+
+// ---------------------------------------------------
+// ---------------------- Images ---------------------
+// ---------------------------------------------------
+$onBoardBackgroundImage: "../img/onBoardBackground.png";
+$loginBackgroundImage: "../img/accountBackground.png";
+$headerBackgroung: "../img/headerBackground.png";
+$menuHeaderBackgroung: "../img/menuHeaderBackground.png";
+
 
 
 // ---------------------------------------------------
@@ -65,13 +76,27 @@ $whiteCircleBackgrounLogoRadius: 50%;
 	}
 }
 
+.popup {
+	.popup-head {
+		background: url($headerBackgroung);
+		h3 { color: white; }
+	}
+	.popup-body { background-color: white; }
+	.popup-buttons {
+		background-color: white;
+		button {
+			border-radius: $custom-button-radius;
+			background-color: $energized;
+			&.activated { background-color: $energized-activated; }
+		}
+	}
+}
+
 
 
 // ---------------------------------------------------
 // --------------------- OnBoard ---------------------
 // ---------------------------------------------------
-$onBoardBackgroundImage: "../img/onBoardBackground.png";
-
 .onBoard {
 	@include full-background($onBoardBackgroundImage);
 
@@ -96,7 +121,7 @@ $onBoardBackgroundImage: "../img/onBoardBackground.png";
 		.button.button-energized.button-outline {
 			border-color: white;
 			color: white;
-			box-shadow: 0;
+			box-shadow: none;
 		}
 	}
 
@@ -117,7 +142,6 @@ $onBoardBackgroundImage: "../img/onBoardBackground.png";
 // ---------------------------------------------------
 // ---------------------- Login ----------------------
 // ---------------------------------------------------
-$loginBackgroundImage: "../img/accountBackground.png";
 $lineColor: rgba(255, 255, 255, 0.2);
 $transparentWhiteColor: rgba(255,255,255,0.7);
 
@@ -213,9 +237,6 @@ $transparentWhiteColor: rgba(255,255,255,0.7);
 // ---------------------------------------------------
 // ---------------------- Menu -----------------------
 // ---------------------------------------------------
-$headerBackgroung: "../img/headerBackground.png";
-$menuHeaderBackgroung: "../img/menuHeaderBackground.png";
-
 ion-side-menus {
 
 	ion-side-menu {
@@ -278,6 +299,25 @@ ion-side-menus {
 			height: 45px;
 			width: 45px;
 			i { font-size: 20px; }
+		}
+	}
+}
+.myDecksPopover.popover {
+	height: auto;
+	width: auto;
+
+	ion-content {
+		position: relative;
+		background-color: white;
+
+		.item.popItem {
+			background-color: white;
+			border: 0;
+			
+			&:not(.lastItem) {
+				border-bottom: 1px solid #ddd;
+				margin-bottom: 1px;
+			}
 		}
 	}
 }
