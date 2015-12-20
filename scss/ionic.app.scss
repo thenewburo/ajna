@@ -3,10 +3,6 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
 
 // A media query file to help for the responsive part
 @import "media-queries";
-.row.h-30 { height: 30%; }
-.row.h-20 { height: 20%; }
-.row.h-15 { height: 15%; }
-.row.h-10 { height: 10%; }
 
 // Custom font
 @font-face {
@@ -32,19 +28,49 @@ $custom-button-shadow: 2px 2px 10px 0px rgba(50, 50, 50, 0.5);
 }
 
 
+// ---------------------------------------------------
+// ---------------------- Common ---------------------
+// ---------------------------------------------------
+.row.h-30 { height: 30%; }
+.row.h-20 { height: 20%; }
+.row.h-15 { height: 15%; }
+.row.h-10 { height: 10%; }
+
+$whiteCircleBackgrounLogoSizeXS: 100px;
+$whiteCircleBackgrounLogoSizeSM: 150px;
+$whiteCircleBackgrounLogoSizeMD: 200px;
+$whiteCircleBackgrounLogoSizeLG: 250px;
+
+$whiteCircleBackgrounLogoColor: rgba(255, 255, 255, 0.3);
+$whiteCircleBackgrounLogoRadius: 50%;
+
+.whiteCircle {
+	background-color: $whiteCircleBackgrounLogoColor;
+	border-radius: $whiteCircleBackgrounLogoRadius;
+	margin-left: auto;
+	margin-right: auto;
+
+	height: $whiteCircleBackgrounLogoSizeXS;
+	width: $whiteCircleBackgrounLogoSizeXS;
+
+	@media (min-width: 768px) { height: $whiteCircleBackgrounLogoSizeSM; width: $whiteCircleBackgrounLogoSizeSM; }
+	@media (min-width: 992px) { height: $whiteCircleBackgrounLogoSizeMD; width: $whiteCircleBackgrounLogoSizeMD; }
+	@media (min-width: 1200px) { height: $whiteCircleBackgrounLogoSizeLG; width: $whiteCircleBackgrounLogoSizeLG; }
+
+	img {
+		width: 50%;
+		height: 50%;
+		margin-left: 25%;
+		margin-top: 25%;
+	}
+}
+
+
 
 // ---------------------------------------------------
 // --------------------- OnBoard ---------------------
 // ---------------------------------------------------
 $onBoardBackgroundImage: "../img/onBoardBackground.png";
-
-$onBoardBackgrounLogoSizeXS: 100px;
-$onBoardBackgrounLogoSizeSM: 150px;
-$onBoardBackgrounLogoSizeMD: 200px;
-$onBoardBackgrounLogoSizeLG: 250px;
-
-$onBoardBackgrounLogoColor: rgba(255, 255, 255, 0.3);
-$onBoardBackgrounLogoRadius: 50%;
 
 .onBoard {
 	@include full-background($onBoardBackgroundImage);
@@ -57,27 +83,6 @@ $onBoardBackgrounLogoRadius: 50%;
 
 	h1, h4 {
 		color: white;
-	}
-
-	.whiteCircle {
-		background-color: $onBoardBackgrounLogoColor;
-		border-radius: $onBoardBackgrounLogoRadius;
-		margin-left: auto;
-		margin-right: auto;
-
-		height: $onBoardBackgrounLogoSizeXS;
-		width: $onBoardBackgrounLogoSizeXS;
-
-		@media (min-width: 768px) { height: $onBoardBackgrounLogoSizeSM; width: $onBoardBackgrounLogoSizeSM; }
-		@media (min-width: 992px) { height: $onBoardBackgrounLogoSizeMD; width: $onBoardBackgrounLogoSizeMD; }
-		@media (min-width: 1200px) { height: $onBoardBackgrounLogoSizeLG; width: $onBoardBackgrounLogoSizeLG; }
-
-		img {
-			width: 50%;
-			height: 50%;
-			margin-left: 25%;
-			margin-top: 25%;
-		}
 	}
 
 	.onBoardingButtons {
@@ -122,6 +127,12 @@ $transparentWhiteColor: rgba(255,255,255,0.7);
 
 	h1.title { color: white; }
 
+	.bar.bar-header {
+		background-color: transparent;
+
+		button, .h1.title { color: white; }
+	}
+
 	ion-content {
 		background: transparent;
 		top: 20%;
@@ -161,16 +172,6 @@ $transparentWhiteColor: rgba(255,255,255,0.7);
 			margin-bottom: 20px;
 		}
 
-		.loginNotReg {
-			text-align: center;
-			color: $transparentWhiteColor;
-
-			a, a:hover, a:focus, a:active {
-				color: white;
-				text-decoration: none;
-			}
-		}
-
 		.socialMediaButton {
 			border-radius: $custom-button-radius;
 			width: 90%;
@@ -194,37 +195,97 @@ $transparentWhiteColor: rgba(255,255,255,0.7);
 				&.twitter { background-color: #63ade9; }
 			}
 		}
+
+		.loginNotReg {
+			text-align: center;
+			color: $transparentWhiteColor;
+
+			a, a:hover, a:focus, a:active {
+				color: white;
+				text-decoration: none;
+			}
+		}
 	}
 }
 
 
+
 // ---------------------------------------------------
-// ------------------- New account -------------------
+// ---------------------- Menu -----------------------
 // ---------------------------------------------------
-.newAccount {
+$headerBackgroung: "../img/headerBackground.png";
+$menuHeaderBackgroung: "../img/menuHeaderBackground.png";
 
-	@include full-background($loginBackgroundImage);
+ion-side-menus {
 
-	.bar.bar-header {
-		background-color: transparent;
+	ion-side-menu {
 
-		button, .h1.title { color: white; }
+		ion-content.scroll-content.has-header {
+			top: 40%;
+		}
+
+		ion-header-bar.bar.bar-stable {
+			background: url($menuHeaderBackgroung);
+			height: 40%;
+
+			h2 { color: white; font-size: 30px; margin-bottom: 0; }
+			span { color: $transparentWhiteColor; font-size: 15px; }
+		}
+	}
+
+	ion-side-menu-content ion-nav-bar {
+
+		.bar.bar-stable {
+			background: url($headerBackgroung);
+
+			.button.button-clear, .title { color: white; }
+		}
 	}
 }
-
 
 
 // ---------------------------------------------------
 // --------------------- My decks --------------------
 // ---------------------------------------------------
 .myDecks {
-	
-	.bar.bar-header {
-		background-color: #FF732B;
 
-		button, .h1.title { color: white; }
+	ion-content {
+
+		.list .item p {
+
+			margin-top: 6px;
+			i {
+				font-size: 30px;
+				float: left;
+				margin-right: 5px;
+				margin-top: -5px;
+			}
+		}
+	}
+
+	.bar.bar-footer.bar-balanced {
+		background-color: transparent;
+		border: 0;
+		height: auto;
+		color: black;
+
+		.col { text-align: right; margin-right: 10px; }
+
+		.button.button-energized {
+			border-radius: $custom-button-radius;
+			box-shadow: $custom-button-shadow;
+			padding: 3px 0px 0px 0px;
+			height: 45px;
+			width: 45px;
+			i { font-size: 20px; }
+		}
 	}
 }
+
+
+// ---------------------------------------------------
+// ------------------- Create deck -------------------
+// ---------------------------------------------------
 
 
 

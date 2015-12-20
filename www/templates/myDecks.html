@@ -1,10 +1,24 @@
-<div class="myDecks">
-    <!-- Title -->
-	<div class="bar bar-header">
-		<button class="button button-icon icon ion-navicon"></button>
-		<div class="h1 title">{{'MYDECKS.My-decks' | translate}}</div>
-	</div>
-    <!-- Content -->
-    <ion-content>
+<ion-view view-title="{{'MYDECKS.My-decks' | translate}}" class="myDecks">
+	<ion-content>
+		<ul class="list">
+			<a ng-repeat="deck in myDecks" class="item item-avatar" href="#">
+				<h2>{{deck.name}}</h2>
+				<p>
+					<i class="ion-ios-eye-outline"></i>
+					<span> {{numberUnseenCards(deck)}} {{'MYDECKS.Unseen-cards' | translate}}</span>
+				</p>
+			</a>
+		</ul>
 	</ion-content>
-</div>
+
+	<div class="bar bar-footer bar-balanced">
+		<div class="row">
+			<div class="col col-center">
+				{{'MYDECKS.Add-deck' | translate}}
+			</div>
+			<button class="button button-large button-energized" ui-sref="menu.createDeck()">
+				<i class="ion-plus"></i>
+			</button>
+		</div>
+	</div>
+</ion-view>

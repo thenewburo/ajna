@@ -1,7 +1,7 @@
 // Ionic Starter App
 angular.module('starter', ['ionic', 'starter.controllers', 'pascalprecht.translate'])
 
-.run(function($ionicPlatform) {
+.run(function($ionicPlatform, $rootScope, $state, UserService) {
     $ionicPlatform.ready(function() {
         // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
         // for form inputs)
@@ -15,43 +15,93 @@ angular.module('starter', ['ionic', 'starter.controllers', 'pascalprecht.transla
             StatusBar.hide();
         }
     });
+    // Every time the user change to another page
+    $rootScope.$on('$stateChangeStart', function(event, toState, toStateParams) {
+        if (toState && toState.data && toState.data.permission == true && UserService.isUserConnected() == false) {
+            event.preventDefault();
+            $state.go("login");
+        }
+    });
 })
 
 .config(function($stateProvider, $urlRouterProvider, $translateProvider) {
-    $stateProvider
 
+    $stateProvider
     .state('onBoarding1', {
         url: '/onBoarding1',
         templateUrl: 'templates/onBoardingPage1.html',
-        controller: 'OnBoardingCtrl'
+        controller: 'OnBoardingCtrl',
+        data: {
+            permission: false
+        }
     })
 
     .state('onBoarding2', {
         url: '/onBoarding2',
         templateUrl: 'templates/onBoardingPage2.html',
-        controller: 'OnBoardingCtrl'
+        controller: 'OnBoardingCtrl',
+        data: {
+            permission: false
+        }
     })
 
     .state('onBoarding3', {
         url: '/onBoarding3',
         templateUrl: 'templates/onBoardingPage3.html',
-        controller: 'OnBoardingCtrl'
+        controller: 'OnBoardingCtrl',
+        data: {
+            permission: false
+        }
     })
 
     .state('login', {
         url: '/login',
         templateUrl: 'templates/login.html',
-        controller: 'LoginCtrl'
+        controller: 'LoginCtrl',
+        data: {
+            permission: false
+        }
     })
 
     .state('newAccount', {
         url: '/newAccount',
-        templateUrl: 'templates/newAccount.html'
+        templateUrl: 'templates/newAccount.html',
+        controller: 'NewAccountCtrl',
+        data: {
+            permission: false
+        }
     })
 
-    .state('myDecks', {
+    .state('menu', {
+        url: '/menu',
+        abstract: true,
+        templateUrl: 'templates/menu.html',
+        controller: 'MenuCtrl'
+    })
+
+    .state('menu.myDecks', {
         url: '/myDecks',
-        templateUrl: 'templates/myDecks.html'
+        views: {
+            'menuContent': {
+                templateUrl: 'templates/myDecks.html',
+                controller: 'MyDecksCtrl'
+            }
+        },
+        data: {
+            permission: true
+        }
+    })
+
+    .state('menu.createDeck', {
+        url: '/createDeck',
+        views: {
+            'menuContent': {
+                templateUrl: 'templates/createDeck.html'
+            }
+        },
+        data: {
+            permission: true
+        }
     });
 
     // Contains all the translation for each language
@@ -73,15 +123,29 @@ angular.module('starter', ['ionic', 'starter.controllers', 'pascalprecht.transla
             "Sign-in": "Sign in",
             "Not-reg": "Don't have an account?",
             "Sign-up": "Sign up",
+            "Logout": "Logout",
             "Sign-facebook": "Sign in with Facebook",
             "Sign-google": "Sign in with Google+",
             "Sign-twitter": "Sign in with Twitter"
         },
         NEWACCOUNT: {
-            "New-account": "New account"
+            "New-account": "New account",
+            "Name": "Name",
+            "Email": "Email",
+            "Account-created": "Your account has been created successfully",
         },
         MYDECKS: {
-            "My-decks": "My decks"
+            "My-decks": "My decks",
+            "Unseen-cards": "unseen card(s)",
+            "Add-deck": "Add a deck"
+        },
+        CREATEDECK: {
+            "Create-deck": "Create a new deck"
+        },
+        ERROR: {
+            "Cannot-connect": "Error: username and password do not match",
+            "Email-used": "Error: that email address is already used",
+            "Error-fields": "Error: please fill all the fields"
         }
     });
 
@@ -93,44 +157,3 @@ angular.module('starter', ['ionic', 'starter.controllers', 'pascalprecht.transla
     // if none of the above states are matched, use this as the fallback
     $urlRouterProvider.otherwise('/onBoarding1');
 });
-
-
-
-
-/*
-    .state('app', {
-        url: '/app',
-        abstract: true,
-        templateUrl: 'templates/menu.html',
-        controller: 'AppCtrl'
-    })
-
-    .state('app.search', {
-        url: '/search',
-        views: {
-            'menuContent': {
-                templateUrl: 'templates/search.html'
-            }
-        }
-    })
-
-
-        .state('app.playlists', {
-            url: '/playlists',
-            views: {
-                'menuContent': {
-                    templateUrl: 'templates/playlists.html',
-                    controller: 'PlaylistsCtrl'
-                }
-            }
-        })
-
-    .state('app.single', {
-        url: '/playlists/:playlistId',
-        views: {
-            'menuContent': {
-                templateUrl: 'templates/playlist.html',
-                controller: 'PlaylistCtrl'
-            }
-        }
-    });*/

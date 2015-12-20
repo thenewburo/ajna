@@ -1,4 +1,4 @@
-<div class="newAccount">
+<div class="login">
     <!-- Title -->
 	<div class="bar bar-header">
 		<button ui-sref="login()" class="button button-icon icon ion-android-arrow-back"></button>
@@ -6,5 +6,45 @@
 	</div>
     <!-- Content -->
     <ion-content>
+    	<!-- Image uploader -->
+		<div class="row h-30">
+			<div class="whiteCircle">
+				<img src="img/uploadImageLogo.png">
+			</div>
+		</div>
+		<!-- New account form -->
+        <form ng-submit="createAccount()">
+            <div class="list">
+            	<!-- Username -->
+                <label class="item item-input item-floating-label">
+                    <div class="col-xs-2 loginIcon">
+                        <i class="ion-person"></i>
+                    </div>
+                    <div class="col-xs-10 loginInput">
+                        <input type="text" ng-model="accountData.username" placeholder="{{'NEWACCOUNT.Name' | translate}}">
+                    </div>
+                </label>
+                <!-- Email -->
+                <label class="item item-input item-floating-label">
+                    <div class="col-xs-2 loginIcon">
+                        <i class="ion-email"></i>
+                    </div>
+                    <div class="col-xs-10 loginInput">
+                        <input type="text" ng-model="accountData.email" placeholder="{{'NEWACCOUNT.Email' | translate}}">
+                    </div>
+                </label>
+                <!-- Password -->
+                <label class="item item-input item-floating-label">
+                    <div class="col-xs-2 loginIcon">
+                        <i class="ion-locked"></i>
+                    </div>
+                    <div class="col-xs-10 loginInput">
+                        <input type="password" ng-model="accountData.password" placeholder="{{'LOGIN.Password' | translate}}">
+                    </div>
+                </label>
+            </div>
+            <!-- Submit button -->
+            <button class="button button-large button-energized loginSignIn newAccountSignIn" type="submit">{{'LOGIN.Sign-in' | translate}}</button>
+        </form>
 	</ion-content>
 </div>
