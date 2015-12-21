@@ -58,6 +58,8 @@ $whiteCircleBackgrounLogoColor: rgba(255, 255, 255, 0.3);
 $whiteCircleDarkerBackgrounLogoColor: rgba(100, 100, 100, 0.3);
 $whiteCircleBackgrounLogoRadius: 50%;
 
+$footerHeight: 65px;
+
 .whiteCircle {
 	background-color: $whiteCircleBackgrounLogoColor;
 	&.darker { background-color: $whiteCircleDarkerBackgrounLogoColor; }
@@ -80,22 +82,11 @@ $whiteCircleBackgrounLogoRadius: 50%;
 	}
 }
 
-.popup {
-	.popup-head {
-		background: url($headerBackgroung);
-		h3 { color: white; }
-	}
-	.popup-body { background-color: white; }
-	.popup-buttons {
-		background-color: white;
-		button {
-			border-radius: $custom-button-radius;
-			background-color: $energized;
-			&.activated { background-color: $energized-activated; }
-		}
-	}
-}
 
+
+// ---------------------------------------------------
+// -------------------- Buttons ----------------------
+// ---------------------------------------------------
 .addSomethingButton.bar.bar-footer.bar-balanced {
 	background-color: transparent;
 	border: 0;
@@ -114,7 +105,7 @@ $whiteCircleBackgrounLogoRadius: 50%;
 	}
 }
 
-.onBoardingButtons {
+.duoButtons {
 	button {
 		border-radius: $custom-button-radius;
 		box-shadow: $custom-button-shadow;
@@ -126,6 +117,83 @@ $whiteCircleBackgrounLogoRadius: 50%;
 		border-color: white;
 		color: white;
 		box-shadow: none;
+	}
+}
+
+
+// ---------------------------------------------------
+// ---------------- Popover / Popups -----------------
+// ---------------------------------------------------
+ion-popover-view.popover {
+	height: auto;
+	width: auto;
+
+	ion-content {
+		position: relative;
+		background-color: white;
+
+		.item.popItem {
+			background-color: white;
+			border: 0;
+			
+			&:not(.lastItem) {
+				border-bottom: 1px solid #ddd;
+				margin-bottom: 1px;
+			}
+		}
+	}
+}
+.popup {
+	.popup-head {
+		background: url($headerBackgroung);
+		h3 { color: white; }
+	}
+	.popup-body { background-color: white; }
+	.popup-buttons {
+		background-color: white;
+		button {
+			border-radius: $custom-button-radius;
+			background-color: $energized;
+			&.activated { background-color: $energized-activated; }
+		}
+	}
+}
+
+
+// ---------------------------------------------------
+// ---------------------- Tags -----------------------
+// ---------------------------------------------------
+.list {
+	&.autoCompleteTagsList>.item {
+		background-color: #FAFAFA;
+	}
+
+	>.item.tagLabel {
+		border-bottom: 0;
+		>.tagBadge {
+			float: left;
+			font-size: 14px;
+			padding: 3px 5px;
+			margin-right: 10px;
+			margin-top: 10px;
+			border-radius: 5px;
+			background-color: #f0f0f0;
+			i { margin-left: 3px; font-size: 15px; }
+		}
+	}
+
+	>.item.tagInputLabel {
+		border-top: 0;
+		margin-top: 1px;
+
+		>input { padding-left: 20px; }
+
+		>.icon.ion-ios-search.placeholder-icon {
+
+			float: left;
+			margin-top: 6px;
+			margin-bottom: -30px;
+		}
 	}
 }
 
@@ -294,7 +362,7 @@ ion-side-menus {
 
 	ion-content {
 
-	    margin-bottom: 65px;
+	    margin-bottom: $footerHeight;
 
 		.list .item p {
 
@@ -305,63 +373,6 @@ ion-side-menus {
 				margin-right: 5px;
 				margin-top: -5px;
 			}
-		}
-	}
-}
-.myDecksPopover.popover {
-	height: auto;
-	width: auto;
-
-	ion-content {
-		position: relative;
-		background-color: white;
-
-		.item.popItem {
-			background-color: white;
-			border: 0;
-			
-			&:not(.lastItem) {
-				border-bottom: 1px solid #ddd;
-				margin-bottom: 1px;
-			}
-		}
-	}
-}
-
-
-// ---------------------------------------------------
-// ---------------------- Tags -----------------------
-// ---------------------------------------------------
-.list {
-	&.autoCompleteTagsList>.item {
-		background-color: #FAFAFA;
-	}
-
-	>.item.tagLabel {
-		border-bottom: 0;
-		>.tagBadge {
-			float: left;
-			font-size: 14px;
-			padding: 3px 5px;
-			margin-right: 10px;
-			margin-top: 10px;
-			border-radius: 5px;
-			background-color: #f0f0f0;
-			i { margin-left: 3px; font-size: 15px; }
-		}
-	}
-
-	>.item.tagInputLabel {
-		border-top: 0;
-		margin-top: 1px;
-
-		>input { padding-left: 20px; }
-
-		>.icon.ion-ios-search.placeholder-icon {
-
-			float: left;
-			margin-top: 6px;
-			margin-bottom: -30px;
 		}
 	}
 }
@@ -396,13 +407,47 @@ ion-side-menus {
 		padding: 10px 0px;
 	}
 
-	.onBoardingButtons .button.button-energized.button-outline {
+	.duoButtons .button.button-energized.button-outline {
 		border-color: $energized;
 		color: $energized;
 		&.activated { color: white; }
 	}
 }
 
+
+
+// ---------------------------------------------------
+// ------------------ Display deck -------------------
+// ---------------------------------------------------
+.displayDeck {
+
+	ion-content {
+	    margin-bottom: $footerHeight;
+
+	    .duoButtons {
+	    	margin-top: 20px;
+	    	margin-bottom: 10px;
+
+	    	.button.button-energized.button-outline {
+				border-color: $energized;
+				color: $energized;
+				&.activated { color: white; }
+			}
+	    }
+
+	    .list .row {
+		    padding-top: 8px;
+		    padding-bottom: 10px;
+		    cursor: pointer;
+
+	    	.indexQuestionCol {
+			    width: auto;
+			    min-width: 30px;
+			    padding-top: 4px;
+		    }
+		}
+	}
+}
 
 
 // Include all of Ionic

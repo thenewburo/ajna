@@ -27,7 +27,7 @@
     <!-- Content -->
 	<ion-content>
 		<ul class="list">
-			<a ng-repeat="deck in myDecks track by deck.id" class="item item-avatar" href="#">
+			<a ng-repeat="deck in myDecks track by deck.id" class="item item-avatar" ui-sref="menu.displayDeck({deckId: deck.id})">
 				<h2>{{deck.name}}</h2>
 				<p>
 					<i class="ion-ios-eye-outline"></i>

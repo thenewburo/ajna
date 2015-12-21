@@ -1,0 +1,67 @@
+<ion-view view-title="{{currentDeck.name}}" class="displayDeck">
+
+	<!-- Header -->
+    <ion-nav-bar class="bar-stable" align-title="center">
+        <ion-nav-back-button></ion-nav-back-button>
+        <ion-nav-buttons side="left">
+            <button class="button button-icon button-clear ion-navicon" menu-toggle="left"></button>
+        </ion-nav-buttons>
+        <ion-nav-buttons side="right">
+            <button class="button button-icon button-clear ion-ios-more" ng-click="openPopover($event)"></button>
+        </ion-nav-buttons>
+    </ion-nav-bar>
+
+    <!-- Popover (top right button) -->
+	<script id="displayDeckPopover.html" type="text/ng-template">
+		<ion-popover-view class="displayDeckPopover">
+			<ion-content>
+				<div class="list">
+					<a class="item popItem">{{'DISPLAYDECK.Deck-options' | translate}}</a>
+					<a class="item popItem">{{'DISPLAYDECK.Custom-study' | translate}}</a>
+					<a class="item popItem lastItem">Other actions</a>
+				</div>
+			</ion-content>
+		</ion-popover-view>
+	</script>
+
+    <!-- Content -->
+	<ion-content>
+
+		<!-- Sell and study button -->
+		<div class="row text-center duoButtons">
+		    <div class="col-xs-0 col-sm-2 col-md-2 col-lg-3"></div>
+		    <div class="col-xs-6 col-sm-3 col-md-3 col-lg-2 col-bottom">
+		        <button class="button button-outline button-large button-energized">{{'DISPLAYDECK.Sell' | translate}}</button>
+		    </div>
+		    <div class="col-xs-0 col-sm-2 col-md-2 col-lg-2"></div>
+		    <div class="col-xs-6 col-sm-3 col-md-3 col-lg-2 col-bottom">
+		        <button class="button button-large button-energized">{{'DISPLAYDECK.Study' | translate}}</button>
+		    </div>
+		    <div class="col-xs-0 col-sm-2 col-md-2 col-lg-3"></div>
+		</div>
+
+		<!-- List of questions -->
+		<ul class="list">
+			<div ng-repeat="card in currentDeck.cards track by card.id" class="item row">
+				<div class="indexQuestionCol">
+					<span>{{$index + 1}}</span>
+				</div>
+				<div class="col">
+					<h2>{{card.question}}</h2>
+				</div>
+			</div>
+		</ul>
+	</ion-content>
+
+	<!-- Add card button -->
+	<div class="bar bar-footer bar-balanced addSomethingButton">
+		<div class="row">
+			<div class="col col-center">
+				{{'CREATEDECK.Add-card' | translate}}
+			</div>
+			<button class="button button-large button-energized" ng-click="goToCreateCard()">
+				<i class="ion-plus"></i>
+			</button>
+		</div>
+	</div>
+</ion-view>

@@ -107,9 +107,25 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'pascalprecht.tra
         }
     })
 
+    // deckId = Used to find the deck to display
+    .state('menu.displayDeck', {
+        url: '/displayDeck',
+        params: { deckId: null },
+        views: {
+            'menuContent': {
+                templateUrl: 'templates/displayDeck.html',
+                controller: 'DisplayDeckCtrl'
+            }
+        },
+        data: {
+            permission: true
+        }
+    })
+
+    // creatingDeck is used to know if we come from the 'Create new deck' page
     .state('menu.createCard', {
         url: '/createCard',
-        params: { deck: null },
+        params: { deck: null, creatingDeck: null },
         views: {
             'menuContent': {
                 templateUrl: 'templates/createCard.html',
@@ -177,8 +193,15 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'pascalprecht.tra
             "Frequency": "Frequency",
             "Edit": "Edit"
         },
+        DISPLAYDECK: {
+            "Deck-options": "Deck options",
+            "Custom-study": "Custom study",
+            "Sell": "Sell",
+            "Study": "Study"
+        },
         ERROR: {
             "Error": "Error",
+            "Error-occurred": "An error occurred while processing your request",
             "Cannot-connect": "Error, please check your username or password",
             "Email-used": "Error, that email address is already used",
             "Error-fields": "Error, please fill all the fields",

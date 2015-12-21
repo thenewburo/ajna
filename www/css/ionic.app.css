@@ -45,22 +45,6 @@
     margin-left: 25%;
     margin-top: 25%; }
 
-.popup .popup-head {
-  background: url("../img/headerBackground.png"); }
-  .popup .popup-head h3 {
-    color: white; }
-
-.popup .popup-body {
-  background-color: white; }
-
-.popup .popup-buttons {
-  background-color: white; }
-  .popup .popup-buttons button {
-    border-radius: 50px;
-    background-color: #e2743c; }
-    .popup .popup-buttons button.activated {
-      background-color: #df6426; }
-
 .addSomethingButton.bar.bar-footer.bar-balanced {
   background-color: transparent;
   border: 0;
@@ -78,17 +62,73 @@
     .addSomethingButton.bar.bar-footer.bar-balanced .button.button-energized i {
       font-size: 20px; }
 
-.onBoardingButtons button {
+.duoButtons button {
   border-radius: 50px;
   box-shadow: 2px 2px 10px 0px rgba(50, 50, 50, 0.5);
   width: 90%;
   padding: 0;
   margin-bottom: 10px; }
 
-.onBoardingButtons .button.button-energized.button-outline {
+.duoButtons .button.button-energized.button-outline {
   border-color: white;
   color: white;
   box-shadow: none; }
+
+ion-popover-view.popover {
+  height: auto;
+  width: auto; }
+  ion-popover-view.popover ion-content {
+    position: relative;
+    background-color: white; }
+    ion-popover-view.popover ion-content .item.popItem {
+      background-color: white;
+      border: 0; }
+      ion-popover-view.popover ion-content .item.popItem:not(.lastItem) {
+        border-bottom: 1px solid #ddd;
+        margin-bottom: 1px; }
+
+.popup .popup-head {
+  background: url("../img/headerBackground.png"); }
+  .popup .popup-head h3 {
+    color: white; }
+
+.popup .popup-body {
+  background-color: white; }
+
+.popup .popup-buttons {
+  background-color: white; }
+  .popup .popup-buttons button {
+    border-radius: 50px;
+    background-color: #e2743c; }
+    .popup .popup-buttons button.activated {
+      background-color: #df6426; }
+
+.list.autoCompleteTagsList > .item {
+  background-color: #FAFAFA; }
+
+.list > .item.tagLabel {
+  border-bottom: 0; }
+  .list > .item.tagLabel > .tagBadge {
+    float: left;
+    font-size: 14px;
+    padding: 3px 5px;
+    margin-right: 10px;
+    margin-top: 10px;
+    border-radius: 5px;
+    background-color: #f0f0f0; }
+    .list > .item.tagLabel > .tagBadge i {
+      margin-left: 3px;
+      font-size: 15px; }
+
+.list > .item.tagInputLabel {
+  border-top: 0;
+  margin-top: 1px; }
+  .list > .item.tagInputLabel > input {
+    padding-left: 20px; }
+  .list > .item.tagInputLabel > .icon.ion-ios-search.placeholder-icon {
+    float: left;
+    margin-top: 6px;
+    margin-bottom: -30px; }
 
 .onBoard {
   background: url("../img/onBoardBackground.png") no-repeat center;
@@ -209,46 +249,6 @@ ion-side-menus ion-side-menu-content ion-nav-bar .bar.bar-stable {
       margin-right: 5px;
       margin-top: -5px; }
 
-.myDecksPopover.popover {
-  height: auto;
-  width: auto; }
-  .myDecksPopover.popover ion-content {
-    position: relative;
-    background-color: white; }
-    .myDecksPopover.popover ion-content .item.popItem {
-      background-color: white;
-      border: 0; }
-      .myDecksPopover.popover ion-content .item.popItem:not(.lastItem) {
-        border-bottom: 1px solid #ddd;
-        margin-bottom: 1px; }
-
-.list.autoCompleteTagsList > .item {
-  background-color: #FAFAFA; }
-
-.list > .item.tagLabel {
-  border-bottom: 0; }
-  .list > .item.tagLabel > .tagBadge {
-    float: left;
-    font-size: 14px;
-    padding: 3px 5px;
-    margin-right: 10px;
-    margin-top: 10px;
-    border-radius: 5px;
-    background-color: #f0f0f0; }
-    .list > .item.tagLabel > .tagBadge i {
-      margin-left: 3px;
-      font-size: 15px; }
-
-.list > .item.tagInputLabel {
-  border-top: 0;
-  margin-top: 1px; }
-  .list > .item.tagInputLabel > input {
-    padding-left: 20px; }
-  .list > .item.tagInputLabel > .icon.ion-ios-search.placeholder-icon {
-    float: left;
-    margin-top: 6px;
-    margin-bottom: -30px; }
-
 .createDeck input {
   width: 100%; }
 
@@ -265,11 +265,30 @@ ion-side-menus ion-side-menu-content ion-nav-bar .bar.bar-stable {
   color: #e2743c;
   padding: 10px 0px; }
 
-.createCard .onBoardingButtons .button.button-energized.button-outline {
+.createCard .duoButtons .button.button-energized.button-outline {
   border-color: #e2743c;
   color: #e2743c; }
-  .createCard .onBoardingButtons .button.button-energized.button-outline.activated {
+  .createCard .duoButtons .button.button-energized.button-outline.activated {
     color: white; }
+
+.displayDeck ion-content {
+  margin-bottom: 65px; }
+  .displayDeck ion-content .duoButtons {
+    margin-top: 20px;
+    margin-bottom: 10px; }
+    .displayDeck ion-content .duoButtons .button.button-energized.button-outline {
+      border-color: #e2743c;
+      color: #e2743c; }
+      .displayDeck ion-content .duoButtons .button.button-energized.button-outline.activated {
+        color: white; }
+  .displayDeck ion-content .list .row {
+    padding-top: 8px;
+    padding-bottom: 10px;
+    cursor: pointer; }
+    .displayDeck ion-content .list .row .indexQuestionCol {
+      width: auto;
+      min-width: 30px;
+      padding-top: 4px; }
 
 /*!
   Ionicons, v2.0.1
