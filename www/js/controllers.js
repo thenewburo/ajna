@@ -108,6 +108,9 @@ angular.module('controllers', [])
 	// Redirect to "My decks" page
 	$scope.goToMyDecks = function() {
 		$state.go("menu.myDecks");
+		$ionicHistory.nextViewOptions({
+			historyRoot: true
+		});
 	};
 
 	// Disconnect the user
@@ -115,10 +118,13 @@ angular.module('controllers', [])
 		UserService.disconnect();
 
 		$state.go("login");
+		$ionicHistory.nextViewOptions({
+			historyRoot: true
+		});
 	};
 })
 
-.controller('MyDecksCtrl', function($scope, $ionicPopover, DeckService) {
+.controller('MyDecksCtrl', function($scope, $ionicPopover, $state, $ionicHistory, DeckService) {
 	// User's decks
 	$scope.myDecks = [];
 
@@ -135,14 +141,22 @@ angular.module('controllers', [])
 		return nb;
 	};
 
+	// Redirect to display a deck
+	$scope.displayDeck = function(deckId) {
+		$state.go("menu.displayDeck", { deckId: deckId });
+		$ionicHistory.nextViewOptions({
+			historyRoot: true
+		});
+	}
+
+
+
 	// Get the popover template
 	$ionicPopover.fromTemplateUrl('myDecksPopover.html', {
 		scope: $scope
 	}).then(function(popover) {
 		$scope.popover = popover;
 	});
-
-
 	$scope.openPopover = function($event) {
 		$scope.popover.show($event);
 	};
@@ -155,11 +169,11 @@ angular.module('controllers', [])
 	});
 })
 
-.controller('CreateDeckCtrl', function($scope, $state, $translate, PopupService, TagService) {
+.controller('CreateDeckCtrl', function($scope, $state, $translate, PopupService, TagService, DeckService) {
 	// Variable that contains our new deck informations
-	$scope.currentDeck = { name: '', image: '', tags: [], isFavorite: false, cards: [] };
+	$scope.currentDeck = DeckService.newDeck();
 	// Variable used to display the tags results (autocomplete) and store the user input
-	$scope.search = { value: "", foundTags: [] };
+	$scope.search = TagService.newSearch();
 
 	$scope.searchForTags = function() {
 		// We use our TagService to get all the tags that match with the search variable
@@ -183,8 +197,8 @@ angular.module('controllers', [])
 			// Redirect to the 'Create new card' page, and pass as parameter the new deck
 			$state.go("menu.createCard", { deck: $scope.currentDeck, creatingDeck: true });
 			// Reset data form
-			$scope.currentDeck = { name: '', image: '', tags: [], isFavorite: false, cards: [] };
-			$scope.search = { value: "", foundTags: [] };
+			$scope.currentDeck = DeckService.newDeck();
+			$scope.search = TagService.newSearch();
 		}
 		else
 			PopupService.showAlert($translate.instant('CREATEDECK.Create-deck'), $translate.instant('ERROR.No-deck-name'));
@@ -192,9 +206,9 @@ angular.module('controllers', [])
 })
 
 .controller('CreateCardCtrl', function($scope, $stateParams, $state, $translate, $ionicHistory, PopupService, TagService, DeckService) {
-	$scope.currentCard = { type: 'Question', question: '', answer: '', frequency: 1, tags: [], seen: false };
+	$scope.currentCard = DeckService.newCard();
 	// Variable used to display the tags results (autocomplete) and store the user input
-	$scope.search = { value: "", foundTags: [] };
+	$scope.search = TagService.newSearch();
 	// We get the deck sent in parameter (we will add the card in that deck)
 	$scope.currentDeck = $stateParams.deck;
 	// We get the boolean to know if we are creating a new deck along with the card
@@ -256,8 +270,8 @@ angular.module('controllers', [])
 			// Add the card in the deck
 			$scope.currentDeck = DeckService.addCard($scope.currentCard, $scope.currentDeck);
 			// Reset data form
-			$scope.currentCard = { type: 'Question', question: '', answer: '', frequency: 1, tags: [], seen: false };
-			$scope.search = { value: "", foundTags: [] };
+			$scope.currentCard = DeckService.newCard();
+			$scope.search = TagService.newSearch();
 
 			if ($scope.creatingDeck) {
 				// Make the next page the root history
@@ -292,6 +306,8 @@ angular.module('controllers', [])
 		// Redirect to the 'Create new card' page, and pass as parameter the new deck
 		$state.go("menu.createCard", { deck: $scope.currentDeck, creatingDeck: false });
 	};
+
+
 
 	// Get the popover template
 	$ionicPopover.fromTemplateUrl('displayDeckPopover.html', {

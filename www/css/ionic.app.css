@@ -224,7 +224,11 @@ ion-side-menus ion-side-menu ion-content.scroll-content.has-header {
   top: 40%; }
 
 ion-side-menus ion-side-menu ion-header-bar.bar.bar-stable {
-  background: url("../img/menuHeaderBackground.png");
+  background: url("../img/menuHeaderBackground.png") no-repeat center;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
   height: 40%; }
   ion-side-menus ion-side-menu ion-header-bar.bar.bar-stable h2 {
     color: white;
@@ -235,7 +239,11 @@ ion-side-menus ion-side-menu ion-header-bar.bar.bar-stable {
     font-size: 15px; }
 
 ion-side-menus ion-side-menu-content ion-nav-bar .bar.bar-stable {
-  background: url("../img/headerBackground.png"); }
+  background: url("../img/headerBackground.png") no-repeat center;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover; }
   ion-side-menus ion-side-menu-content ion-nav-bar .bar.bar-stable .button.button-clear, ion-side-menus ion-side-menu-content ion-nav-bar .bar.bar-stable .title {
     color: white; }
 

@@ -34,8 +34,8 @@ $custom-button-shadow: 2px 2px 10px 0px rgba(50, 50, 50, 0.5);
 // ---------------------------------------------------
 $onBoardBackgroundImage: "../img/onBoardBackground.png";
 $loginBackgroundImage: "../img/accountBackground.png";
-$headerBackgroung: "../img/headerBackground.png";
-$menuHeaderBackgroung: "../img/menuHeaderBackground.png";
+$headerBackground: "../img/headerBackground.png";
+$menuHeaderBackground: "../img/menuHeaderBackground.png";
 
 
 
@@ -145,7 +145,7 @@ ion-popover-view.popover {
 }
 .popup {
 	.popup-head {
-		background: url($headerBackgroung);
+		background: url($headerBackground);
 		h3 { color: white; }
 	}
 	.popup-body { background-color: white; }
@@ -336,7 +336,11 @@ ion-side-menus {
 		}
 
 		ion-header-bar.bar.bar-stable {
-			background: url($menuHeaderBackgroung);
+			background: url($menuHeaderBackground) no-repeat center;
+			-webkit-background-size: cover;
+			-moz-background-size: cover;
+			-o-background-size: cover;
+			background-size: cover;
 			height: 40%;
 
 			h2 { color: white; font-size: 30px; margin-bottom: 0; }
@@ -347,7 +351,11 @@ ion-side-menus {
 	ion-side-menu-content ion-nav-bar {
 
 		.bar.bar-stable {
-			background: url($headerBackgroung);
+			background: url($headerBackground) no-repeat center;
+			-webkit-background-size: cover;
+			-moz-background-size: cover;
+			-o-background-size: cover;
+			background-size: cover;
 
 			.button.button-clear, .title { color: white; }
 		}

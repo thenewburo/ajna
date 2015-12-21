@@ -75,6 +75,10 @@ angular.module('services', [])
 	var tags = ["Math", "French", "English", "American", "History", "Geography", "Biology"];
 
 	return {
+		// Return a new search object
+		newSearch: function() {
+			return { value: "", foundTags: [] };
+		},
 		// This function returns all the tags that match with the string passed in parameter
 		// but ignore all the tags which are in the array passed in parameter
 		searchTags: function(searchStr, ignoreArray) {
@@ -150,21 +154,21 @@ angular.module('services', [])
 		name: 'Second deck example',
 		image: '',
 		tags: [],
-		isFavorite: true,
+		isFavorite: false,
 		cards: [
-			{
-				id: 12,
-				type: 'Question',
-				question: 'What year are we in?',
-				answer: '2015',
-				frequency: 1,
-				tags: [],
-				seen: false
-			}
+			{ id: 12, type: 'Question', question: 'What year are we in?', answer: '2015', frequency: 1, tags: [], seen: false },
+			{ id: 13, type: 'Question', question: 'What year are we in?What year are we in?', answer: '2015', frequency: 1, tags: [], seen: false }
 		]
 	}];
 
 	return {
+		// Create an empty deck
+		newDeck: function() {
+			return { name: '', image: '', tags: [], isFavorite: false, cards: [] };
+		},
+		newCard: function() {
+			return { type: 'Question', question: '', answer: '', frequency: 1, tags: [], seen: false };
+		},
 		// Returns all the decks
 		getDecks: function() {
 			return decks;
