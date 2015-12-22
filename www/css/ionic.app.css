@@ -147,6 +147,9 @@
   font-family: "Comme-font";
   src: url("../font/Comme-font.ttf"); }
 
+.row + .row {
+  padding: 0; }
+
 .row.h-100 {
   height: 100%; }
 
