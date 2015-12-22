@@ -27,6 +27,15 @@
     <!-- Content -->
 	<ion-content>
 
+		<!-- Number unseen cards -->
+		<div class="row text-center unseenCards">
+			<div class="col">
+				<p>
+					<i class="ion-ios-eye-outline"></i>{{numberUnseenCards(currentDeck)}} {{'MYDECKS.Unseen-cards' | translate}}
+				</p>
+			</div>
+		</div>
+
 		<!-- Sell and study button -->
 		<div class="row text-center duoButtons">
 		    <div class="col-xs-0 col-sm-2 col-md-2 col-lg-3"></div>
@@ -35,14 +44,14 @@
 		    </div>
 		    <div class="col-xs-0 col-sm-2 col-md-2 col-lg-2"></div>
 		    <div class="col-xs-6 col-sm-3 col-md-3 col-lg-2 col-bottom">
-		        <button class="button button-large button-energized">{{'DISPLAYDECK.Study' | translate}}</button>
+		        <button ng-click="studyDeck(true, null)" class="button button-large button-energized">{{'DISPLAYDECK.Study' | translate}}</button>
 		    </div>
 		    <div class="col-xs-0 col-sm-2 col-md-2 col-lg-3"></div>
 		</div>
 
 		<!-- List of questions -->
 		<ul class="list">
-			<div ng-repeat="card in currentDeck.cards track by card.id" class="item row">
+			<div ng-click="studyDeck(false, card.id)" ng-repeat="card in currentDeck.cards track by card.id" class="item row">
 				<div class="indexQuestionCol">
 					<span>{{$index + 1}}</span>
 				</div>

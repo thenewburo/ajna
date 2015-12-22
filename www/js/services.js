@@ -137,16 +137,16 @@ angular.module('services', [])
 		tags: [],
 		isFavorite: false,
 		cards: [
-			{ id: 1, type: 'Question', question: 'What year are we in?', answer: '2015', frequency: 1, tags: [], seen: false },
-			{ id: 2, type: 'Question', question: 'What year are we in?What year are we in?', answer: '2015', frequency: 1, tags: [], seen: false },
-			{ id: 3, type: 'Question', question: 'What year are we in?', answer: '2015', frequency: 1, tags: [], seen: false },
-			{ id: 4, type: 'Question', question: 'What year are we in?', answer: '2015', frequency: 1, tags: [], seen: false },
-			{ id: 5, type: 'Question', question: 'What year are we in?', answer: '2015', frequency: 1, tags: [], seen: false },
-			{ id: 6, type: 'Question', question: 'What year are we in?', answer: '2015', frequency: 1, tags: [], seen: false },
-			{ id: 7, type: 'Question', question: 'What year are we in?', answer: '2015', frequency: 1, tags: [], seen: false },
-			{ id: 8, type: 'Question', question: 'What year are we in?', answer: '2015', frequency: 1, tags: [], seen: false },
-			{ id: 9, type: 'Question', question: 'What year are we in?', answer: '2015', frequency: 1, tags: [], seen: false },
-			{ id: 10, type: 'Question', question: 'What year are we in?', answer: '2015', frequency: 1, tags: [], seen: false }
+			{ id: 1, type: 'Question', question: 'Question 1', answer: '2015', frequency: 1, tags: [], seen: false },
+			{ id: 2, type: 'Question', question: 'Question 2', answer: '2015', frequency: 1, tags: [], seen: false },
+			{ id: 3, type: 'Question', question: 'Question 3', answer: '2015', frequency: 1, tags: [], seen: false },
+			{ id: 4, type: 'Question', question: 'Question 4', answer: '2015', frequency: 1, tags: [], seen: false },
+			{ id: 5, type: 'Question', question: 'Question 5', answer: '2015', frequency: 1, tags: [], seen: false },
+			{ id: 6, type: 'Question', question: 'Question 6', answer: '2015', frequency: 1, tags: [], seen: false },
+			{ id: 7, type: 'Question', question: 'Question 7', answer: '2015', frequency: 1, tags: [], seen: false },
+			{ id: 8, type: 'Question', question: 'Question 8', answer: '2015', frequency: 1, tags: [], seen: false },
+			{ id: 9, type: 'Question', question: 'Question 9', answer: '2015', frequency: 1, tags: [], seen: false },
+			{ id: 10, type: 'Question', question: 'Question 10', answer: '2015', frequency: 1, tags: [], seen: false }
 		]
 	},
 	{
@@ -173,6 +173,15 @@ angular.module('services', [])
 		getDecks: function() {
 			return decks;
 		},
+		// Returns the number of unseen cards
+		getNbUnseenCards: function(deck) {
+			var nb = 0;
+			angular.forEach (deck.cards, function(card) {
+				if (card.seen == false)
+					nb++;
+			});
+			return nb;
+		},
 		// Return the deck with the ID passed in parameter, null if not found
 		getDeckWithId: function(id) {
 			var myDeck = null;
@@ -196,7 +205,7 @@ angular.module('services', [])
 		},
 		// Remove a deck
 		removeDeck: function(deck) {
-			decks = _.reject(decks, function(curDeck) { return curDeck == deck; });
+			decks = _.reject(decks, function(curDeck) { return curDeck.id == deck.id; });
 		},
 		// Add this card in the deck, and returns the deck up to date
 		addCard: function(card, deck) {
@@ -222,6 +231,68 @@ angular.module('services', [])
 				}
 			});
 			return myDeck;
+		}
+	};
+})
+
+// This factory is used to manage the decks
+.factory('CardService', function() {
+	// A stack to store all the cards index we saw (needed by the 'Previous card' option)
+	var cardsIndexStack = [];
+
+	// Returns the index of the card in this deck
+	getCardIndex = function(card, deck) {
+		var res = -1;
+		angular.forEach(deck.cards, function(curCard, index) {
+			if (curCard.id == card.id) {
+				res = index;
+				return;
+			}
+		});
+		return res;
+	};
+
+	// Returns the next card
+	getNextCardWithIndex = function(cardId, deck) {
+		// We want the card next to the current one
+		var res = cardId + 1;
+		// If we were on the last of the array, go back to the first
+		if (res >= deck.cards.length)
+			res = 0;
+		return res;
+	};
+
+	return {
+		// Add an index in the stack (/!\you should not use this function /!\)
+		addIndexInStack: function(index) {
+			cardsIndexStack.push(index);
+		},
+		// Return the next card by using the current card, the deck and the study mode
+		getNextCard: function(card, deck, studyMode) {
+			var newCardIndex = -1;
+			// If we are in study mode, or it is the first card
+			if (studyMode || card == null) {
+				newCardIndex = _.random(deck.cards.length - 1);
+				// If we randomly found the same card, return the next one
+				if (card != null && card.id && deck.cards[newCardIndex].id == card.id)
+					newCardIndex = getNextCardWithIndex(newCardIndex, deck);
+			}
+			// We just take the next card
+			else {
+				// Find the index of the current card
+				var currentIndex = getCardIndex(card, deck);
+				// If not found, return the current card
+				if (currentIndex == -1)
+					return card;
+				newCardIndex = getNextCardWithIndex(currentIndex, deck);
+			}
+			cardsIndexStack.push(newCardIndex);
+			return deck.cards[newCardIndex];
+		},
+		// Return the last card we saw by using our cards ID stack
+		getPreviousCard: function(deck) {
+			cardsIndexStack = _.initial(cardsIndexStack);
+			return deck.cards[_.last(cardsIndexStack)];
 		}
 	};
 });

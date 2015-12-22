@@ -133,12 +133,7 @@ angular.module('controllers', [])
 
 	// Get the number of unseen cards
 	$scope.numberUnseenCards = function(deck) {
-		var nb = 0;
-		angular.forEach (deck.cards, function(card) {
-			if (card.seen == false)
-				nb++;
-		});
-		return nb;
+		return DeckService.getNbUnseenCards(deck);
 	};
 
 	// Redirect to display a deck
@@ -301,11 +296,22 @@ angular.module('controllers', [])
 	// Use the deck ID to find the complete deck
 	$scope.currentDeck = DeckService.getDeckWithId($scope.currentDeckId);
 
+	// Get the number of unseen cards
+	$scope.numberUnseenCards = function(deck) {
+		return DeckService.getNbUnseenCards(deck);
+	};
+
 	// Move to the 'Create new card' page
 	$scope.goToCreateCard = function() {
-		// Redirect to the 'Create new card' page, and pass as parameter the new deck
+		// Redirect to the 'Create new card' page, and pass as parameter the deck
 		$state.go("menu.createCard", { deck: $scope.currentDeck, creatingDeck: false });
 	};
+
+	// Start studying the deck
+	$scope.studyDeck = function(studyMode, cardId) {
+		// Redirect to the 'Display card' page, and pass as parameter the deck
+		$state.go("menu.displayCard", { deckId: $scope.currentDeck.id, cardId: cardId, studyMode: studyMode });
+	}
 
 
 
@@ -325,4 +331,55 @@ angular.module('controllers', [])
 	$scope.$on('$destroy', function() {
 		$scope.popover.remove();
 	});
+})
+
+.controller('DisplayCardCtrl', function($scope, $stateParams, CardService, DeckService) {
+	// We get the deck sent in parameter (we will display that deck)
+	$scope.currentDeckId = $stateParams.deckId;
+	// We get the boolean to determine if we are in study mode
+	$scope.studyMode = $stateParams.studyMode;
+	// An integerer to know if we can use the 'Previous card' option
+	$scope.nbCardsSaw = 0;
+	// We get the card ID sent in parameter
+	$scope.cardId = $stateParams.cardId;
+	// Check we successfully got the deck id
+	if ($scope.currentDeckId == undefined) {
+		PopupService.showAlert($translate.instant('ERROR.Error'), $translate.instant('ERROR.Cannot-get-deck'));
+		$state.go("menu.myDecks");
+	}
+	// Check we successfully got the study mode boolean, else set default mode
+	if ($scope.studyMode == undefined)
+		$scope.studyMode = true;
+
+
+	// Get the next card by using the CardService. We have to send our current card, the deck and the study mode
+	$scope.getNextCard = function() {
+		$scope.currentCard = CardService.getNextCard($scope.currentCard, $scope.currentDeck, $scope.studyMode);
+		$scope.nbCardsSaw += 1;
+	};
+	// Get the previous card we saw
+	$scope.getPreviousCard = function() {
+		if ($scope.nbCardsSaw <= 0)
+			return;
+		$scope.currentCard = CardService.getPreviousCard($scope.currentDeck);
+		$scope.nbCardsSaw -= 1;
+	};
+
+
+	// Use the deck ID to find the complete deck
+	$scope.currentDeck = DeckService.getDeckWithId($scope.currentDeckId);
+	// If we don't have a card ID, we use the getNextCard function, but we reset the nbCardsSaw counter to 0
+	// because that's our first card
+	if ($scope.cardId == undefined)
+		$scope.currentCard = CardService.getNextCard(null, $scope.currentDeck, $scope.studyMode);
+	else {
+		// We have a card ID, so we just need to find it in the deck, it will be our first card
+		angular.forEach($scope.currentDeck.cards, function(curCard, index) {
+			if (curCard.id == $scope.cardId) {
+				$scope.currentCard = curCard;
+				CardService.addIndexInStack(index);
+				return;
+			}
+		});
+	}
 });

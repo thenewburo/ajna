@@ -107,7 +107,7 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'pascalprecht.tra
         }
     })
 
-    // deckId = Used to find the deck to display
+    // deckId: used to find the deck to display
     .state('menu.displayDeck', {
         url: '/displayDeck',
         params: { deckId: null },
@@ -122,7 +122,23 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'pascalprecht.tra
         }
     })
 
-    // creatingDeck is used to know if we come from the 'Create new deck' page
+    // cardId: is set if we are not in study mode
+    // studyMode (boolean): if true we use our algorithm, if false we just iterate
+    .state('menu.displayCard', {
+        url: '/displayCard',
+        params: { deckId: null, cardId: null, studyMode: null },
+        views: {
+            'menuContent': {
+                templateUrl: 'templates/displayCard.html',
+                controller: 'DisplayCardCtrl'
+            }
+        },
+        data: {
+            permission: true
+        }
+    })
+
+    // creatingDeck (boolean): used to know if we come from the 'Create new deck' page
     .state('menu.createCard', {
         url: '/createCard',
         params: { deck: null, creatingDeck: null },
@@ -198,6 +214,11 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'pascalprecht.tra
             "Custom-study": "Custom study",
             "Sell": "Sell",
             "Study": "Study"
+        },
+        DISPLAYCARD: {
+            "Show-answer": "Show answer",
+            "Previous-card": "Previous card",
+            "Next-card": "Next-card"
         },
         ERROR: {
             "Error": "Error",
