@@ -22,6 +22,11 @@ $energized-activated: #df6426;
 $custom-button-radius: 50px;
 $custom-button-shadow: 2px 2px 10px 0px rgba(50, 50, 50, 0.5);
 
+
+
+// ---------------------------------------------------
+// ---------------------- Mixins ---------------------
+// ---------------------------------------------------
 // Mixin for a full page background
 @mixin full-background($url) {
 	background: url($url) no-repeat center; 
@@ -30,6 +35,23 @@ $custom-button-shadow: 2px 2px 10px 0px rgba(50, 50, 50, 0.5);
 	-o-background-size: cover;
 	background-size: cover;
 }
+
+// Mixin for the animations
+@mixin animation($animation, $duration, $mode) {
+	-webkit-animation: $animation $duration $mode;
+	-moz-animation: $animation $duration $mode;
+	-ms-animation-name: $animation $duration $mode;
+	animation: $animation $duration $mode;
+}
+
+@mixin animationFillMode($mode) {
+	-webkit-animation-fill-mode: $mode;
+	-moz-animation-fill-mode: $mode;
+	-ms-animation-fill-mode: $mode;
+	-o-animation-fill-mode: $mode;
+	animation-fill-mode: $mode;
+}
+
 
 
 // ---------------------------------------------------
@@ -46,7 +68,10 @@ $fullScreenBackground: "../img/fullScreenBackground.png";
 // ---------------------- Common ---------------------
 // ---------------------------------------------------
 .row.h-100 { height: 100%; }
+.row.h-80 { height: 80%; }
+.row.h-35 { height: 35%; }
 .row.h-30 { height: 30%; }
+.row.h-25 { height: 25%; }
 .row.h-20 { height: 20%; }
 .row.h-15 { height: 15%; }
 .row.h-10 { height: 10%; }
@@ -206,27 +231,38 @@ ion-popover-view.popover {
 // ---------------------------------------------------
 // --------------------- OnBoard ---------------------
 // ---------------------------------------------------
-.onBoard {
-	@include full-background($onBoardBackgroundImage);
+.onBoardSlide {
 
-	.row + .row {
-		margin-top: 0;
-		margin-right: auto;
-    	margin-left: auto;
+	&.pane.slider {
+		background-color: $energized;
 	}
 
-	h1, h4 {
-		color: white;
+	.slider-pager {
+		bottom: 20%;
+
+		.slider-pager-page {
+			color: rgba(255, 255, 255, 0.5);
+			font-size: 14px;
+
+			&.active {
+				color: #FF9F00;
+				font-size: 16px;
+			}
+		}
 	}
 
-	.indicators i {
-		color: rgba(255, 255, 255, 0.5);
-		font-size: 14px;
-		margin: 0px 8px;
+	.onBoard {
+		@include full-background($onBoardBackgroundImage);
+		height: 100%;
 
-		&.active {
-			color: #FF9F00;
-			font-size: 16px;
+		.row + .row {
+			margin-top: 0;
+			margin-right: auto;
+	    	margin-left: auto;
+		}
+
+		h1, h4 {
+			color: white;
 		}
 	}
 }
@@ -554,87 +590,37 @@ $cardBorderRadius: 15px;
 		// ---------------------------------------------------
 		// ----------------- Card animation ------------------
 		// ---------------------------------------------------
-		$animationDuration: 0.5s;
-		flipper {
-		    
-		    span {
-		        color: white;
-		    }
-		    
-		    >div.flipper {
-		        float: left;
-		        width: 100%;
-		        height: 80%;
-		        position: relative;
+		$animationDuration: 0.3s;
+		$animationMode: ease-in-out;
+		$animationFillMode: forwards;
+		.card {
 
-		        -ms-transform-style: preserve-3d;
-		        -webkit-transform-style: preserve-3d;
-				-moz-transform-style: preserve-3d;
-				-o-transform-style: preserve-3d;
-				transform-style: preserve-3d;
-		        
-		        .front, .back {
-		            float: left;
-		            display: block;
-		            width: 100%;
-		            height: 100%;
+			&.moveTopGo {
+				@include animation(moveTopGo, $animationDuration, $animationMode);
+				@include animationFillMode($animationFillMode);
+			}
+			&.moveTopReturn {
+				@include animation(moveTopReturn, $animationDuration, $animationMode);
+				@include animationFillMode($animationFillMode);
+			}
 
-		            backface-visibility: hidden;
+			&.moveLeftGo {
+				@include animation(moveLeftGo, $animationDuration, $animationMode);
+				@include animationFillMode($animationFillMode);
+			}
+			&.moveLeftReturn {
+				@include animation(moveLeftReturn, $animationDuration, $animationMode);
+				@include animationFillMode($animationFillMode);
+			}
 
-		            position: absolute;
-		            top: 0;
-		            left: 0;
-
-			        -webkit-transform-style: preserve-3d;
-			        -ms-transform-style: preserve-3d;
-			        transform-style: preserve-3d;
-
-		            transition: transform ease 500ms;
-		        }
-
-		        .front { z-index: 2; }
-
-		        .back .list.card .item.itemFooter {
-		        	background-color: transparent;
-		        	border-top: 0;
-		       	}
-		    }
-		}
-		flipper[horizontal] {
-		    .front {
-		    	z-index: 2;
-
-				-ms-animation-name: rotateR $animationDuration;
-				animation: rotateR $animationDuration;
-				-moz-animation: rotateR $animationDuration;
-				-webkit-animation: rotateR $animationDuration;
-		    }
-
-		    .back {
-		    	z-index: 1;
-				-ms-animation-name: rotateL $animationDuration;
-				animation: rotateL $animationDuration;
-				-moz-animation: rotateL $animationDuration;
-				-webkit-animation: rotateL $animationDuration;
-		    }
-
-		    div.flipper.flipped {
-		        .front {
-		        	z-index: 1;
-					-ms-animation-name: rotateL $animationDuration;
-					animation: rotateL $animationDuration;
-					-moz-animation: rotateL $animationDuration;
-					-webkit-animation: rotateL $animationDuration;
-		        }
-
-		        .back {
-		        	z-index: 2;
-					-ms-animation-name: rotateR $animationDuration;
-					animation: rotateR $animationDuration;
-					-moz-animation: rotateR $animationDuration;
-					-webkit-animation: rotateR $animationDuration;
-		        }
-		    }
+			&.moveRightGo {
+				@include animation(moveRightGo, $animationDuration, $animationMode);
+				@include animationFillMode($animationFillMode);
+			}
+			&.moveRightReturn {
+				@include animation(moveRightReturn, $animationDuration, $animationMode);
+				@include animationFillMode($animationFillMode);
+			}
 		}
 	}
 }

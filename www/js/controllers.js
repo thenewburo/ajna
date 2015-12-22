@@ -1,10 +1,36 @@
 angular.module('controllers', [])
 
-.controller('OnBoardingCtrl', function($scope, $ionicHistory) {
-	// Make the next page the root history, so we can't use the back button to come back to the previous page
-	$ionicHistory.nextViewOptions({
-		disableBack: true
-	});
+.controller('OnBoardingCtrl', function($scope, $ionicHistory, $state, $ionicSlideBoxDelegate) {
+
+	// Used to remove the slide bounce when on the first and last slide
+	$scope.myActiveSlide = 0;
+
+	// Swipe to the next page
+	$scope.nextSlide = function() {
+		$ionicSlideBoxDelegate.next();
+	};
+
+	// Redirect to the login page
+	$scope.goToLoginPage = function() {
+		// Make the next page the root history, so we can't use the back button to come back to the previous page
+		$ionicHistory.nextViewOptions({
+			disableBack: true
+		});
+		$state.go("login");
+	};
+
+	// Used to remove the slide bounce when on the first and last slide
+	$scope.enableSlide = function() {
+		$ionicSlideBoxDelegate.enableSlide(true);
+	};
+	// Used to remove the slide bounce when on the first and last slide
+	$scope.$watch(function(scope) { return scope.myActiveSlide },
+		function(newValue, oldValue) {
+			// Disable slide on the first and last slide
+			if (newValue == 0 || newValue == 2)
+				$ionicSlideBoxDelegate.enableSlide(false);
+		}
+	);
 })
 
 .controller('LoginCtrl', function($scope, $state, $translate, $ionicHistory, UserService, PopupService) {
@@ -333,15 +359,21 @@ angular.module('controllers', [])
 	});
 })
 
-.controller('DisplayCardCtrl', function($scope, $stateParams, CardService, DeckService) {
+.controller('DisplayCardCtrl', function($scope, $stateParams, $timeout, CardService, DeckService) {
 	// We get the deck sent in parameter (we will display that deck)
 	$scope.currentDeckId = $stateParams.deckId;
 	// We get the boolean to determine if we are in study mode
 	$scope.studyMode = $stateParams.studyMode;
 	// Boolean to rotate the card
 	$scope.flipped = false;
+	// Boolean to hide the buttons
+	$scope.showButtons = true;
 	// An integerer to know if we can use the 'Previous card' option
 	$scope.nbCardsSaw = 0;
+	// Get our card element in the DOM
+	var myCard = $('.col.list.card');
+	// The duration of one animation
+	var animationDuration = 300;
 	// We get the card ID sent in parameter
 	$scope.cardId = $stateParams.cardId;
 	// Check we successfully got the deck id
@@ -354,23 +386,51 @@ angular.module('controllers', [])
 		$scope.studyMode = true;
 
 
+	// Execute the animation passed in first argument
+	// Then, execute the function passed in second argument
+	// Finally, execute the last animation passed in third argument
+	executeAnimation = function(animation1, fct, animation2) {
+		// Hide the buttons
+		$scope.showButtons = false;
+		// Start our card animation
+		myCard.addClass(animation1);
+		// This code will be executed after the card animation
+		$timeout(function() {
+			if (fct)
+				fct();
+			myCard.removeClass(animation1);
+			myCard.addClass(animation2);
+		}, animationDuration);
+		// Finally, when the 2 animations are done
+		$timeout(function() {
+			myCard.removeClass(animation2);
+			// Show the buttons
+			$scope.showButtons = true;
+		}, animationDuration * 2);
+	};
 	// Get the next card by using the CardService. We have to send our current card, the deck and the study mode
 	$scope.getNextCard = function() {
-		$scope.flipped = false;
-		$scope.currentCard = CardService.getNextCard($scope.currentCard, $scope.currentDeck, $scope.studyMode);
-		$scope.nbCardsSaw += 1;
+		executeAnimation('moveLeftGo', function() {
+			$scope.flipped = false;
+			$scope.currentCard = CardService.getNextCard($scope.currentCard, $scope.currentDeck, $scope.studyMode);
+			$scope.nbCardsSaw += 1;
+		}, 'moveRightReturn');
 	};
 	// Get the previous card we saw
 	$scope.getPreviousCard = function() {
 		if ($scope.nbCardsSaw <= 0)
 			return;
-		$scope.flipped = false;
-		$scope.currentCard = CardService.getPreviousCard($scope.currentDeck);
-		$scope.nbCardsSaw -= 1;
+		executeAnimation('moveRightGo', function() {
+			$scope.flipped = false;
+			$scope.currentCard = CardService.getPreviousCard($scope.currentDeck);
+			$scope.nbCardsSaw -= 1;
+		}, 'moveLeftReturn');
 	};
 	// Function to returns the card and show the answer
 	$scope.rotateCard = function() {
-		$scope.flipped = true;
+		executeAnimation('moveTopGo', function() {
+			$scope.flipped = true;
+		}, 'moveTopReturn');
 	};
 
 

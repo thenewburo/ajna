@@ -1,51 +1,147 @@
 @charset "UTF-8";
-@-webkit-keyframes rotateL {
+@-webkit-keyframes moveRightGo {
   from {
-    -webkit-transform: translate(0px); }
+    -webkit-transform: translate(0%); }
   to {
     -webkit-transform: translate(200%); } }
 
-@-moz-keyframes rotateL {
+@-moz-keyframes moveRightGo {
   from {
-    -moz-transform: translate(0px); }
+    -moz-transform: translate(0%); }
   to {
     -moz-transform: translate(200%); } }
 
-@-o-keyframes rotateL {
+@-o-keyframes moveRightGo {
   from {
-    -o-transform: translate(0px); }
+    -o-transform: translate(0%); }
   to {
     -o-transform: translate(200%); } }
 
-@keyframes rotateL {
+@keyframes moveRightGo {
   from {
-    transform: translate(0px); }
+    transform: translate(0%); }
   to {
     transform: translate(200%); } }
 
-@-webkit-keyframes rotateR {
+@-webkit-keyframes moveRightReturn {
   from {
     -webkit-transform: translate(200%); }
   to {
-    -webkit-transform: translate(0px); } }
+    -webkit-transform: translate(0%); } }
 
-@-moz-keyframes rotateR {
+@-moz-keyframes moveRightReturn {
   from {
     -moz-transform: translate(200%); }
   to {
-    -moz-transform: translate(0px); } }
+    -moz-transform: translate(0%); } }
 
-@-o-keyframes rotateR {
+@-o-keyframes moveRightReturn {
   from {
     -o-transform: translate(200%); }
   to {
-    -o-transform: translate(0px); } }
+    -o-transform: translate(0%); } }
 
-@keyframes rotateR {
+@keyframes moveRightReturn {
   from {
     transform: translate(200%); }
   to {
-    transform: translate(0px); } }
+    transform: translate(0%); } }
+
+@-webkit-keyframes moveLeftGo {
+  from {
+    -webkit-transform: translate(0%); }
+  to {
+    -webkit-transform: translate(-200%); } }
+
+@-moz-keyframes moveLeftGo {
+  from {
+    -moz-transform: translate(0%); }
+  to {
+    -moz-transform: translate(-200%); } }
+
+@-o-keyframes moveLeftGo {
+  from {
+    -o-transform: translate(0%); }
+  to {
+    -o-transform: translate(-200%); } }
+
+@keyframes moveLeftGo {
+  from {
+    transform: translate(0%); }
+  to {
+    transform: translate(-200%); } }
+
+@-webkit-keyframes moveLeftReturn {
+  from {
+    -webkit-transform: translate(-200%); }
+  to {
+    -webkit-transform: translate(0%); } }
+
+@-moz-keyframes moveLeftReturn {
+  from {
+    -moz-transform: translate(-200%); }
+  to {
+    -moz-transform: translate(0%); } }
+
+@-o-keyframes moveLeftReturn {
+  from {
+    -o-transform: translate(-200%); }
+  to {
+    -o-transform: translate(0%); } }
+
+@keyframes moveLeftReturn {
+  from {
+    transform: translate(-200%); }
+  to {
+    transform: translate(0%); } }
+
+@-webkit-keyframes moveTopGo {
+  from {
+    -webkit-transform: translate(0%, 0%); }
+  to {
+    -webkit-transform: translate(0%, -200%); } }
+
+@-moz-keyframes moveTopGo {
+  from {
+    -moz-transform: translate(0%, 0%); }
+  to {
+    -moz-transform: translate(0%, -200%); } }
+
+@-o-keyframes moveTopGo {
+  from {
+    -o-transform: translate(0%, 0%); }
+  to {
+    -o-transform: translate(0%, -200%); } }
+
+@keyframes moveTopGo {
+  from {
+    transform: translate(0%, 0%); }
+  to {
+    transform: translate(0%, -200%); } }
+
+@-webkit-keyframes moveTopReturn {
+  from {
+    -webkit-transform: translate(0%, -200%); }
+  to {
+    -webkit-transform: translate(0%, 0%); } }
+
+@-moz-keyframes moveTopReturn {
+  from {
+    -moz-transform: translate(0%, -200%); }
+  to {
+    -moz-transform: translate(0%, 0%); } }
+
+@-o-keyframes moveTopReturn {
+  from {
+    -o-transform: translate(0%, -200%); }
+  to {
+    -o-transform: translate(0%, 0%); } }
+
+@keyframes moveTopReturn {
+  from {
+    transform: translate(0%, -200%); }
+  to {
+    transform: translate(0%, 0%); } }
 
 @font-face {
   font-family: "Comme-font";
@@ -54,8 +150,17 @@
 .row.h-100 {
   height: 100%; }
 
+.row.h-80 {
+  height: 80%; }
+
+.row.h-35 {
+  height: 35%; }
+
 .row.h-30 {
   height: 30%; }
+
+.row.h-25 {
+  height: 25%; }
 
 .row.h-20 {
   height: 20%; }
@@ -181,25 +286,31 @@ ion-popover-view.popover {
     margin-top: 6px;
     margin-bottom: -30px; }
 
-.onBoard {
+.onBoardSlide.pane.slider {
+  background-color: #e2743c; }
+
+.onBoardSlide .slider-pager {
+  bottom: 20%; }
+  .onBoardSlide .slider-pager .slider-pager-page {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 14px; }
+    .onBoardSlide .slider-pager .slider-pager-page.active {
+      color: #FF9F00;
+      font-size: 16px; }
+
+.onBoardSlide .onBoard {
   background: url("../img/onBoardBackground.png") no-repeat center;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
-  background-size: cover; }
-  .onBoard .row + .row {
+  background-size: cover;
+  height: 100%; }
+  .onBoardSlide .onBoard .row + .row {
     margin-top: 0;
     margin-right: auto;
     margin-left: auto; }
-  .onBoard h1, .onBoard h4 {
+  .onBoardSlide .onBoard h1, .onBoardSlide .onBoard h4 {
     color: white; }
-  .onBoard .indicators i {
-    color: rgba(255, 255, 255, 0.5);
-    font-size: 14px;
-    margin: 0px 8px; }
-    .onBoard .indicators i.active {
-      color: #FF9F00;
-      font-size: 16px; }
 
 .login {
   background: url("../img/accountBackground.png") no-repeat center;
@@ -424,60 +535,66 @@ ion-side-menus ion-side-menu-content ion-nav-bar .bar.bar-stable:not(.transparen
       box-shadow: none; }
       .displayCard ion-content .duoButtons .button.button-energized.activated {
         color: white; }
-  .displayCard ion-content flipper span {
-    color: white; }
-  .displayCard ion-content flipper > div.flipper {
-    float: left;
-    width: 100%;
-    height: 80%;
-    position: relative;
-    -ms-transform-style: preserve-3d;
-    -webkit-transform-style: preserve-3d;
-    -moz-transform-style: preserve-3d;
-    -o-transform-style: preserve-3d;
-    transform-style: preserve-3d; }
-    .displayCard ion-content flipper > div.flipper .front, .displayCard ion-content flipper > div.flipper .back {
-      float: left;
-      display: block;
-      width: 100%;
-      height: 100%;
-      backface-visibility: hidden;
-      position: absolute;
-      top: 0;
-      left: 0;
-      -webkit-transform-style: preserve-3d;
-      -ms-transform-style: preserve-3d;
-      transform-style: preserve-3d;
-      transition: transform ease 500ms; }
-    .displayCard ion-content flipper > div.flipper .front {
-      z-index: 2; }
-    .displayCard ion-content flipper > div.flipper .back .list.card .item.itemFooter {
-      background-color: transparent;
-      border-top: 0; }
-  .displayCard ion-content flipper[horizontal] .front {
-    z-index: 2;
-    -ms-animation-name: rotateR 0.5s;
-    animation: rotateR 0.5s;
-    -moz-animation: rotateR 0.5s;
-    -webkit-animation: rotateR 0.5s; }
-  .displayCard ion-content flipper[horizontal] .back {
-    z-index: 1;
-    -ms-animation-name: rotateL 0.5s;
-    animation: rotateL 0.5s;
-    -moz-animation: rotateL 0.5s;
-    -webkit-animation: rotateL 0.5s; }
-  .displayCard ion-content flipper[horizontal] div.flipper.flipped .front {
-    z-index: 1;
-    -ms-animation-name: rotateL 0.5s;
-    animation: rotateL 0.5s;
-    -moz-animation: rotateL 0.5s;
-    -webkit-animation: rotateL 0.5s; }
-  .displayCard ion-content flipper[horizontal] div.flipper.flipped .back {
-    z-index: 2;
-    -ms-animation-name: rotateR 0.5s;
-    animation: rotateR 0.5s;
-    -moz-animation: rotateR 0.5s;
-    -webkit-animation: rotateR 0.5s; }
+  .displayCard ion-content .card.moveTopGo {
+    -webkit-animation: moveTopGo 0.3s ease-in-out;
+    -moz-animation: moveTopGo 0.3s ease-in-out;
+    -ms-animation-name: moveTopGo 0.3s ease-in-out;
+    animation: moveTopGo 0.3s ease-in-out;
+    -webkit-animation-fill-mode: forwards;
+    -moz-animation-fill-mode: forwards;
+    -ms-animation-fill-mode: forwards;
+    -o-animation-fill-mode: forwards;
+    animation-fill-mode: forwards; }
+  .displayCard ion-content .card.moveTopReturn {
+    -webkit-animation: moveTopReturn 0.3s ease-in-out;
+    -moz-animation: moveTopReturn 0.3s ease-in-out;
+    -ms-animation-name: moveTopReturn 0.3s ease-in-out;
+    animation: moveTopReturn 0.3s ease-in-out;
+    -webkit-animation-fill-mode: forwards;
+    -moz-animation-fill-mode: forwards;
+    -ms-animation-fill-mode: forwards;
+    -o-animation-fill-mode: forwards;
+    animation-fill-mode: forwards; }
+  .displayCard ion-content .card.moveLeftGo {
+    -webkit-animation: moveLeftGo 0.3s ease-in-out;
+    -moz-animation: moveLeftGo 0.3s ease-in-out;
+    -ms-animation-name: moveLeftGo 0.3s ease-in-out;
+    animation: moveLeftGo 0.3s ease-in-out;
+    -webkit-animation-fill-mode: forwards;
+    -moz-animation-fill-mode: forwards;
+    -ms-animation-fill-mode: forwards;
+    -o-animation-fill-mode: forwards;
+    animation-fill-mode: forwards; }
+  .displayCard ion-content .card.moveLeftReturn {
+    -webkit-animation: moveLeftReturn 0.3s ease-in-out;
+    -moz-animation: moveLeftReturn 0.3s ease-in-out;
+    -ms-animation-name: moveLeftReturn 0.3s ease-in-out;
+    animation: moveLeftReturn 0.3s ease-in-out;
+    -webkit-animation-fill-mode: forwards;
+    -moz-animation-fill-mode: forwards;
+    -ms-animation-fill-mode: forwards;
+    -o-animation-fill-mode: forwards;
+    animation-fill-mode: forwards; }
+  .displayCard ion-content .card.moveRightGo {
+    -webkit-animation: moveRightGo 0.3s ease-in-out;
+    -moz-animation: moveRightGo 0.3s ease-in-out;
+    -ms-animation-name: moveRightGo 0.3s ease-in-out;
+    animation: moveRightGo 0.3s ease-in-out;
+    -webkit-animation-fill-mode: forwards;
+    -moz-animation-fill-mode: forwards;
+    -ms-animation-fill-mode: forwards;
+    -o-animation-fill-mode: forwards;
+    animation-fill-mode: forwards; }
+  .displayCard ion-content .card.moveRightReturn {
+    -webkit-animation: moveRightReturn 0.3s ease-in-out;
+    -moz-animation: moveRightReturn 0.3s ease-in-out;
+    -ms-animation-name: moveRightReturn 0.3s ease-in-out;
+    animation: moveRightReturn 0.3s ease-in-out;
+    -webkit-animation-fill-mode: forwards;
+    -moz-animation-fill-mode: forwards;
+    -ms-animation-fill-mode: forwards;
+    -o-animation-fill-mode: forwards;
+    animation-fill-mode: forwards; }
 
 /*!
   Ionicons, v2.0.1

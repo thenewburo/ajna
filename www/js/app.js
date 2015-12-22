@@ -29,27 +29,9 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'pa
     // Here we define all the routes
     // The permission field is used to know if the user has to be logged in to access this page
     $stateProvider
-    .state('onBoarding1', {
-        url: '/onBoarding1',
-        templateUrl: 'templates/onBoardingPage1.html',
-        controller: 'OnBoardingCtrl',
-        data: {
-            permission: false
-        }
-    })
-
-    .state('onBoarding2', {
-        url: '/onBoarding2',
-        templateUrl: 'templates/onBoardingPage2.html',
-        controller: 'OnBoardingCtrl',
-        data: {
-            permission: false
-        }
-    })
-
-    .state('onBoarding3', {
-        url: '/onBoarding3',
-        templateUrl: 'templates/onBoardingPage3.html',
+    .state('onBoarding', {
+        url: '/onBoarding',
+        templateUrl: 'templates/onBoardingPage.html',
         controller: 'OnBoardingCtrl',
         data: {
             permission: false
@@ -154,7 +136,7 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'pa
     });
 
     // if none of the above states are matched, use this as the fallback
-    $urlRouterProvider.otherwise('/onBoarding1');
+    $urlRouterProvider.otherwise('/onBoarding');
 
     // Contains all the translation for each language
     $translateProvider.translations('en', {
