@@ -11,7 +11,7 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'pa
 
         }
         if (window.StatusBar) {
-            StatusBar.styleDefault();
+            StatusBar.hide();
         }
         ionic.Platform.isFullScreen = true;
     });
