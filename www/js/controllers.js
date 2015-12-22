@@ -338,6 +338,8 @@ angular.module('controllers', [])
 	$scope.currentDeckId = $stateParams.deckId;
 	// We get the boolean to determine if we are in study mode
 	$scope.studyMode = $stateParams.studyMode;
+	// Boolean to rotate the card
+	$scope.flipped = false;
 	// An integerer to know if we can use the 'Previous card' option
 	$scope.nbCardsSaw = 0;
 	// We get the card ID sent in parameter
@@ -354,6 +356,7 @@ angular.module('controllers', [])
 
 	// Get the next card by using the CardService. We have to send our current card, the deck and the study mode
 	$scope.getNextCard = function() {
+		$scope.flipped = false;
 		$scope.currentCard = CardService.getNextCard($scope.currentCard, $scope.currentDeck, $scope.studyMode);
 		$scope.nbCardsSaw += 1;
 	};
@@ -361,8 +364,13 @@ angular.module('controllers', [])
 	$scope.getPreviousCard = function() {
 		if ($scope.nbCardsSaw <= 0)
 			return;
+		$scope.flipped = false;
 		$scope.currentCard = CardService.getPreviousCard($scope.currentDeck);
 		$scope.nbCardsSaw -= 1;
+	};
+	// Function to returns the card and show the answer
+	$scope.rotateCard = function() {
+		$scope.flipped = true;
 	};
 
 

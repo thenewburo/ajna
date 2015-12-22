@@ -1,0 +1,35 @@
+@-webkit-keyframes rotateL {
+	from { -webkit-transform: translate(0px); }
+	to { -webkit-transform: translate(200%); }
+}
+@-moz-keyframes rotateL {
+	from { -moz-transform: translate(0px); }
+	to { -moz-transform: translate(200%); }
+}
+@-o-keyframes rotateL {
+	from { -o-transform: translate(0px); }
+	to { -o-transform: translate(200%); }
+}
+@keyframes rotateL {
+	from { transform: translate(0px); }
+	to { transform: translate(200%); }
+}
+
+
+
+@-webkit-keyframes rotateR {
+	from { -webkit-transform: translate(200%); }
+	to { -webkit-transform: translate(0px); }
+}
+@-moz-keyframes rotateR {
+	from { -moz-transform: translate(200%); }
+	to { -moz-transform: translate(0px); }
+}
+@-o-keyframes rotateR {
+	from { -o-transform: translate(200%); }
+	to { -o-transform: translate(0px); }
+}
+@keyframes rotateR {
+	from { transform: translate(200%); }
+	to { transform: translate(0px); }
+}

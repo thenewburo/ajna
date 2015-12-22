@@ -1,5 +1,5 @@
 // Ionic Starter App
-angular.module('starter', ['ionic', 'controllers', 'services', 'pascalprecht.translate'])
+angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'pascalprecht.translate'])
 
 .run(function($ionicPlatform, $rootScope, $state, UserService) {
     $ionicPlatform.ready(function() {

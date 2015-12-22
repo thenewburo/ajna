@@ -12,57 +12,55 @@
 	<ion-content scroll="false">
 
         <!-- Card -->
-        <div class="flip-container" ng-class="showAnswer ? 'flip' : ''">
-            <div class="flipper">
-                <!-- Front side of the card -->
-                <div class="front">
-                    <div class="row text-center h-100">
-                        <div class="col list card">
+        <flipper flipped="flipped" horizontal>
 
-                            <div class="item itemHeader">
-                                <h2>{{currentCard.question}}</h2>
-                            </div>
+            <front>
+                <div class="row text-center h-100">
+                    <div class="col list card">
 
-                            <div class="item itemFooter" ng-click="showAnswer = true;">
-                                <span>
-                                    <i class="ion-share"></i>
-                                    {{'DISPLAYCARD.Show-answer' | translate}}
-                                </span>
-                            </div>
-
+                        <div class="item itemHeader">
+                            <h2>{{currentCard.question}}</h2>
                         </div>
+
+                        <div class="item itemFooter" ng-click="rotateCard()">
+                            <span>
+                                <i class="ion-share"></i>
+                                {{'DISPLAYCARD.Show-answer' | translate}}
+                            </span>
+                        </div>
+
                     </div>
                 </div>
-                <!-- Back side of the card -->
-                <div class="back">
-                    <div class="row text-center h-100">
-                        <div class="col list card">
+            </front>
 
-                            <div class="item itemHeader" ng-show="showAnswer">
-                                <h2>{{currentCard.question}}</h2>
-                                <h1>{{currentCard.answer}}</h1>
-                            </div>
+            <back>
+                <div class="row text-center h-100">
+                    <div class="col list card">
 
-                            <div class="item itemFooter">
-                                <span>
-                                </span>
-                            </div>
-
+                        <div class="item itemHeader">
+                            <h2>{{currentCard.question}}</h2>
+                            <h1 ng-show="flipped">{{currentCard.answer}}</h1>
                         </div>
+
+                        <div class="item itemFooter">
+                            <span></span>
+                        </div>
+
                     </div>
                 </div>
-            </div>
-        </div>
+            </back>
+
+        </flipper>
 
 		<!-- Edit and done button -->
 		<div class="row text-center h-20 duoButtons">
 		    <div class="col-xs-0 col-sm-2 col-md-2 col-lg-3"></div>
 		    <div class="col-xs-6 col-sm-3 col-md-3 col-lg-2 col-bottom">
-		        <button ng-click="showAnswer = false; getPreviousCard()" ng-show="nbCardsSaw > 0" class="button button-outline button-large button-energized">{{'DISPLAYCARD.Previous-card' | translate}}</button>
+		        <button ng-click="getPreviousCard()" ng-show="nbCardsSaw > 0" class="button button-outline button-large button-energized">{{'DISPLAYCARD.Previous-card' | translate}}</button>
 		    </div>
 		    <div class="col-xs-0 col-sm-2 col-md-2 col-lg-2"></div>
 		    <div class="col-xs-6 col-sm-3 col-md-3 col-lg-2 col-bottom">
-		        <button ng-click="showAnswer = false; getNextCard()" class="button button-large button-energized">{{'DISPLAYCARD.Next-card' | translate}}</button>
+		        <button ng-click="getNextCard()" class="button button-large button-energized">{{'DISPLAYCARD.Next-card' | translate}}</button>
 		    </div>
 		    <div class="col-xs-0 col-sm-2 col-md-2 col-lg-3"></div>
 		</div>
