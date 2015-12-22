@@ -200,7 +200,7 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'pa
         DISPLAYCARD: {
             "Show-answer": "Show answer",
             "Previous-card": "Previous card",
-            "Next-card": "Next-card"
+            "Next-card": "Next card"
         },
         ERROR: {
             "Error": "Error",
