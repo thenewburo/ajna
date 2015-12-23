@@ -137,16 +137,16 @@ angular.module('services', [])
 		tags: [],
 		isFavorite: false,
 		cards: [
-			{ id: 1, type: 'Question', question: 'Question 1', answer: '2015', frequency: 1, tags: [], seen: false },
-			{ id: 2, type: 'Question', question: 'Question 2', answer: '2015', frequency: 1, tags: [], seen: false },
-			{ id: 3, type: 'Question', question: 'Question 3', answer: '2015', frequency: 1, tags: [], seen: false },
-			{ id: 4, type: 'Question', question: 'Question 4', answer: '2015', frequency: 1, tags: [], seen: false },
-			{ id: 5, type: 'Question', question: 'Question 5', answer: '2015', frequency: 1, tags: [], seen: false },
-			{ id: 6, type: 'Question', question: 'Question 6', answer: '2015', frequency: 1, tags: [], seen: false },
-			{ id: 7, type: 'Question', question: 'Question 7', answer: '2015', frequency: 1, tags: [], seen: false },
-			{ id: 8, type: 'Question', question: 'Question 8', answer: '2015', frequency: 1, tags: [], seen: false },
-			{ id: 9, type: 'Question', question: 'Question 9', answer: '2015', frequency: 1, tags: [], seen: false },
-			{ id: 10, type: 'Question', question: 'Question 10', answer: '2015', frequency: 1, tags: [], seen: false }
+			{ id: 1, type: 1, question: 'Question 1', answer: '2015', frequency: 1, tags: [], seen: false },
+			{ id: 2, type: 1, question: 'Question 2', answer: '2015', frequency: 1, tags: [], seen: false },
+			{ id: 3, type: 1, question: 'Question 3', answer: '2015', frequency: 1, tags: [], seen: false },
+			{ id: 4, type: 1, question: 'Question 4', answer: '2015', frequency: 1, tags: [], seen: false },
+			{ id: 5, type: 1, question: 'Question 5', answer: '2015', frequency: 1, tags: [], seen: false },
+			{ id: 6, type: 1, question: 'Question 6', answer: '2015', frequency: 1, tags: [], seen: false },
+			{ id: 7, type: 1, question: 'Question 7', answer: '2015', frequency: 1, tags: [], seen: false },
+			{ id: 8, type: 1, question: 'Question 8', answer: '2015', frequency: 1, tags: [], seen: false },
+			{ id: 9, type: 1, question: 'Question 9', answer: '2015', frequency: 1, tags: [], seen: false },
+			{ id: 10, type: 1, question: 'Question 10', answer: '2015', frequency: 1, tags: [], seen: false }
 		]
 	},
 	{
@@ -156,8 +156,9 @@ angular.module('services', [])
 		tags: [],
 		isFavorite: false,
 		cards: [
-			{ id: 12, type: 'Question', question: 'What year are we in?', answer: '2015', frequency: 1, tags: [], seen: false },
-			{ id: 13, type: 'Question', question: 'What year are we in?What year are we in?', answer: '2015', frequency: 1, tags: [], seen: false }
+			{ id: 12, type: 1, question: 'What year are we in?', answer: '2015', frequency: 1, tags: [], seen: false },
+			{ id: 13, type: 1, question: 'What year are we in?What year are we in?', answer: '2015', frequency: 1, tags: [], seen: false },
+			{ id: 14, type: 2, question: 'What year are we in? We are in year [..]', answer: 'What year are we in? We are in year 2015', frequency: 1, tags: [], seen: false }
 		]
 	}];
 
@@ -167,7 +168,7 @@ angular.module('services', [])
 			return { name: '', image: '', tags: [], isFavorite: false, cards: [] };
 		},
 		newCard: function() {
-			return { type: 'Question', question: '', answer: '', frequency: 1, tags: [], seen: false };
+			return { type: 1, question: '', answer: '', frequency: 1, tags: [], seen: false };
 		},
 		// Returns all the decks
 		getDecks: function() {
@@ -237,6 +238,8 @@ angular.module('services', [])
 
 // This factory is used to manage the decks
 .factory('CardService', function() {
+	// List of the type of card we can use
+	var cardTypes = [{ id: 1, value: 'Question' }, { id: 2, value: 'Fill in the blank' }];
 	// A stack to store all the cards index we saw (needed by the 'Previous card' option)
 	var cardsIndexStack = [];
 
@@ -266,6 +269,10 @@ angular.module('services', [])
 		// Add an index in the stack (/!\you should not use this function /!\)
 		addIndexInStack: function(index) {
 			cardsIndexStack.push(index);
+		},
+		// Return the list of type we can set for a card
+		getCardTypes: function() {
+			return cardTypes;
 		},
 		// Return the next card by using the current card, the deck and the study mode
 		getNextCard: function(card, deck, studyMode) {

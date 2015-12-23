@@ -19,19 +19,30 @@
             <!-- Type -->
             <div class="item">
             	<span>{{'CREATECARD.Type' | translate}}
-                <select>
-					<option selected>Question</option>
+                <select ng-model="currentCard.type"
+                        ng-init="currentCard.type = cardTypes[0]"
+                        ng-options="type.value for type in cardTypes">
 				</select>
             </div>
 
             <!-- Question -->
-            <div class="item">
-                <input type="text" ng-model="currentCard.question" placeholder="{{'CREATECARD.Question' | translate}}">
+            <div class="item row">
+                <div class="col col-80 addBlankButton">
+                    <input type="text" id="questionInput" ng-change="updateHTMLAnswer()" ng-model="currentCard.question" placeholder="{{'CREATECARD.Question' | translate}}">
+                </div>
+                <div class="col col-20">
+                    <button ng-show="currentCard.type.value == 'Fill in the blank'" ng-click="addBlankToQuestion()" class="button addBlankButton button-small button-energized">{{'CREATECARD.Blank' | translate}}</button>
+                </div>
             </div>
 
             <!-- Answer -->
-            <div class="item">
+            <!-- Question type -->
+            <div class="item" ng-show="currentCard.type.value == 'Question'">
                 <input type="text" ng-model="currentCard.answer" placeholder="{{'CREATECARD.Answer' | translate}}">
+            </div>
+            <!-- Fill in the blank type -->
+            <div class="item fillInBlankAnswer" ng-show="currentCard.type.value == 'Fill in the blank'">
+                <div ng-bind-html="getHTMLAnswer()"></div>
             </div>
 
             <!-- Frequency -->

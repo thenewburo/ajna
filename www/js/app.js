@@ -1,5 +1,5 @@
 // Ionic Starter App
-angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'pascalprecht.translate'])
+angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'pascalprecht.translate', 'ngSanitize'])
 
 .run(function($ionicPlatform, $rootScope, $state, UserService) {
     $ionicPlatform.ready(function() {
@@ -189,7 +189,8 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'pa
             "Question": "Question",
             "Answer": "Answer",
             "Frequency": "Frequency",
-            "Edit": "Edit"
+            "Edit": "Edit",
+            "Blank": "Blank"
         },
         DISPLAYDECK: {
             "Deck-options": "Deck options",

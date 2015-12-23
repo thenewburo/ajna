@@ -446,6 +446,27 @@ ion-side-menus {
 
 	input { width: 100%; }
 
+	.list {
+
+		button.addBlankButton {
+			width: 100%;
+		}
+
+		.fillInBlankAnswer {
+			padding-bottom: 9px;
+			padding-top: 25px;
+			font-size: 14px;
+			line-height: 16px;
+
+			input {
+				border: 1px solid $energized;
+				border-radius: 7px;
+				margin: 10px 0px;
+				padding: 0px 5px;
+			}
+		}
+	}
+
 	select {
 		border-style: none;
 		padding: 10px;

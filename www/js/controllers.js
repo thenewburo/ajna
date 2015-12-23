@@ -226,7 +226,7 @@ angular.module('controllers', [])
 	};
 })
 
-.controller('CreateCardCtrl', function($scope, $stateParams, $state, $translate, $ionicHistory, PopupService, TagService, DeckService) {
+.controller('CreateCardCtrl', function($scope, $stateParams, $state, $translate, $ionicHistory, $sce, $timeout, PopupService, TagService, DeckService, CardService) {
 	$scope.currentCard = DeckService.newCard();
 	// Variable used to display the tags results (autocomplete) and store the user input
 	$scope.search = TagService.newSearch();
@@ -234,6 +234,11 @@ angular.module('controllers', [])
 	$scope.currentDeck = $stateParams.deck;
 	// We get the boolean to know if we are creating a new deck along with the card
 	$scope.creatingDeck = $stateParams.creatingDeck
+	// We get the type of cards
+	$scope.cardTypes = CardService.getCardTypes();
+	// Contains the HTML code for the answer (Fill in the blank mode only)
+	$scope.htmlAnswer = "<span></span>";
+	$scope.blanksValues = new Array();
 
 	// Check we successfully got the boolean
 	if ($scope.creatingDeck == undefined) {
@@ -280,10 +285,24 @@ angular.module('controllers', [])
 		TagService.removeTag(tag, $scope.currentCard, $scope.search);
 	};
 
+	// Update the answer string by using the blanks (Fill in the blank mode only)
+	reformAnswerFromBlanks = function() {
+		$scope.currentCard.answer = $scope.currentCard.question;
+		var index = 0;
+		while ($scope.currentCard.answer.indexOf("\[..\]") != -1) {
+			if ($scope.blanksValues[index])
+				$scope.currentCard.answer = $scope.currentCard.answer.replace("[..]", $scope.blanksValues[index]);
+			else
+				$scope.currentCard.answer = $scope.currentCard.answer.replace("[..]", "[xx]");
+			index = index + 1;
+		}
+	}
+
 	// Create the deck with the card in it
 	$scope.createCard = function() {
+		if ($scope.currentCard.type.value == "Fill in the blank")
+			reformAnswerFromBlanks();
 		if ($scope.currentCard.question.length > 0 && $scope.currentCard.answer.length > 0) {
-
 			if ($scope.creatingDeck) {
 				// Add the deck in our list of decks (we send a copy)
 				$scope.currentDeck = DeckService.addDeck(_.extend({}, $scope.currentDeck));
@@ -306,6 +325,66 @@ angular.module('controllers', [])
 		}
 		else
 			PopupService.showAlert($translate.instant('CREATECARD.Create-card'), $translate.instant('ERROR.Error-fields'));
+	};
+
+	// Add a blank to the question (Fill in the blank mode only)
+	$scope.addBlankToQuestion = function() {
+		// We get our input for the question
+		var input = angular.element(document.getElementById('questionInput'));
+		if (input == undefined)
+			return;
+		// Find where the cursor is
+		var caretPos = input[0].selectionStart;
+		if (caretPos == undefined)
+			return;
+		var text = input[0].value;
+		// We create our blank text, and an int to know how many we need to move forward the cursor
+		var moveCursor = 4;
+		var blankText = "";
+		// and we add a space before the blank if the user didn't put one
+		if (caretPos > 0 && text[caretPos - 1] != ' ') {
+			blankText = " ";
+			moveCursor = moveCursor + 1;
+		}
+		blankText += "[..]";
+		// Add a space after the blank if the user didn't put one
+		if (text[caretPos] == undefined || text[caretPos] != ' ') {
+			blankText += " ";
+			moveCursor = moveCursor + 1;
+		}
+		// Add our blank
+		input[0].value = text.substring(0, caretPos) + blankText + text.substring(caretPos);
+		// Trigger the change event to force the UI to update, and put back the selection cursor
+		input.triggerHandler('change');
+		$timeout(function() {
+			input[0].setSelectionRange(caretPos + moveCursor, caretPos + moveCursor);
+			input[0].focus();
+		});
+	}
+
+	// Save the value of the blank passed in parameter (use the index to identify which blank)
+	$scope.saveBlankValue = function(index, element) {
+		$scope.blanksValues[index] = element.value;
+	};
+
+	// Create an HTML part for the answer (Fill in the blank mode only)
+	$scope.updateHTMLAnswer = function() {
+		// We generate the HTML part to let the user fill the blanks
+		var content = $scope.currentCard.question;
+		var index = 0;
+		while (content.indexOf("\[..\]") != -1) {
+			var val = '';
+			if ($scope.blanksValues[index])
+				val = $scope.blanksValues[index];
+			var blankText = $translate.instant('CREATECARD.Blank') + " " + (index + 1) + " ";
+			content = content.replace("[..]", "<input type=\"text\" placeholder=\"" + blankText + "\" value=\"" + val + "\" onkeyup=\"angular.element(this).scope().saveBlankValue(" + index + ", this)\">");
+			index = index + 1;
+		}
+		// Update the HTML variable
+		$scope.htmlAnswer = "<span>" + content + "</span>";
+	};
+	$scope.getHTMLAnswer = function() {
+		return $sce.trustAsHtml($scope.htmlAnswer);
 	};
 })
 

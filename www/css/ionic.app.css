@@ -437,6 +437,20 @@ ion-side-menus ion-side-menu-content ion-nav-bar .bar.bar-stable:not(.transparen
 .createCard input {
   width: 100%; }
 
+.createCard .list button.addBlankButton {
+  width: 100%; }
+
+.createCard .list .fillInBlankAnswer {
+  padding-bottom: 9px;
+  padding-top: 25px;
+  font-size: 14px;
+  line-height: 16px; }
+  .createCard .list .fillInBlankAnswer input {
+    border: 1px solid #e2743c;
+    border-radius: 7px;
+    margin: 10px 0px;
+    padding: 0px 5px; }
+
 .createCard select {
   border-style: none;
   padding: 10px;
