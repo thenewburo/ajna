@@ -184,6 +184,7 @@ ion-popover-view.popover {
 		button {
 			border-radius: $custom-button-radius;
 			background-color: $energized;
+			color: white;
 			&.activated { background-color: $energized-activated; }
 		}
 	}

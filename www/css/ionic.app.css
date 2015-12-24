@@ -258,7 +258,8 @@ ion-popover-view.popover {
   background-color: white; }
   .popup .popup-buttons button {
     border-radius: 50px;
-    background-color: #e2743c; }
+    background-color: #e2743c;
+    color: white; }
     .popup .popup-buttons button.activated {
       background-color: #df6426; }
 
