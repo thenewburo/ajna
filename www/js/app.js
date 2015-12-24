@@ -144,7 +144,9 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'pa
             "Title": "EASY LEARNING",
             "Tags": "Tags",
             "Done-button": "Done",
-            "Success": "Success"
+            "Success": "Success",
+            "Yes": "Yes",
+            "No": "No"
         },
         ONBOARD: {
             "Text-page1": "Create your own flashcards in few minutes.",
@@ -175,7 +177,9 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'pa
             "Unseen-cards": "unseen card(s)",
             "Add-deck": "Add a deck",
             "Refresh-decks": "Refresh decks",
-            "Import-deck": "Import deck"
+            "Import-deck": "Import deck",
+            "Delete-deck": "Delete deck",
+            "Sure-delete-deck": "Are you sure you want to delete this deck?"
         },
         CREATEDECK: {
             "Create-deck": "Create a new deck",
@@ -196,7 +200,11 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'pa
             "Deck-options": "Deck options",
             "Custom-study": "Custom study",
             "Sell": "Sell",
-            "Study": "Study"
+            "Study": "Study",
+            "Empty-deck": "Empty deck",
+            "Empty-deck-message": "The deck is empty, please add a card",
+            "Delete-card": "Delete card",
+            "Sure-delete-card": "Are you sure you want to delete this card?"
         },
         DISPLAYCARD: {
             "Show-answer": "Show answer",

@@ -150,7 +150,7 @@ angular.module('controllers', [])
 	};
 })
 
-.controller('MyDecksCtrl', function($scope, $ionicPopover, $state, $ionicHistory, DeckService) {
+.controller('MyDecksCtrl', function($scope, $ionicPopover, $state, $ionicHistory, $translate, DeckService, PopupService) {
 	// User's decks
 	$scope.myDecks = [];
 
@@ -168,7 +168,21 @@ angular.module('controllers', [])
 		$ionicHistory.nextViewOptions({
 			historyRoot: true
 		});
-	}
+	};
+
+	// Ask the user if he wants to delete the deck
+	$scope.deleteDeck = function(deck) {
+		PopupService.showConfirm($translate.instant('MYDECKS.Delete-deck'), $translate.instant('MYDECKS.Sure-delete-deck'),
+			// If the user pressed No
+			function() {},
+			// If the user pressed Yes
+			function() {
+				DeckService.removeDeck(deck);
+				// Ask our deckService to get all the decks to refresh the list
+				$scope.myDecks = DeckService.getDecks();
+			}
+		);
+	};
 
 
 
@@ -414,9 +428,35 @@ angular.module('controllers', [])
 
 	// Start studying the deck
 	$scope.studyDeck = function(studyMode, cardId) {
+		// If the deck is empty, display a popup and return
+		if ($scope.currentDeck.cards.length <= 0) {
+			PopupService.showAlert($translate.instant('DISPLAYDECK.Empty-deck'), $translate.instant('DISPLAYDECK.Empty-deck-message'));
+			return;
+		}
 		// Redirect to the 'Display card' page, and pass as parameter the deck
 		$state.go("menu.displayCard", { deckId: $scope.currentDeck.id, cardId: cardId, studyMode: studyMode });
-	}
+	};
+
+	// Ask the user if he wants to delete the card
+	$scope.deleteCard = function(card) {
+		PopupService.showConfirm($translate.instant('DISPLAYDECK.Delete-card'), $translate.instant('DISPLAYDECK.Sure-delete-card'),
+			// If the user pressed No
+			function() {},
+			// If the user pressed Yes
+			function() {
+				DeckService.removeCard(card, $scope.currentDeck);
+			}
+		);
+	};
+
+	// Sell the deck on the store
+	$scope.sellDeck = function() {
+		// If the deck is empty, display a popup and return
+		if ($scope.currentDeck.cards.length <= 0) {
+			PopupService.showAlert($translate.instant('DISPLAYDECK.Empty-deck'), $translate.instant('DISPLAYDECK.Empty-deck-message'));
+			return;
+		}
+	};
 
 
 

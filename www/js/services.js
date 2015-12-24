@@ -1,13 +1,31 @@
 angular.module('services', [])
 
 // This factory is used to display popups
-.factory('PopupService', function($ionicPopup) {
+.factory('PopupService', function($ionicPopup, $translate) {
 	return {
 		// Display a 'OK' popup with the title and message passed in parameters
 		showAlert: function(title, message) {
 			var alertPopup = $ionicPopup.alert({
 				title: title,
 				template: message
+			});
+		},
+		// Display a "Yes/No" popup and run the good function depending of the user's response
+		showConfirm: function(title, message, noFct, yesFct) {
+			var confirmPopup = $ionicPopup.confirm({
+				title: title,
+				template: message,
+				cancelText: $translate.instant('UTILS.No'),
+				okText: $translate.instant('UTILS.Yes')
+			});
+
+			// If the user pressed Yes, we run the yesFct()
+			// else we run the noFct()
+			confirmPopup.then(function(res) {
+				if (res)
+					yesFct();
+				else
+					noFct();
 			});
 		}
 	};
@@ -177,6 +195,8 @@ angular.module('services', [])
 		// Returns the number of unseen cards
 		getNbUnseenCards: function(deck) {
 			var nb = 0;
+			if (deck == null)
+				return nb;
 			angular.forEach (deck.cards, function(card) {
 				if (card.seen == false)
 					nb++;
@@ -200,16 +220,22 @@ angular.module('services', [])
 		},
 		// Add a new deck, and returns the deck with his ID field filled
 		addDeck: function(deck) {
+			if (deck == null)
+				return;
 			deck.id = fakeID++;
 			decks.push(deck);
 			return deck;
 		},
 		// Remove a deck
 		removeDeck: function(deck) {
+			if (deck == null)
+				return;
 			decks = _.reject(decks, function(curDeck) { return curDeck.id == deck.id; });
 		},
 		// Add this card in the deck, and returns the deck up to date
 		addCard: function(card, deck) {
+			if (card == null || deck == null)
+				return;
 			var myDeck = deck;
 			// Find the deck in our deck list
 			angular.forEach(decks, function(curDeck) {
@@ -232,6 +258,12 @@ angular.module('services', [])
 				}
 			});
 			return myDeck;
+		},
+		// Remove a card from a deck
+		removeCard: function(card, deck) {
+			if (card == null || deck == null)
+				return;
+			deck.cards = _.reject(deck.cards, function(curCard) { return curCard.id == card.id; });
 		}
 	};
 })
