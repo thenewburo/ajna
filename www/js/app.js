@@ -1,5 +1,5 @@
 // Ionic Starter App
-angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'pascalprecht.translate', 'ngSanitize'])
+angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'pascalprecht.translate', 'ngSanitize', 'ngCookies'])
 
 .constant("server", { url: "http://173.255.197.21", port: "8080" })
 

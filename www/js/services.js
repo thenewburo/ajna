@@ -32,7 +32,7 @@ angular.module('services', [])
 })
 
 // This factory is used to manage the users
-.factory('UserService', function($http, $sanitize, server) {
+.factory('UserService', function($http, $sanitize, $cookies, server) {
 
 	var user = {};
 
@@ -67,6 +67,9 @@ angular.module('services', [])
 		},
 		// Try to connect the user, and returns a token if successfully
 		connect: function(curUser, successFct, errorFct) {
+			// Usually this case happens when we don't have a cookie
+			if (curUser == undefined)
+				return;
 			// To avoid script injection (remove dangerous html)
 			curUser.email = $sanitize(curUser.email);
 			curUser.password = $sanitize(curUser.password);
@@ -75,8 +78,12 @@ angular.module('services', [])
 				function(response) {
 					// Success
 					if (response.data != undefined) {
+						// Get the user's informations
 						user = response.data;
+						// All the next http requests will have the token in the header
 						$http.defaults.headers.common['authorization'] = user.token;
+						// Create/update the cookie
+						$cookies.putObject('KrootUser', user);
 						successFct(response);
 					}
 					else
@@ -90,6 +97,26 @@ angular.module('services', [])
 		// Disconnect the user
 		disconnect: function() {
 			user = {};
+			$cookies.remove('KrootUser');
+		},
+		// Check if the user is authenticated
+		isAuthenticated: function(successFct) {
+			var curUser = $cookies.getObject('KrootUser');
+			if (curUser == undefined)
+				return;
+			// Request the server to know if the user's token is valid
+			$http.get(server.url + ":" + server.port + '/api/authenticated', { headers: {'authorization': curUser.token} }).then(
+				function(response) {
+					// Success
+					// Get the user's informations
+					user = curUser;
+					// All the next http requests will have the token in the header
+					$http.defaults.headers.common['authorization'] = curUser.token;
+					successFct();
+				}, function(response) {
+					// Fail
+				}
+			);
 		}
 	};
 })

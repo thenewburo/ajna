@@ -40,17 +40,17 @@ app.post('/createAccount', function(req, res) {
 	if (req.body == undefined || req.body.username == undefined || req.body.username.length <= 0 ||
 		req.body.email == undefined || req.body.email.length <= 0 ||
 		req.body.password == undefined || req.body.password.length <= 0)
-		res.status(400).json({ title: "NEWACCOUNT.New-account", message: "ERROR.Error-fields" });
+		return res.status(400).json({ title: "NEWACCOUNT.New-account", message: "ERROR.Error-fields" });
 	// Check email address is well formated
 	var patt = /\S+@\S+\.\S+/;
 	if (patt.test(req.body.email) == false)
-		res.status(400).json({ title: "NEWACCOUNT.New-account", message: "ERROR.Email-incorrect" });
+		return res.status(400).json({ title: "NEWACCOUNT.New-account", message: "ERROR.Email-incorrect" });
 	// Check email address already used
 	User.findOne({ email: req.body.email }, function (err, person) {
 		if (err) return res.status(400).json({ title: "NEWACCOUNT.New-account", message: "ERROR.Error-occurred" });
 		// The email is already used
 		if (person != null)
-			res.status(400).json({ title: "NEWACCOUNT.New-account", message: "ERROR.Email-used" });
+			return res.status(400).json({ title: "NEWACCOUNT.New-account", message: "ERROR.Email-used" });
 		// Email is good, we can create the user
 		else {
 			// Create the new user
@@ -80,14 +80,14 @@ app.post('/connect', function(req, res) {
 	// One of the fields is empty
 	if (req.body == undefined || req.body.email == undefined || req.body.email.length <= 0 ||
 		req.body.password == undefined || req.body.password.length <= 0)
-		res.status(400).json({ title: "LOGIN.Sign-in", message: "ERROR.Error-fields" });
+		return res.status(400).json({ title: "LOGIN.Sign-in", message: "ERROR.Error-fields" });
 
 	// find the user
 	User.findOne({ email: req.body.email.toLowerCase() }, function(err, user) {
     	if (err) throw err;
     	// User not found
 		if (!user)
-			res.status(400).json({ title: "LOGIN.Sign-in", message: "ERROR.Cannot-connect" });
+			return res.status(400).json({ title: "LOGIN.Sign-in", message: "ERROR.Cannot-connect" });
 		// User found
 		else {
 			// check if password matches
@@ -99,10 +99,10 @@ app.post('/connect', function(req, res) {
 						expiresIn: "24h" // expires in 24 hours
 					});
 					// return the information including token as JSON
-					res.status(200).json({ name: user.name, email: user.email, token: token });
+					return res.status(200).json({ name: user.name, email: user.email, token: token });
 				}
 				else
-					res.status(400).json({ title: "LOGIN.Sign-in", message: "ERROR.Cannot-connect" });
+					return res.status(400).json({ title: "LOGIN.Sign-in", message: "ERROR.Cannot-connect" });
 			});
 		}
 	});
@@ -140,8 +140,8 @@ apiRoutes.use(function(req, res, next) {
 	}
 });
 
-apiRoutes.get('/toto', function(req, res) {
-	res.json({ message: 'Welcome to the coolest API on earth!' });
+apiRoutes.get('/authenticated', function(req, res) {
+	res.sendStatus(200);
 });
 
 // apply the routes to our application with the prefix /api

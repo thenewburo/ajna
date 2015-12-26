@@ -1,6 +1,15 @@
 angular.module('controllers', [])
 
-.controller('OnBoardingCtrl', function($scope, $ionicHistory, $state, $ionicSlideBoxDelegate) {
+.controller('OnBoardingCtrl', function($scope, $ionicHistory, $state, $ionicSlideBoxDelegate, UserService) {
+
+	// If the user is already authenticated with a valid token in his cookie
+	UserService.isAuthenticated(function(response) {
+		// Make the next page the root history, so we can't use the back button to come back to the previous page
+		$ionicHistory.nextViewOptions({
+			disableBack: true
+		});
+		$state.go("menu.myDecks");
+	});
 
 	// Used to remove the slide bounce when on the first and last slide
 	$scope.myActiveSlide = 0;
@@ -34,6 +43,16 @@ angular.module('controllers', [])
 })
 
 .controller('LoginCtrl', function($scope, $state, $translate, $ionicHistory, UserService, PopupService) {
+
+	// If the user is already authenticated with a valid token in his cookie
+	UserService.isAuthenticated(function(response) {
+		// Make the next page the root history, so we can't use the back button to come back to the previous page
+		$ionicHistory.nextViewOptions({
+			disableBack: true
+		});
+		$state.go("menu.myDecks");
+	});
+
 	// The user's login data
 	$scope.loginData = {};
 
@@ -83,6 +102,7 @@ angular.module('controllers', [])
 })
 
 .controller('NewAccountCtrl', function($scope, $state, $translate, UserService, PopupService) {
+	
 	// Variable to temporarily store the user's data
 	$scope.accountData = {};
 
@@ -138,6 +158,7 @@ angular.module('controllers', [])
 })
 
 .controller('MenuCtrl', function($scope, $state, $ionicHistory, UserService) {
+	
 	$scope.UserService = UserService;
 
 	// Redirect to "My decks" page
@@ -213,6 +234,7 @@ angular.module('controllers', [])
 })
 
 .controller('CreateDeckCtrl', function($scope, $state, $translate, PopupService, TagService, DeckService) {
+	
 	// Variable that contains our new deck informations
 	$scope.currentDeck = DeckService.newDeck();
 	// Variable used to display the tags results (autocomplete) and store the user input
@@ -249,6 +271,7 @@ angular.module('controllers', [])
 })
 
 .controller('CreateCardCtrl', function($scope, $stateParams, $state, $translate, $ionicHistory, $sce, $timeout, PopupService, TagService, DeckService, CardService) {
+	
 	$scope.currentCard = DeckService.newCard();
 	// Variable used to display the tags results (autocomplete) and store the user input
 	$scope.search = TagService.newSearch();
@@ -411,6 +434,7 @@ angular.module('controllers', [])
 })
 
 .controller('DisplayDeckCtrl', function($scope, $stateParams, $state, $translate, $ionicPopover, PopupService, DeckService) {
+	
 	// We get the deck sent in parameter (we will display that deck)
 	$scope.currentDeckId = $stateParams.deckId;
 
@@ -487,6 +511,7 @@ angular.module('controllers', [])
 })
 
 .controller('DisplayCardCtrl', function($scope, $stateParams, $timeout, CardService, DeckService) {
+	
 	// We get the deck sent in parameter (we will display that deck)
 	$scope.currentDeckId = $stateParams.deckId;
 	// We get the boolean to determine if we are in study mode
