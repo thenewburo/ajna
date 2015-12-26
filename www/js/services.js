@@ -32,53 +32,60 @@ angular.module('services', [])
 })
 
 // This factory is used to manage the users
-.factory('UserService', function() {
+.factory('UserService', function($http, $sanitize, server) {
+
 	var user = {};
-	var isConnected = false;
-	// Simulate our database
-	var users = [{ username: "root", email: "root@root.com", password: "root" }];
 
 	return {
 		// Return the current username
 		getUsername: function() {
-			return user.username;
+			return user.name;
 		},
 		// Return the current email
 		getEmail: function() {
 			return user.email;
 		},
-		// Return true if the user is connected, else false
-		isUserConnected: function() {
-			return isConnected;
+		// Return the current user's token
+		getToken: function() {
+			return user.token;
 		},
 		// Try to create a new user if the email is not already used
-		createAccount: function(name, mail, pass) {
-			var alreadyUsed = false;
-			angular.forEach(users, function(cur) {
-				if (cur.mail == mail) {
-					alreadyUsed = true;
-					return;
+		createAccount: function(newUser, successFct, errorFct) {
+			// To avoid script injection (remove dangerous html)
+			newUser.username = $sanitize(newUser.username);
+			newUser.password = $sanitize(newUser.password);
+			// Request the server to try to add the user
+			$http.post(server.url + ":" + server.port + '/createAccount', newUser).then(
+				function(response) {
+					// Success
+					successFct(response);
+				}, function(response) {
+					// Fail
+					errorFct(response);
 				}
-			});
-			if (alreadyUsed)
-				return false;
-			users.push({ username: name, email: mail, password: pass});
-			user = { username: name, email: mail };
-			return true;
+			);
 		},
-		// Look in our database if the user exists
-		connect: function(name, pass) {
-			if (isConnected)
-				return isConnected;
-			angular.forEach(users, function(cur) {
-				if (cur.username == name && cur.password == pass)
-				{
-					user = { username: cur.username, email: cur.email };
-					isConnected = true;
-					return;
+		// Try to connect the user, and returns a token if successfully
+		connect: function(curUser, successFct, errorFct) {
+			// To avoid script injection (remove dangerous html)
+			curUser.email = $sanitize(curUser.email);
+			curUser.password = $sanitize(curUser.password);
+			// Request the server to try to connect the user
+			$http.post(server.url + ":" + server.port + '/connect', curUser).then(
+				function(response) {
+					// Success
+					if (response.data != undefined) {
+						user = response.data;
+						$http.defaults.headers.common['authorization'] = user.token;
+						successFct(response);
+					}
+					else
+						errorFct(response);
+				}, function(response) {
+					// Fail
+					errorFct(response);
 				}
-			});
-			return isConnected;
+			);
 		},
 		// Disconnect the user
 		disconnect: function() {

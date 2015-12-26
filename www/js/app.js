@@ -1,6 +1,8 @@
 // Ionic Starter App
 angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'pascalprecht.translate', 'ngSanitize'])
 
+.constant("server", { url: "http://173.255.197.21", port: "8080" })
+
 .run(function($ionicPlatform, $rootScope, $state, UserService) {
     $ionicPlatform.ready(function() {
         // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
@@ -15,45 +17,28 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'pa
         }
         ionic.Platform.isFullScreen = true;
     });
-    // Every time the user change to another page
-    $rootScope.$on('$stateChangeStart', function(event, toState, toStateParams) {
-        if (toState && toState.data && toState.data.permission == true && UserService.isUserConnected() == false) {
-            event.preventDefault();
-            $state.go("login");
-        }
-    });
 })
 
 .config(function($stateProvider, $urlRouterProvider, $translateProvider) {
 
     // Here we define all the routes
-    // The permission field is used to know if the user has to be logged in to access this page
     $stateProvider
     .state('onBoarding', {
         url: '/onBoarding',
         templateUrl: 'templates/onBoardingPage.html',
-        controller: 'OnBoardingCtrl',
-        data: {
-            permission: false
-        }
+        controller: 'OnBoardingCtrl'
     })
 
     .state('login', {
         url: '/login',
         templateUrl: 'templates/login.html',
-        controller: 'LoginCtrl',
-        data: {
-            permission: false
-        }
+        controller: 'LoginCtrl'
     })
 
     .state('newAccount', {
         url: '/newAccount',
         templateUrl: 'templates/newAccount.html',
-        controller: 'NewAccountCtrl',
-        data: {
-            permission: false
-        }
+        controller: 'NewAccountCtrl'
     })
 
     .state('menu', {
@@ -70,9 +55,6 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'pa
                 templateUrl: 'templates/myDecks.html',
                 controller: 'MyDecksCtrl'
             }
-        },
-        data: {
-            permission: true
         }
     })
 
@@ -83,9 +65,6 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'pa
                 templateUrl: 'templates/createDeck.html',
                 controller: 'CreateDeckCtrl'
             }
-        },
-        data: {
-            permission: true
         }
     })
 
@@ -98,9 +77,6 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'pa
                 templateUrl: 'templates/displayDeck.html',
                 controller: 'DisplayDeckCtrl'
             }
-        },
-        data: {
-            permission: true
         }
     })
 
@@ -114,9 +90,6 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'pa
                 templateUrl: 'templates/displayCard.html',
                 controller: 'DisplayCardCtrl'
             }
-        },
-        data: {
-            permission: true
         }
     })
 
@@ -129,9 +102,6 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'pa
                 templateUrl: 'templates/createCard.html',
                 controller: 'CreateCardCtrl'
             }
-        },
-        data: {
-            permission: true
         }
     });
 
@@ -219,7 +189,8 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'pa
             "Error-fields": "Error, please fill all the fields",
             "Email-incorrect": "Error, please enter a correct email address",
             "No-deck-name": "Error, please enter a name for the deck",
-            "Cannot-get-deck": "Error, impossible to find the deck"
+            "Cannot-get-deck": "Error, impossible to find the deck",
+            "Error-token": "Error, failed to authenticate the token"
         }
     });
 

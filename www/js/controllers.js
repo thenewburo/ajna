@@ -40,7 +40,7 @@ angular.module('controllers', [])
 	// This function checks all the fields and returns 0 if everything is correct, else returns an error code
 	checkLoginFields = function() {
 		// One of the fields is empty
-		if (!$scope.loginData.username || $scope.loginData.username.length <= 0 ||
+		if (!$scope.loginData.email || $scope.loginData.email.length <= 0 ||
 			!$scope.loginData.password || $scope.loginData.password.length <= 0)
 			return 1;
 		return 0;
@@ -53,7 +53,8 @@ angular.module('controllers', [])
 
 			// Everything is correct, we can try to connect but still check for an error
 			case 0:
-				if (UserService.connect($scope.loginData.username, $scope.loginData.password)) {
+				UserService.connect($scope.loginData, function(response) {
+					// Success
 					// Reset the fields
 					$scope.loginData = {};
 					// Make the next page the root history
@@ -62,9 +63,13 @@ angular.module('controllers', [])
 					});
 					// Redirect to 'My decks' page
 					$state.go("menu.myDecks");
-				}
-				else
-					PopupService.showAlert($translate.instant('LOGIN.Sign-in'), $translate.instant('ERROR.Cannot-connect'));
+				}, function(response) {
+					// Fail
+					if (response.data != undefined && response.data.title != undefined && response.data.message != undefined)
+						PopupService.showAlert($translate.instant(response.data.title), $translate.instant(response.data.message));
+					else
+						PopupService.showAlert($translate.instant('LOGIN.Sign-in'), $translate.instant('ERROR.Cannot-connect'));
+				});
 				break;
 
 			// An error happened
@@ -105,12 +110,16 @@ angular.module('controllers', [])
 			// Everything is correct, we can try to create the account but still check if email address not already used
 			case 0:
 				// Try to create an account
-				if (UserService.createAccount($scope.accountData.username, $scope.accountData.email, $scope.accountData.password)) {
+				UserService.createAccount($scope.accountData, function(response) {
+					// Success
+					$scope.accountData = {};
 					$state.go("login");
 					PopupService.showAlert($translate.instant('NEWACCOUNT.New-account'), $translate.instant('NEWACCOUNT.Account-created'));
-				}
-				else
-					PopupService.showAlert($translate.instant('NEWACCOUNT.New-account'), $translate.instant('ERROR.Email-used'));
+				}, function(response) {
+					// Fail
+					if (response.data != undefined && response.data.title != undefined && response.data.message != undefined)
+						PopupService.showAlert($translate.instant(response.data.title), $translate.instant(response.data.message));
+				});
 				break;
 
 			// One field is empty
@@ -142,7 +151,6 @@ angular.module('controllers', [])
 	// Disconnect the user
 	$scope.logout = function() {
 		UserService.disconnect();
-
 		$state.go("login");
 		$ionicHistory.nextViewOptions({
 			historyRoot: true
