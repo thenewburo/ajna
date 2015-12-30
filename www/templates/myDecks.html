@@ -27,7 +27,7 @@
     <!-- Content -->
 	<ion-content>
 		<ul class="list">
-			<a ng-repeat="deck in myDecks track by deck.id" class="item item-avatar" ng-click="displayDeck(deck.id)" on-hold="deleteDeck(deck)">
+			<a ng-repeat="deck in getDecks()" class="item item-avatar" ng-click="displayDeck(deck._id)" on-hold="deleteDeck(deck)">
 				<h2>{{deck.name}}</h2>
 				<p>
 					<i class="ion-ios-eye-outline"></i>

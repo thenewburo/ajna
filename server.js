@@ -6,30 +6,36 @@ var morgan      = require('morgan');
 var mongoose    = require('mongoose');
 var cors 		= require('cors');
 var bcrypt		= require('bcrypt-nodejs');
-
-var jwt    		= require('jsonwebtoken'); // used to create, sign, and verify tokens
-var config 		= require('./server/config'); // get our config file
-var User   		= require('./server/models/user'); // get our user mongoose model
+// used to create, sign, and verify tokens
+var jwt    		= require('jsonwebtoken');
+// get our config file
+var config 		= require('./server/config');
+// get our mongoose models
+var User   		= require('./server/models/user');
+var Tag   		= require('./server/models/tag');
+var Deck   		= require('./server/models/deck');
     
 // =======================
 // Configuration =========
 // =======================
+// use body parser so we can get info from POST and/or URL parameters
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
+app.use(cors());
+// connect to database
+mongoose.connect(config.database);
+// secret variable
+app.set('superSecret', config.secret);
+// use morgan to log requests to the console
+app.use(morgan('dev'));
+
 app.all('*', function(req, res, next) {
 	res.header('Access-Control-Allow-Origin', '*');
 	res.header('Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, OPTIONS');
 	res.header('Access-Control-Allow-Headers', 'Content-Type');
 	next();
 });
-// connect to database
-mongoose.connect(config.database);
-// secret variable
-app.set('superSecret', config.secret);
-// use body parser so we can get info from POST and/or URL parameters
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
-app.use(cors());
-// use morgan to log requests to the console
-app.use(morgan('dev'));
 
 // =======================
 // Routes ================
@@ -37,7 +43,7 @@ app.use(morgan('dev'));
 // route to create a new user in our database
 app.post('/createAccount', function(req, res) {
 	// One of the fields is empty
-	if (req.body == undefined || req.body.username == undefined || req.body.username.length <= 0 ||
+	if (req.body.username == undefined || req.body.username.length <= 0 ||
 		req.body.email == undefined || req.body.email.length <= 0 ||
 		req.body.password == undefined || req.body.password.length <= 0)
 		return res.status(400).json({ title: "NEWACCOUNT.New-account", message: "ERROR.Error-fields" });
@@ -54,11 +60,7 @@ app.post('/createAccount', function(req, res) {
 		// Email is good, we can create the user
 		else {
 			// Create the new user
-			var newUser = new User({
-				name: req.body.username,
-				email: req.body.email.toLowerCase(),
-				password: req.body.password
-			});
+			var newUser = new User({ name: req.body.username, email: req.body.email.toLowerCase(), password: req.body.password, decks: [] });
 			// bcrypt the password
 			bcrypt.hash(newUser.password, null, null, function(err, hash) {
 				if (err) return res.status(400).json({ title: "NEWACCOUNT.New-account", message: "ERROR.Error-occurred" });
@@ -78,13 +80,12 @@ app.post('/createAccount', function(req, res) {
 app.post('/connect', function(req, res) {
 
 	// One of the fields is empty
-	if (req.body == undefined || req.body.email == undefined || req.body.email.length <= 0 ||
-		req.body.password == undefined || req.body.password.length <= 0)
+	if (req.body.email == undefined || req.body.email.length <= 0 || req.body.password == undefined || req.body.password.length <= 0)
 		return res.status(400).json({ title: "LOGIN.Sign-in", message: "ERROR.Error-fields" });
 
 	// find the user
 	User.findOne({ email: req.body.email.toLowerCase() }, function(err, user) {
-    	if (err) throw err;
+    	if (err) return res.status(400).json({ title: "LOGIN.Sign-in", message: "ERROR.Cannot-connect" });
     	// User not found
 		if (!user)
 			return res.status(400).json({ title: "LOGIN.Sign-in", message: "ERROR.Cannot-connect" });
@@ -116,6 +117,10 @@ app.post('/connect', function(req, res) {
 // get an instance of the router for api routes
 var apiRoutes = express.Router(); 
 
+// ----------------------------------
+// Athentication
+// ----------------------------------
+// 
 // route middleware to verify a token
 apiRoutes.use(function(req, res, next) {
 	// check header or url parameters or post parameters for token
@@ -139,10 +144,158 @@ apiRoutes.use(function(req, res, next) {
 		return res.status(403).json({ title: "ERROR.Error", message: "ERROR.Error-token" });
 	}
 });
-
+// route to verify a user is connected (valid token)
 apiRoutes.get('/authenticated', function(req, res) {
 	res.sendStatus(200);
 });
+
+
+
+// ----------------------------------
+// Add, remove and get decks
+// ----------------------------------
+// 
+// route to add a deck in the user's list of decks
+apiRoutes.post('/addDeck', function(req, res) {
+	// One of the fields is empty
+	if (req.decoded == undefined || req.decoded.email == undefined || req.decoded.email.length <= 0 || req.body.deck == undefined)
+		return res.status(400).json({ title: "CREATEDECK.Create-deck", message: "ERROR.Error-occurred" });
+
+	// find the user
+	User.findOne({ email: req.decoded.email.toLowerCase() }, function(err, user) {
+    	if (err) return res.status(400).json({ title: "CREATEDECK.Create-deck", message: "ERROR.Error-occurred" });
+    	// User not found
+		if (!user)
+			return res.status(400).json({ title: "CREATEDECK.Create-deck", message: "ERROR.Error-occurred" });
+		// User found
+		else {
+			// create the new deck object
+			var newDeck = new Deck({ name: req.body.deck.name, cards: [], tags: [], author: user._id,
+									description: req.body.deck.description, isOnline: false, hasBeenOnline: false });
+			// put all the tags id
+			for (index in req.body.deck.tags)
+				newDeck.tags.push(req.body.deck.tags[index]);
+			// save it in database
+			newDeck.save(function(err) {
+				if (err) return res.status(400).json({ title: "CREATEDECK.Create-deck", message: "ERROR.Error-occurred" });
+				// Deck successfully created
+				// updating the user
+				user.decks.push(newDeck._id);
+				user.save(function(err) {
+					if (err) return res.status(400).json({ title: "CREATEDECK.Create-deck", message: "ERROR.Error-occurred" });
+					// User successfully created
+					res.status(200).json({ deck: newDeck });
+				});
+			});
+		}
+	});
+});
+// route to get all the user's deck(s)
+apiRoutes.get('/getDecks', function(req, res) {
+	// One of the fields is empty
+	if (req.decoded == undefined || req.decoded.email == undefined || req.decoded.email.length <= 0)
+		return res.status(400).json({ title: "MYDECKS.My-decks", message: "ERROR.Error-occurred" });
+
+	// find the user
+	User.findOne({ email: req.decoded.email.toLowerCase() }, function(err, user) {
+    	if (err) return res.status(400).json({ title: "MYDECKS.My-decks", message: "ERROR.Error-occurred" });
+    	// User not found
+		if (!user)
+			return res.status(400).json({ title: "MYDECKS.My-decks", message: "ERROR.Error-occurred" });
+		// User found
+		else {
+			// since we only store deck ID in the user's list, we need to retrive all the decks from the database
+			Deck.find({ '_id': { $in: user.decks } }, function(err, userDecks) {
+				if (err) return res.status(400).json({ title: "MYDECKS.My-decks", message: "ERROR.Error-occurred" });
+				// return all the decks of the user
+				return res.status(200).json({ decks: userDecks });
+			});
+		}
+	});
+});
+// route to delete a user's deck
+apiRoutes.post('/deleteDeck', function(req, res) {
+	// One of the fields is empty
+	if (req.decoded == undefined || req.decoded.email == undefined || req.decoded.email.length <= 0 ||
+		req.body.deck == undefined)
+		return res.status(400).json({ title: "MYDECKS.Delete-deck", message: "ERROR.Error-occurred" });
+	// find the user
+	User.findOne({ email: req.decoded.email.toLowerCase() }, function(err, user) {
+    	if (err) return res.status(400).json({ title: "MYDECKS.Delete-deck", message: "ERROR.Error-occurred" });
+    	// User not found
+		if (!user)
+			return res.status(400).json({ title: "MYDECKS.Delete-deck", message: "ERROR.Error-occurred" });
+		// User found
+		else {
+			// Remove the deck from the user table
+			for (index in user.decks) {
+				if (user.decks[index] == req.body.deck._id) {
+					user.decks.splice(index, 1);
+				}
+			}
+			// Update the user in database
+			user.save(function(err) {
+				if (err) return res.status(400).json({ title: "MYDECKS.Delete-deck", message: "ERROR.Error-occurred" });
+				// Check if we can remove the deck from the deck table (we keep it if it is/was online)
+				Deck.findOne({ '_id': req.body.deck._id }, function(err, deck) {
+					if (!err && deck.hasBeenOnline == false)
+						Deck.find({ '_id': req.body.deck._id }).remove().exec();
+					// since we only store deck ID in the user's list, we need to retrive all the decks from the database
+					Deck.find({ '_id': { $in: user.decks } }, function(err, userDecks) {
+						if (err) return res.status(400).json({ title: "MYDECKS.Delete-deck", message: "ERROR.Error-occurred" });
+						// return all the decks of the user
+						return res.status(200).json({ decks: userDecks });
+					});
+				});
+			});
+		}
+	});
+});
+
+
+
+// ----------------------------------
+// Add / delete cards
+// ----------------------------------
+//
+// route to add a card in a deck
+apiRoutes.post('/addCard', function(req, res) {
+	// One of the fields is empty
+	if (req.body.deck == undefined || req.body.deck._id == undefined)
+		return res.status(400).json({ title: "CREATECARD.Create-card", message: "ERROR.Error-occurred" });
+
+	// find the user
+	Deck.findOne({ _id: req.body.deck._id }, function(err, deck) {
+    	if (err) return res.status(400).json({ title: "CREATECARD.Create-card", message: "ERROR.Cannot-get-deck" });
+    	// Deck not found
+		if (!deck)
+			return res.status(400).json({ title: "CREATECARD.Create-card", message: "ERROR.Cannot-get-deck" });
+		// Deck found
+		else {
+			deck.cards = req.body.deck.cards;
+			deck.save(function(err) {
+				if (err) return res.status(400).json({ title: "CREATECARD.Create-card", message: "ERROR.Error-occurred" });
+				// Deck successfully updated
+				res.sendStatus(200);
+			});
+		}
+	});
+});
+
+
+
+// ----------------------------------
+// Get tags
+// ----------------------------------
+// 
+// route to get all the tags
+apiRoutes.get('/getTags', function(req, res) {
+	Tag.find({}, function(err, tags) {
+		return res.status(200).json({ tags: tags });
+	});
+});
+
+
 
 // apply the routes to our application with the prefix /api
 app.use('/api', apiRoutes);

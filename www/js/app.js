@@ -3,14 +3,13 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'pa
 
 .constant("server", { url: "http://173.255.197.21", port: "8080" })
 
-.run(function($ionicPlatform, $rootScope, $state, UserService) {
+.run(function($ionicPlatform) {
     $ionicPlatform.ready(function() {
         // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
         // for form inputs)
         if (window.cordova && window.cordova.plugins.Keyboard) {
             //cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
             //cordova.plugins.Keyboard.disableScroll(true);
-
         }
         if (window.StatusBar) {
             StatusBar.hide();
@@ -50,6 +49,7 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'pa
 
     .state('menu.myDecks', {
         url: '/myDecks',
+        cache: false,
         views: {
             'menuContent': {
                 templateUrl: 'templates/myDecks.html',
@@ -60,6 +60,7 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'pa
 
     .state('menu.createDeck', {
         url: '/createDeck',
+        cache: false,
         views: {
             'menuContent': {
                 templateUrl: 'templates/createDeck.html',
@@ -71,6 +72,7 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'pa
     // deckId: used to find the deck to display
     .state('menu.displayDeck', {
         url: '/displayDeck',
+        cache: false,
         params: { deckId: null },
         views: {
             'menuContent': {
@@ -84,6 +86,7 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'pa
     // studyMode (boolean): if true we use our algorithm, if false we just iterate
     .state('menu.displayCard', {
         url: '/displayCard',
+        cache: false,
         params: { deckId: null, cardId: null, studyMode: null },
         views: {
             'menuContent': {
@@ -96,6 +99,7 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'pa
     // creatingDeck (boolean): used to know if we come from the 'Create new deck' page
     .state('menu.createCard', {
         url: '/createCard',
+        cache: false,
         params: { deck: null, creatingDeck: null },
         views: {
             'menuContent': {

@@ -51,7 +51,7 @@
 
 		<!-- List of questions -->
 		<ul class="list">
-			<div ng-click="studyDeck(false, card.id)" ng-repeat="card in currentDeck.cards track by card.id" class="item row" on-hold="deleteCard(card)">
+			<div ng-repeat="card in currentDeck.cards track by card.question" ng-click="studyDeck(false, card.question)" class="item row" on-hold="deleteCard(card)">
 				<div class="indexQuestionCol">
 					<span>{{$index + 1}}</span>
 				</div>

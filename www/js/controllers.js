@@ -2,15 +2,6 @@ angular.module('controllers', [])
 
 .controller('OnBoardingCtrl', function($scope, $ionicHistory, $state, $ionicSlideBoxDelegate, UserService) {
 
-	// If the user is already authenticated with a valid token in his cookie
-	UserService.isAuthenticated(function(response) {
-		// Make the next page the root history, so we can't use the back button to come back to the previous page
-		$ionicHistory.nextViewOptions({
-			disableBack: true
-		});
-		$state.go("menu.myDecks");
-	});
-
 	// Used to remove the slide bounce when on the first and last slide
 	$scope.myActiveSlide = 0;
 
@@ -43,15 +34,6 @@ angular.module('controllers', [])
 })
 
 .controller('LoginCtrl', function($scope, $state, $translate, $ionicHistory, UserService, PopupService) {
-
-	// If the user is already authenticated with a valid token in his cookie
-	UserService.isAuthenticated(function(response) {
-		// Make the next page the root history, so we can't use the back button to come back to the previous page
-		$ionicHistory.nextViewOptions({
-			disableBack: true
-		});
-		$state.go("menu.myDecks");
-	});
 
 	// The user's login data
 	$scope.loginData = {};
@@ -179,16 +161,18 @@ angular.module('controllers', [])
 	};
 })
 
-.controller('MyDecksCtrl', function($scope, $ionicPopover, $state, $ionicHistory, $translate, DeckService, PopupService) {
+.controller('MyDecksCtrl', function($scope, $ionicPopover, $state, $ionicHistory, $translate, DeckService, TagService, PopupService) {
 	// User's decks
 	$scope.myDecks = [];
-
-	// Ask our deckService to get all the decks
-	$scope.myDecks = DeckService.getDecks();
 
 	// Get the number of unseen cards
 	$scope.numberUnseenCards = function(deck) {
 		return DeckService.getNbUnseenCards(deck);
+	};
+
+	// Get the user's deck
+	$scope.getDecks = function() {
+		return DeckService.getDecks();
 	};
 
 	// Redirect to display a deck
@@ -212,8 +196,6 @@ angular.module('controllers', [])
 			}
 		);
 	};
-
-
 
 	// Get the popover template
 	$ionicPopover.fromTemplateUrl('myDecksPopover.html', {
@@ -270,21 +252,21 @@ angular.module('controllers', [])
 	};
 })
 
-.controller('CreateCardCtrl', function($scope, $stateParams, $state, $translate, $ionicHistory, $sce, $timeout, PopupService, TagService, DeckService, CardService) {
+.controller('CreateCardCtrl', function($scope, $stateParams, $state, $translate, $ionicHistory, $sce, $timeout, UserService, PopupService, TagService, DeckService, CardService) {
 	
 	$scope.currentCard = DeckService.newCard();
 	// Variable used to display the tags results (autocomplete) and store the user input
 	$scope.search = TagService.newSearch();
-	// We get the deck sent in parameter (we will add the card in that deck)
-	$scope.currentDeck = $stateParams.deck;
-	// We get the boolean to know if we are creating a new deck along with the card
-	$scope.creatingDeck = $stateParams.creatingDeck
 	// We get the type of cards
 	$scope.cardTypes = CardService.getCardTypes();
 	// Contains the HTML code for the answer (Fill in the blank mode only)
 	$scope.htmlAnswer = "<span></span>";
 	$scope.blanksValues = new Array();
 
+	// We get the deck sent in parameter (we will add the card in that deck)
+	$scope.currentDeck = $stateParams.deck;
+	// We get the boolean to know if we are creating a new deck along with the card
+	$scope.creatingDeck = $stateParams.creatingDeck
 	// Check we successfully got the boolean
 	if ($scope.creatingDeck == undefined) {
 		PopupService.showAlert($translate.instant('ERROR.Error'), $translate.instant('ERROR.Error-occurred'));
@@ -307,10 +289,11 @@ angular.module('controllers', [])
 			});
 			$state.go("menu.myDecks");
 		}
+		return;
 	}
 	// If we have an ID field in the deck, use the DeckService to update the deck
-	if ($scope.currentDeck.id != undefined) {
-		var updatedDeck = DeckService.getDeckWithId($scope.currentDeck.id);
+	if ($scope.currentDeck._id != undefined) {
+		var updatedDeck = DeckService.getDeckWithId($scope.currentDeck._id);
 		if (updatedDeck != null)
 			$scope.currentDeck = updatedDeck;
 	}
@@ -350,23 +333,38 @@ angular.module('controllers', [])
 		if ($scope.currentCard.question.length > 0 && $scope.currentCard.answer.length > 0) {
 			if ($scope.creatingDeck) {
 				// Add the deck in our list of decks (we send a copy)
-				$scope.currentDeck = DeckService.addDeck(_.extend({}, $scope.currentDeck));
-			}
-			// Add the card in the deck
-			$scope.currentDeck = DeckService.addCard($scope.currentCard, $scope.currentDeck);
-			// Reset data form
-			$scope.currentCard = DeckService.newCard();
-			$scope.search = TagService.newSearch();
-
-			if ($scope.creatingDeck) {
-				// Make the next page the root history
-				$ionicHistory.nextViewOptions({
-					disableBack: true
+				var newDeck = DeckService.addDeck(UserService.getEmail(), _.extend({}, $scope.currentDeck));
+				// When the DeckService has created the deck, we can add the card
+				$scope.createDeck.promise.then(function() {
+					// If we cannot added the new deck, we display an error and return
+					if (newDeck._id == undefined) {
+						PopupService.showAlert($translate.instant('CREATECARD.Create-card'), $translate.instant('ERROR.Error-occurred'));
+						return;
+					}
+					// Else, we keep going
+					$scope.currentDeck = newDeck;
+					// Add the card in the deck
+					$scope.currentDeck = DeckService.addCard($scope.currentCard, $scope.currentDeck);
+					DeckService.getDecksDatabase();
+					// Reset data form
+					$scope.currentCard = DeckService.newCard();
+					$scope.search = TagService.newSearch();
+					// Make the next page the root history
+					$ionicHistory.nextViewOptions({
+						disableBack: true
+					});
+					$state.go("menu.myDecks");
 				});
-				$state.go("menu.myDecks");
 			}
-			else
-				$state.go("menu.displayDeck", { deckId: $scope.currentDeck.id });
+			else {
+				// Add the card in the deck
+				$scope.currentDeck = DeckService.addCard($scope.currentCard, $scope.currentDeck);
+				// Reset data form
+				$scope.currentCard = DeckService.newCard();
+				$scope.search = TagService.newSearch();
+
+				$state.go("menu.displayDeck", { deckId: $scope.currentDeck._id });
+			}
 		}
 		else
 			PopupService.showAlert($translate.instant('CREATECARD.Create-card'), $translate.instant('ERROR.Error-fields'));
@@ -466,7 +464,7 @@ angular.module('controllers', [])
 			return;
 		}
 		// Redirect to the 'Display card' page, and pass as parameter the deck
-		$state.go("menu.displayCard", { deckId: $scope.currentDeck.id, cardId: cardId, studyMode: studyMode });
+		$state.go("menu.displayCard", { deckId: $scope.currentDeck._id, cardId: cardId, studyMode: studyMode });
 	};
 
 	// Ask the user if he wants to delete the card
@@ -510,7 +508,7 @@ angular.module('controllers', [])
 	});
 })
 
-.controller('DisplayCardCtrl', function($scope, $stateParams, $timeout, CardService, DeckService) {
+.controller('DisplayCardCtrl', function($scope, $stateParams, $timeout, $translate, $state, CardService, PopupService, DeckService) {
 	
 	// We get the deck sent in parameter (we will display that deck)
 	$scope.currentDeckId = $stateParams.deckId;
@@ -590,12 +588,17 @@ angular.module('controllers', [])
 	$scope.currentDeck = DeckService.getDeckWithId($scope.currentDeckId);
 	// If we don't have a card ID, we use the getNextCard function, but we reset the nbCardsSaw counter to 0
 	// because that's our first card
-	if ($scope.cardId == undefined)
+	if ($scope.cardId == undefined) {
 		$scope.currentCard = CardService.getNextCard(null, $scope.currentDeck, $scope.studyMode);
+		if ($scope.currentCard == null && $scope.currentDeckId != undefined) {
+			PopupService.showAlert($translate.instant('ERROR.Error'), $translate.instant('ERROR.Cannot-get-deck'));
+			$state.go("menu.myDecks");
+		}
+	}
 	else {
 		// We have a card ID, so we just need to find it in the deck, it will be our first card
 		angular.forEach($scope.currentDeck.cards, function(curCard, index) {
-			if (curCard.id == $scope.cardId) {
+			if (curCard.question == $scope.cardId) {
 				$scope.currentCard = curCard;
 				CardService.addIndexInStack(index);
 				return;

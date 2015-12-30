@@ -17,8 +17,8 @@
             </div>
             <!-- Tags -->
             <div class="item tagLabel" ng-show="currentDeck.tags.length > 0">
-                <div class="tagBadge" ng-repeat="tagName in currentDeck.tags" ng-click="removeTag(tagName)">
-                    {{tagName}} <i class="ion-close-circled"></i>
+                <div class="tagBadge" ng-repeat="tag in currentDeck.tags" ng-click="removeTag(tag)">
+                    {{tag.name}} <i class="ion-close-circled"></i>
                 </div>
             </div>
             <div class="item tagInputLabel">
@@ -27,7 +27,7 @@
             </div>
             <!-- Autocomplete results -->
             <div class="list autoCompleteTagsList">
-                <a class="item" ng-repeat="result in search.foundTags" ng-click="addTag(result)">{{result}}</a>
+                <a class="item" ng-repeat="result in search.foundTags" ng-click="addTag(result)">{{result.name}}</a>
             </div>
         </div>
 
