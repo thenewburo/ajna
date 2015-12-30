@@ -18,8 +18,11 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'pa
     });
 })
 
-.config(function($stateProvider, $urlRouterProvider, $translateProvider) {
+.config(function($stateProvider, $urlRouterProvider, $translateProvider, $httpProvider) {
 
+    // If we get a 403 response from a request, redirect to login page
+    $httpProvider.interceptors.push('responseObserver');
+    
     // Here we define all the routes
     $stateProvider
     .state('onBoarding', {

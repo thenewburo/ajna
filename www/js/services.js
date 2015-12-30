@@ -1,5 +1,19 @@
 angular.module('services', [])
 
+// This factory check the http response, and redirect if needed
+.factory('responseObserver', function responseObserver($q, $window) {
+    return {
+        'responseError': function(errorResponse) {
+            switch (errorResponse.status) {
+	            case 403:
+	                $window.location = '/#/login';
+	                break;
+            }
+            return $q.reject(errorResponse);
+        }
+    };
+})
+
 // This factory is used to display popups
 .factory('PopupService', function($ionicPopup, $translate) {
 	return {
@@ -277,7 +291,7 @@ angular.module('services', [])
 			// If not, push it in the deck and in our deck object to update the view
 			if (alreadyIn == false) {
 				curDeck.cards.push(card);
-				$http.post(server.url + ":" + server.port + '/api/addCard', { deck: curDeck }).then(
+				$http.post(server.url + ":" + server.port + '/api/saveDeck', { deck: curDeck }).then(
 					function(response) {}, function(response) {
 						// Fail
 						// Remove the card, since we could not add it
@@ -291,7 +305,14 @@ angular.module('services', [])
 		removeCard: function(card, deck) {
 			if (card == null || deck == null)
 				return;
-			deck.cards = _.reject(deck.cards, function(curCard) { return curCard._id == card._id; });
+			deck.cards = _.reject(deck.cards, function(curCard) { return curCard.question.toLowerCase() == card.question.toLowerCase(); });
+			$http.post(server.url + ":" + server.port + '/api/saveDeck', { deck: deck }).then(
+				function(response) {}, function(response) {
+					// Fail
+					// Add the card, since we could not remove it
+					deck.cards.push(card);
+				}
+			);
 		}
 	};
 })

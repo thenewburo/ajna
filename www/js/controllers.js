@@ -164,6 +164,9 @@ angular.module('controllers', [])
 .controller('MyDecksCtrl', function($scope, $ionicPopover, $state, $ionicHistory, $translate, DeckService, TagService, PopupService) {
 	// User's decks
 	$scope.myDecks = [];
+	DeckService.getDecksDatabase();
+	// Get the tags
+	TagService.getAllTags();
 
 	// Get the number of unseen cards
 	$scope.numberUnseenCards = function(deck) {

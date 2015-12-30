@@ -152,7 +152,7 @@ apiRoutes.get('/authenticated', function(req, res) {
 
 
 // ----------------------------------
-// Add, remove and get decks
+// Add, remove, get and save decks
 // ----------------------------------
 // 
 // route to add a deck in the user's list of decks
@@ -251,15 +251,8 @@ apiRoutes.post('/deleteDeck', function(req, res) {
 		}
 	});
 });
-
-
-
-// ----------------------------------
-// Add / delete cards
-// ----------------------------------
-//
-// route to add a card in a deck
-apiRoutes.post('/addCard', function(req, res) {
+// route to save a deck (add/remove card(s))
+apiRoutes.post('/saveDeck', function(req, res) {
 	// One of the fields is empty
 	if (req.body.deck == undefined || req.body.deck._id == undefined)
 		return res.status(400).json({ title: "CREATECARD.Create-card", message: "ERROR.Error-occurred" });
