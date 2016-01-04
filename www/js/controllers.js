@@ -151,6 +151,11 @@ angular.module('controllers', [])
 		});
 	};
 
+	// Redirect to "Deckstore" page
+	$scope.goToDeckstore = function() {
+		$state.go("menu.deckstore");
+	}
+
 	// Disconnect the user
 	$scope.logout = function() {
 		UserService.disconnect();
@@ -164,6 +169,7 @@ angular.module('controllers', [])
 .controller('MyDecksCtrl', function($scope, $ionicPopover, $state, $ionicHistory, $translate, DeckService, TagService, PopupService) {
 	// User's decks
 	$scope.myDecks = [];
+	DeckService.reset();
 	DeckService.getDecksDatabase();
 	// Get the tags
 	TagService.getAllTags();
@@ -193,6 +199,10 @@ angular.module('controllers', [])
 			function() {},
 			// If the user pressed Yes
 			function() {
+				if (deck.isOnline == true) {
+					PopupService.showAlert($translate.instant('ERROR.Error'), $translate.instant('ERROR.Error-deck-online'));
+					return;
+				}
 				DeckService.removeDeck(deck);
 				// Ask our deckService to get all the decks to refresh the list
 				$scope.myDecks = DeckService.getDecks();
@@ -434,10 +444,18 @@ angular.module('controllers', [])
 	};
 })
 
-.controller('DisplayDeckCtrl', function($scope, $stateParams, $state, $translate, $ionicPopover, PopupService, DeckService) {
+.controller('DisplayDeckCtrl', function($scope, $stateParams, $state, $translate, $ionicPopover, PopupService, DeckService, StoreService) {
 	
 	// We get the deck sent in parameter (we will display that deck)
 	$scope.currentDeckId = $stateParams.deckId;
+
+	// Variable to display the sell/remove buttons
+	$scope.isWorking = false;
+
+	// Variable to display the good html content
+	$scope.isSelling = false;
+	$scope.description = "";
+	$scope.price = "";
 
 	// Check we successfully got the deck id
 	if ($scope.currentDeckId == undefined) {
@@ -482,13 +500,65 @@ angular.module('controllers', [])
 		);
 	};
 
+	// Return a boolean if the StoreService is working
+	$scope.isWorking = function() {
+		return StoreService.isWorking();
+	};
+
+	// Boolean to choose which html content to display
+	$scope.goToSellDeck = function(val) {
+		$scope.isSelling = val;
+	};
+
 	// Sell the deck on the store
-	$scope.sellDeck = function() {
+	$scope.sellDeck = function(price, description) {
 		// If the deck is empty, display a popup and return
 		if ($scope.currentDeck.cards.length <= 0) {
 			PopupService.showAlert($translate.instant('DISPLAYDECK.Empty-deck'), $translate.instant('DISPLAYDECK.Empty-deck-message'));
 			return;
 		}
+		PopupService.showConfirm($translate.instant('DISPLAYDECK.Sell'), $translate.instant('DISPLAYDECK.Sure-sell'),
+			// If the user pressed No
+			function() {},
+			// If the user pressed Yes
+			function() {
+				// Get the price
+				var newPrice = 0;
+				if (price && price > 0)
+					newPrice = price;
+				// Put the deck on the store
+				StoreService.addDeckOnStore($scope.currentDeckId, description, newPrice,
+					function() {
+						// Success
+						$scope.currentDeck.isOnline = true;
+					}, function() {}
+				);
+				$scope.isSelling = false;
+			}
+		);
+	};
+
+	// Remove the deck from the store
+	$scope.removeDeck = function() {
+		// If the deck is empty, display a popup and return
+		if ($scope.currentDeck.cards.length <= 0) {
+			PopupService.showAlert($translate.instant('DISPLAYDECK.Empty-deck'), $translate.instant('DISPLAYDECK.Empty-deck-message'));
+			return;
+		}
+		// Ask the user if he is really sure he wants to remove this deck from the store
+		PopupService.showConfirm($translate.instant('DISPLAYDECK.Remove'), $translate.instant('DISPLAYDECK.Sure-remove'),
+			// If the user pressed No
+			function() {},
+			// If the user pressed Yes
+			function() {
+				StoreService.removeDeckFromStore($scope.currentDeckId,
+					function() {
+						// Success
+						$scope.currentDeck.isOnline = false;
+					}, function() {}
+				);
+			}
+		);
 	};
 
 
@@ -608,4 +678,29 @@ angular.module('controllers', [])
 			}
 		});
 	}
+})
+
+.controller('DeckstoreCtrl', function($scope, StoreService) {
+
+	// Ask the StoreService to update the user's decks in the store
+	StoreService.reset();
+	StoreService.getUserStoreDecksDatabase();
+
+	// Return a boolean if the StoreService is working
+	$scope.isWorking = function() {
+		return StoreService.isWorking();
+	};
+
+	// Return the user's decks currently in the store
+	$scope.getUserStoreDecks = function() {
+		return StoreService.getUserStoreDecks();
+	};
+	// Used to know if we still have decks to display
+	$scope.stillUserStoreDecks = function() {
+		return StoreService.stillUserStoreDecks();
+	};
+	// Ask for the next page
+	$scope.getNextUserStoreDecks = function() {
+		StoreService.getUserStoreDecksDatabase();
+	};
 });

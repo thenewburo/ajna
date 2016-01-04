@@ -313,6 +313,10 @@ angular.module('services', [])
 					deck.cards.push(card);
 				}
 			);
+		},
+		// Function to reset all the variables of this service
+		reset: function() {
+			decks = {};
 		}
 	};
 })
@@ -383,6 +387,90 @@ angular.module('services', [])
 		getPreviousCard: function(deck) {
 			cardsIndexStack = _.initial(cardsIndexStack);
 			return deck.cards[_.last(cardsIndexStack)];
+		}
+	};
+})
+
+// This factory is used to manage the decks
+.factory('StoreService', function($http, server) {
+
+	// Variable used to display the sell/remove buttons
+	var isWorking = false;
+
+	// User's decks
+	var userDecks = [];
+	// Contains the date of the last deck, to get the next ones
+	var userLastDate = undefined;
+
+	return {
+		// Return true if the service is working with the server, else return false
+		isWorking: function() {
+			return isWorking;
+		},
+
+		// Return all the decks for the current user
+		getUserStoreDecks: function() {
+			return userDecks;
+		},
+		// Return true if we don't have other user's decks to display
+		stillUserStoreDecks: function() {
+			if (userLastDate == null)
+				return false;
+			return true;
+		},
+		// Update the userDecks variable with the user's decks on the store
+		getUserStoreDecksDatabase: function() {
+			isWorking = true;
+			$http.post(server.url + ":" + server.port + '/api/getUserStoreDecks', { currentDate: userLastDate }).then(
+				function(response) {
+					// Success
+					if (response.data.userDecks) {
+						angular.forEach(response.data.userDecks, function(newDeck) {
+							userDecks.push(newDeck);
+						});
+					}
+					userLastDate = response.data.nextDate;
+					isWorking = false;
+				}, function(response) {
+					// Fail
+					isWorking = false;
+				}
+			);
+		},
+		// Add a deck on the store
+		addDeckOnStore: function(deckId, description, price, successFct, errorFct) {
+			isWorking = true;
+			$http.post(server.url + ":" + server.port + '/api/putDeckOnStore', { infos: { _id: deckId, description: description, price: price } }).then(
+				function(response) {
+					// Success
+					isWorking = false;
+					successFct();
+				}, function(response) {
+					// Fail
+					isWorking = false;
+					errorFct();
+				}
+			);
+		},
+		// Remove a deck from the store
+		removeDeckFromStore: function(deckId, successFct, errorFct) {
+			isWorking = true;
+			$http.post(server.url + ":" + server.port + '/api/removeDeckFromStore', { infos: { _id: deckId } }).then(
+				function(response) {
+					// Success
+					isWorking = false;
+					successFct();
+				}, function(response) {
+					// Fail
+					isWorking = false;
+					errorFct();
+				}
+			);
+		},
+		// Function to reset all the variables of this service
+		reset: function() {
+			userLastDate = undefined;
+			userDecks = [];
 		}
 	};
 });

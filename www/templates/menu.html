@@ -16,10 +16,19 @@
         </ion-header-bar>
         <ion-content>
             <ion-list>
+                <!-- My decks -->
                 <ion-item menu-close ng-click="goToMyDecks()">
+                    <span class="ion-home"></span>
                     {{'MYDECKS.My-decks' | translate}}
                 </ion-item>
+                <!-- Deckstore -->
+                <ion-item menu-close ng-click="goToDeckstore()">
+                    <span class="ion-android-cart"></span>
+                    {{'DECKSTORE.Deckstore' | translate}}
+                </ion-item>
+                <!-- Logout -->
                 <ion-item menu-close ng-click="logout()">
+                    <span class="ion-log-out"></span>
                     {{'LOGIN.Logout' | translate}}
                 </ion-item>
             </ion-list>

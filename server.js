@@ -14,6 +14,7 @@ var config 		= require('./server/config');
 var User   		= require('./server/models/user');
 var Tag   		= require('./server/models/tag');
 var Deck   		= require('./server/models/deck');
+var Store 		= require('./server/models/store');
     
 // =======================
 // Configuration =========
@@ -21,7 +22,6 @@ var Deck   		= require('./server/models/deck');
 // use body parser so we can get info from POST and/or URL parameters
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-
 app.use(cors());
 // connect to database
 mongoose.connect(config.database);
@@ -29,6 +29,8 @@ mongoose.connect(config.database);
 app.set('superSecret', config.secret);
 // use morgan to log requests to the console
 app.use(morgan('dev'));
+// how many decks we get for each request (deckstore only)
+var numberDecksPerRequest = 10;
 
 app.all('*', function(req, res, next) {
 	res.header('Access-Control-Allow-Origin', '*');
@@ -170,8 +172,10 @@ apiRoutes.post('/addDeck', function(req, res) {
 		// User found
 		else {
 			// create the new deck object
-			var newDeck = new Deck({ name: req.body.deck.name, cards: [], tags: [], author: user._id,
-									description: req.body.deck.description, isOnline: false, hasBeenOnline: false });
+			var newDeck = new Deck({
+				name: req.body.deck.name,
+				cards: [],
+				tags: [] });
 			// put all the tags id
 			for (index in req.body.deck.tags)
 				newDeck.tags.push(req.body.deck.tags[index]);
@@ -197,20 +201,16 @@ apiRoutes.get('/getDecks', function(req, res) {
 		return res.status(400).json({ title: "MYDECKS.My-decks", message: "ERROR.Error-occurred" });
 
 	// find the user
-	User.findOne({ email: req.decoded.email.toLowerCase() }, function(err, user) {
+	User.findOne({ email: req.decoded.email.toLowerCase() })
+		.populate('decks')
+		.exec(function(err, user) {
     	if (err) return res.status(400).json({ title: "MYDECKS.My-decks", message: "ERROR.Error-occurred" });
     	// User not found
 		if (!user)
 			return res.status(400).json({ title: "MYDECKS.My-decks", message: "ERROR.Error-occurred" });
 		// User found
-		else {
-			// since we only store deck ID in the user's list, we need to retrive all the decks from the database
-			Deck.find({ '_id': { $in: user.decks } }, function(err, userDecks) {
-				if (err) return res.status(400).json({ title: "MYDECKS.My-decks", message: "ERROR.Error-occurred" });
-				// return all the decks of the user
-				return res.status(200).json({ decks: userDecks });
-			});
-		}
+		else
+			return res.status(200).json({ decks: user.decks });
 	});
 });
 // route to delete a user's deck
@@ -238,7 +238,7 @@ apiRoutes.post('/deleteDeck', function(req, res) {
 				if (err) return res.status(400).json({ title: "MYDECKS.Delete-deck", message: "ERROR.Error-occurred" });
 				// Check if we can remove the deck from the deck table (we keep it if it is/was online)
 				Deck.findOne({ '_id': req.body.deck._id }, function(err, deck) {
-					if (!err && deck.hasBeenOnline == false)
+					if (!err)
 						Deck.find({ '_id': req.body.deck._id }).remove().exec();
 					// since we only store deck ID in the user's list, we need to retrive all the decks from the database
 					Deck.find({ '_id': { $in: user.decks } }, function(err, userDecks) {
@@ -257,7 +257,7 @@ apiRoutes.post('/saveDeck', function(req, res) {
 	if (req.body.deck == undefined || req.body.deck._id == undefined)
 		return res.status(400).json({ title: "CREATECARD.Create-card", message: "ERROR.Error-occurred" });
 
-	// find the user
+	// find the deck
 	Deck.findOne({ _id: req.body.deck._id }, function(err, deck) {
     	if (err) return res.status(400).json({ title: "CREATECARD.Create-card", message: "ERROR.Cannot-get-deck" });
     	// Deck not found
@@ -271,6 +271,137 @@ apiRoutes.post('/saveDeck', function(req, res) {
 				// Deck successfully updated
 				res.sendStatus(200);
 			});
+		}
+	});
+});
+
+
+
+// ----------------------------------
+// Deckstore
+// ----------------------------------
+//
+// route to put a deck on the store
+apiRoutes.post('/putDeckOnStore', function(req, res) {
+	// One of the fields is empty
+	if (req.decoded == undefined || req.decoded.email == undefined || req.decoded.email.length <= 0 ||
+		req.body.infos == undefined || req.body.infos._id == undefined)
+		return res.status(400).json({ title: "DECKSTORE.Deckstore", message: "ERROR.Error-occurred" });
+	// find the user
+	User.findOne({ email: req.decoded.email.toLowerCase() }, function(err, user) {
+    	if (err) return res.status(400).json({ title: "DECKSTORE.Deckstore", message: "ERROR.Error-occurred" });
+    	// User not found
+		if (!user)
+			return res.status(400).json({ title: "DECKSTORE.Deckstore", message: "ERROR.Error-occurred" });
+		// User found
+		else {
+			// find the deck
+			Deck.findOne({ _id: req.body.infos._id }, function(err, deck) {
+				if (err) return res.status(400).json({ title: "DECKSTORE.Deckstore", message: "ERROR.Cannot-get-deck" });
+				// Deck not found
+				if (!deck)
+					return res.status(400).json({ title: "DECKSTORE.Deckstore", message: "ERROR.Cannot-get-deck" });
+				// Deck found
+				else {
+					if (deck.cards.length <= 0)
+						return res.status(400).json({ title: "DECKSTORE.Deckstore", message: "ERROR.Error-occurred" });
+					deck.isOnline = true;
+					deck.save(function(err) {
+						if (err) return res.status(400).json({ title: "DECKSTORE.Deckstore", message: "ERROR.Error-occurred" });
+						// Deck successfully updated, we can add the element to the store
+						// Create the new store element
+						var newStoreElement = new Store({
+							deckId: deck._id,
+							deck: { name: deck.name, tags: deck.tags, cards: deck.cards, createdTime: deck.createdTime },
+							author: user._id });
+						// Update the price or description if needed
+						if (req.body.infos.description && req.body.infos.description.length > 0)
+							newStoreElement.description = req.body.infos.description;
+						if (req.body.infos.price && req.body.infos.price >= 0)
+							newStoreElement.price = req.body.infos.price;
+						// Save the element in database
+						newStoreElement.save(function(err) {
+							if (err) return res.status(400).json({ title: "DECKSTORE.Deckstore", message: "ERROR.Error-occurred" });
+							// Element successfully created, we can update the deck
+							res.sendStatus(200);
+						});
+					});
+				}
+			});
+		}
+	});
+});
+// route to remove a deck from the store
+apiRoutes.post('/removeDeckFromStore', function(req, res) {
+	// One of the fields is empty
+	if (req.decoded == undefined || req.decoded.email == undefined || req.decoded.email.length <= 0 ||
+		req.body.infos == undefined || req.body.infos._id == undefined)
+		return res.status(400).json({ title: "DECKSTORE.Deckstore", message: "ERROR.Error-occurred" });
+	// find the user
+	User.findOne({ email: req.decoded.email.toLowerCase() }, function(err, user) {
+    	if (err) return res.status(400).json({ title: "DECKSTORE.Deckstore", message: "ERROR.Error-occurred" });
+    	// User not found
+		if (!user)
+			return res.status(400).json({ title: "DECKSTORE.Deckstore", message: "ERROR.Error-occurred" });
+		// User found
+		else {
+			// Find the store element
+			Store.findOne({ deckId: req.body.infos._id, isOnline: true }, function(err, storeElement) {
+				if (err) return res.status(400).json({ title: "DECKSTORE.Deckstore", message: "ERROR.Cannot-get-deck" });
+				// Make it not visible in the store anymore (but still accessible for people who bought it)
+				storeElement.isOnline = false;
+				storeElement.save(function(err) {
+					if (err) return res.status(400).json({ title: "DECKSTORE.Deckstore", message: "ERROR.Error-occurred" });
+					// find the deck
+					Deck.findOne({ _id: req.body.infos._id }, function(err, deck) {
+				    	if (err) return res.status(400).json({ title: "DECKSTORE.Deckstore", message: "ERROR.Cannot-get-deck" });
+				    	// Deck not found
+						if (!deck)
+							return res.status(400).json({ title: "DECKSTORE.Deckstore", message: "ERROR.Cannot-get-deck" });
+						// Deck found
+						else {
+							deck.isOnline = false;
+							deck.save(function(err) {
+								if (err) return res.status(400).json({ title: "DECKSTORE.Deckstore", message: "ERROR.Error-occurred" });
+								// Deck successfully updated
+								res.sendStatus(200);
+							});
+						}
+					});
+				});
+			});
+		}
+	});
+});
+// route to get the user's decks on the store
+apiRoutes.post('/getUserStoreDecks', function(req, res) {
+	// One of the fields is empty
+	if (req.decoded == undefined || req.decoded.email == undefined || req.decoded.email.length <= 0)
+		return res.status(400).json({ title: "DECKSTORE.Deckstore", message: "ERROR.Error-occurred" });
+
+	// find the user
+	User.findOne({ email: req.decoded.email.toLowerCase() }, function(err, user) {
+    	if (err) return res.status(400).json({ title: "DECKSTORE.Deckstore", message: "ERROR.Error-occurred" });
+    	// User not found
+		if (!user)
+			return res.status(400).json({ title: "DECKSTORE.Deckstore", message: "ERROR.Error-occurred" });
+		// User found
+		else {
+			var query;
+			// If we have a current date, we need the decks after that date
+			if (req.body.currentDate != undefined)
+				query = Store.find({ author: user._id, isOnline: true, dateOfSale: {$lt: req.body.currentDate} });
+			else
+				query = Store.find({ author: user._id, isOnline: true });
+			query.sort({ dateOfSale: -1 }).limit(numberDecksPerRequest).populate('author')
+				.exec(function(err, decks) {
+					if (err) return res.status(400).json({ title: "DECKSTORE.Deckstore", message: "ERROR.Error-occurred" });
+					var nextDate = null;
+					if (decks && decks.length > 0)
+						nextDate = decks[decks.length - 1].dateOfSale;
+					return res.status(200).json({ userDecks: decks, nextDate: nextDate });
+				}
+			);
 		}
 	});
 });

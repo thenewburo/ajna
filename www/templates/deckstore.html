@@ -1,0 +1,56 @@
+<ion-view view-title="{{'DECKSTORE.Deckstore' | translate}}" class="deckstore">
+
+	<!-- Header -->
+    <ion-nav-bar class="bar-stable transparentBackground" align-title="center">
+        <ion-nav-back-button></ion-nav-back-button>
+        <ion-nav-buttons side="left">
+            <button class="button button-icon button-clear ion-navicon" menu-toggle="left"></button>
+        </ion-nav-buttons>
+    </ion-nav-bar>
+
+    <!-- Content -->
+	<ion-content scroll="false">
+
+        <!-- Search -->
+        <div class="row row-left h-10 searchStore">
+        </div>
+
+        <!-- New decks -->
+        <div class="h-30 decksStore newDecksStore">
+            <div class="storeTitle">
+                <span>{{'DECKSTORE.New-decks' | translate}}</span>
+            </div>
+            <div class="seeAllButton">
+                <span>{{'DECKSTORE.See-all' | translate}}</span>
+            </div>
+
+        </div>
+
+        <!-- Popular decks -->
+        <div class="h-30 decksStore popularDecksStore">
+            <div class="storeTitle">
+                <span>{{'DECKSTORE.Popular-decks' | translate}}</span>
+            </div>
+            <div class="seeAllButton">
+                <span>{{'DECKSTORE.See-all' | translate}}</span>
+            </div>
+
+        </div>
+
+        <!-- User's decks -->
+        <div class="h-30 decksStore userDecksStore">
+            <div class="storeTitle">
+                <span>{{'MYDECKS.My-decks' | translate}}</span>
+            </div>
+            <div class="seeAllButton">
+                <span>{{'DECKSTORE.See-all' | translate}}</span>
+            </div>
+            <div class="storeElement" ng-repeat="storeElement in getUserStoreDecks()" maintain-ratio>
+                {{storeElement.deck.name}}
+            </div>
+        </div>
+        <!--<button class="button" ng-show="isWorking() == false && stillUserStoreDecks() == true" ng-click="getNextUserStoreDecks()">Next</button>-->
+
+	</ion-content>
+
+</ion-view>

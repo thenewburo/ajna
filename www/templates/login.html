@@ -16,7 +16,7 @@
                         <i class="ion-person"></i>
                     </div>
                     <div class="col-xs-10 loginInput">
-                        <input type="text" ng-model="loginData.email" placeholder="{{'NEWACCOUNT.Email' | translate}}">
+                        <input type="email" name="username" ng-model="loginData.email" placeholder="{{'NEWACCOUNT.Email' | translate}}">
                     </div>
                 </label>
                 <!-- Password -->
@@ -25,7 +25,7 @@
                         <i class="ion-locked"></i>
                     </div>
                     <div class="col-xs-8 loginInput">
-                        <input type="password" ng-model="loginData.password" placeholder="{{'LOGIN.Password' | translate}}">
+                        <input type="password" name="password" ng-model="loginData.password" placeholder="{{'LOGIN.Password' | translate}}">
                     </div>
                     <div class="col-xs-2 loginHelpButton">
                         <i class="ion-ios-help-outline"></i>

@@ -20,7 +20,7 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'pa
 
 .config(function($stateProvider, $urlRouterProvider, $translateProvider, $httpProvider) {
 
-    // If we get a 403 response from a request, redirect to login page
+    // If we get a 403 response from a request, redirect to login page by using the 'responseObserver' service
     $httpProvider.interceptors.push('responseObserver');
     
     // Here we define all the routes
@@ -110,6 +110,17 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'pa
                 controller: 'CreateCardCtrl'
             }
         }
+    })
+
+    .state('menu.deckstore', {
+        url: '/deckstore',
+        cache: false,
+        views: {
+            'menuContent': {
+                templateUrl: 'templates/deckstore.html',
+                controller: 'DeckstoreCtrl'
+            }
+        }
     });
 
     // if none of the above states are matched, use this as the fallback
@@ -123,7 +134,8 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'pa
             "Done-button": "Done",
             "Success": "Success",
             "Yes": "Yes",
-            "No": "No"
+            "No": "No",
+            "Cancel": "Cancel"
         },
         ONBOARD: {
             "Text-page1": "Create your own flashcards in few minutes.",
@@ -177,6 +189,9 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'pa
             "Deck-options": "Deck options",
             "Custom-study": "Custom study",
             "Sell": "Sell",
+            "Sure-sell": "Are you sure you want to sell this deck on the store?",
+            "Remove": "Remove",
+            "Sure-remove": "Are you sure you want to remove this deck from the store?",
             "Study": "Study",
             "Empty-deck": "Empty deck",
             "Empty-deck-message": "The deck is empty, please add a card",
@@ -188,6 +203,14 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'pa
             "Previous-card": "Previous card",
             "Next-card": "Next card"
         },
+        DECKSTORE: {
+            "Deckstore": "Deckstore",
+            "Description": "Description",
+            "Price": "Price",
+            "See-all": "See all >",
+            "Popular-decks": "Popular decks",
+            "New-decks": "New decks"
+        },
         ERROR: {
             "Error": "Error",
             "Error-occurred": "An error occurred while processing your request",
@@ -197,7 +220,8 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'pa
             "Email-incorrect": "Error, please enter a correct email address",
             "No-deck-name": "Error, please enter a name for the deck",
             "Cannot-get-deck": "Error, impossible to find the deck",
-            "Error-token": "Error, failed to authenticate the token"
+            "Error-token": "Error, failed to authenticate the token",
+            "Error-deck-online": "Error, cannot delete a deck currently available on the store"
         }
     });
 

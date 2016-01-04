@@ -7,9 +7,6 @@ module.exports = mongoose.model('Deck', new Schema({
 	name: { type: String, required: true },
 	cards: [],
 	tags: [{ type: Schema.Types.ObjectId, ref: 'Tag' }],
-	author: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-	description: { type: String },
-	price: { type: Number },
-	isOnline: { type: Boolean, required: true },
-	hasBeenOnline: { type: Boolean, required: true }
+	isOnline: { type: Boolean, default: false, required: true },
+	createdTime: { type: Date, default: Date.now, required: true }
 }));
