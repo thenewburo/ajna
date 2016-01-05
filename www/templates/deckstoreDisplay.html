@@ -1,0 +1,24 @@
+<ion-view view-title="{{getTitle()}}" class="deckstore">
+
+	<!-- Header -->
+    <ion-nav-bar class="bar-stable transparentBackground" align-title="center">
+        <ion-nav-back-button></ion-nav-back-button>
+        <ion-nav-buttons side="left">
+            <button class="button button-icon button-clear ion-navicon" menu-toggle="left"></button>
+        </ion-nav-buttons>
+    </ion-nav-bar>
+
+    <!-- Content -->
+	<ion-content id="deckstoreDisplayScroll" scroll="true" direction="y" on-scroll="isScrolling()" delegate-handle="mainScroll">
+
+        <!-- New decks -->
+        <div class="seeAllDeckStore">
+            <div class="storeElement" ng-repeat="storeElement in getDecks()" maintain-ratio-height>
+                <!-- Deck -->
+                <div store-element my-store-element="storeElement" show-description="true"></div>
+            </div>
+        </div>
+
+	</ion-content>
+
+</ion-view>

@@ -189,6 +189,7 @@ angular.module('services', [])
 .factory('DeckService', function($http, $rootScope, $q, server) {
 
 	var decks = {};
+	var ownedDecks = {};
 
 	return {
 		// Create an empty deck
@@ -198,27 +199,46 @@ angular.module('services', [])
 		newCard: function() {
 			return { type: 1, question: '', answer: '', tags: [], seen: false };
 		},
+		// Add the deck in the owned list
+		addOwnedDeck: function(storeElement) {
+			ownedDecks.push(storeElement);
+		},
 		// Update the decks variable from the database
 		getDecksDatabase: function() {
-			// Used to notify the controller we are done
-			$rootScope.getDecks = $q.defer();
 			// Reset the decks variable
 			decks = {};
+			ownedDecks = {};
 			// Request the server to get all the user's deck(s)
 			$http.get(server.url + ":" + server.port + '/api/getDecks').then(
 				function(response) {
 					// Success
-					decks = response.data.decks;
-					$rootScope.getDecks.resolve();
-				}, function(response) {
-					// Fail
-					$rootScope.getDecks.resolve();
-				}
+					if (response.data.decks)
+						decks = response.data.decks;
+					if (response.data.ownedDecks)
+						ownedDecks = response.data.ownedDecks;
+				}, function(response) {}
 			);
 		},
 		// Returns all the decks
 		getDecks: function() {
 			return decks;
+		},
+		// Returns all the owned decks
+		getOwnedDecks: function() {
+			return ownedDecks;
+		},
+		buyDeck: function(storeElement, successFct, errorFct) {
+			// Request the server to add a new deck
+			$http.post(server.url + ":" + server.port + '/api/buyDeck', { storeElement: storeElement }).then(
+				function(response) {
+					// Success
+					ownedDecks.push(storeElement);
+					successFct();
+				}, function(response) {
+					// Fail
+					errorFct();
+				}
+			);
 		},
 		// Returns the number of unseen cards
 		getNbUnseenCards: function(deck) {
@@ -265,7 +285,7 @@ angular.module('services', [])
 			return deck;
 		},
 		// Remove a deck
-		removeDeck: function(deck) {
+		removeDeck: function(deck, successFct, errorFct) {
 			if (deck == null)
 				return;
 			// Request the server to delete the deck
@@ -273,7 +293,11 @@ angular.module('services', [])
 				function(response) {
 					// Success
 					decks = response.data.decks;
-				}, function(response) {}
+					successFct();
+				}, function(response) {
+					// Fail
+					errorFct();
+				}
 			);
 		},
 		// Add this card in the deck, and returns the deck up to date
@@ -302,21 +326,26 @@ angular.module('services', [])
 			return curDeck;
 		},
 		// Remove a card from a deck
-		removeCard: function(card, deck) {
+		removeCard: function(card, deck, successFct, errorFct) {
 			if (card == null || deck == null)
 				return;
 			deck.cards = _.reject(deck.cards, function(curCard) { return curCard.question.toLowerCase() == card.question.toLowerCase(); });
 			$http.post(server.url + ":" + server.port + '/api/saveDeck', { deck: deck }).then(
-				function(response) {}, function(response) {
+				function(response) {
+					// Success
+					successFct();
+				}, function(response) {
 					// Fail
 					// Add the card, since we could not remove it
 					deck.cards.push(card);
+					errorFct();
 				}
 			);
 		},
 		// Function to reset all the variables of this service
 		reset: function() {
 			decks = {};
+			ownedDecks = {};
 		}
 	};
 })
@@ -392,15 +421,43 @@ angular.module('services', [])
 })
 
 // This factory is used to manage the decks
-.factory('StoreService', function($http, server) {
+.factory('StoreService', function($http, $translate, server, DeckService) {
 
 	// Variable used to display the sell/remove buttons
 	var isWorking = false;
 
-	// User's decks
-	var userDecks = [];
-	// Contains the date of the last deck, to get the next ones
-	var userLastDate = undefined;
+	// New decks, and date for the next page
+	var newDecks = { decks: [], page: 0, endOfContent: false, isWorking: false };
+	// Popular decks, and date for the next page
+	var popularDecks = { decks: [], page: 0, endOfContent: false, isWorking: false };
+	// User's decks, and date for the next page
+	var userDecks = { decks: [], page: 0, endOfContent: false, isWorking: false };
+
+	// This function add all the decks in the list
+	addDecksToList = function(list, newDecks) {
+		// Get all the owned decks
+		var ownedDecks = DeckService.getOwnedDecks();
+		list.endOfContent = true;
+		angular.forEach(newDecks, function(newDeck) {
+			list.endOfContent = false;
+			// Check if we own this deck, if so we set a field isOwned
+			angular.forEach(ownedDecks, function(ownedDeck) {
+				if (ownedDeck.deckId == newDeck.deckId)
+					newDeck.isOwned = true;
+			});
+			list.decks.push(newDeck);
+		});
+	};
+
+	// Go through all the lists, and set the deck as owned
+	setDeckOwned = function(decks, storeElement) {
+		angular.forEach(decks, function(curStoreElement) {
+			if (curStoreElement._id == storeElement._id) {
+				curStoreElement.isOwned = true;
+				return;
+			}
+		});
+	};
 
 	return {
 		// Return true if the service is working with the server, else return false
@@ -408,41 +465,110 @@ angular.module('services', [])
 			return isWorking;
 		},
 
-		// Return all the decks for the current user
-		getUserStoreDecks: function() {
-			return userDecks;
+		// Function used when a user buy a deck, we set the deck as owned
+		setElementOwned: function(storeElement) {
+			setDeckOwned(newDecks.decks, storeElement);
+			setDeckOwned(popularDecks.decks, storeElement);
+			setDeckOwned(userDecks.decks, storeElement);
 		},
-		// Return true if we don't have other user's decks to display
-		stillUserStoreDecks: function() {
-			if (userLastDate == null)
-				return false;
-			return true;
-		},
-		// Update the userDecks variable with the user's decks on the store
-		getUserStoreDecksDatabase: function() {
-			isWorking = true;
-			$http.post(server.url + ":" + server.port + '/api/getUserStoreDecks', { currentDate: userLastDate }).then(
-				function(response) {
-					// Success
-					if (response.data.userDecks) {
-						angular.forEach(response.data.userDecks, function(newDeck) {
-							userDecks.push(newDeck);
-						});
+
+		// New decks
+		newDecks: {
+			// Return all the first most recent decks
+			getDecks: function() {
+				return newDecks.decks;
+			},
+			// Return the title for this category
+			getTitle: function() {
+				return $translate.instant('DECKSTORE.New-decks');
+			},
+			// Update the newDecks variable with the most recent decks on the store
+			getNextPage: function() {
+				// If we know there are no content anymore or the service is already requesting the server, return directly
+				if (newDecks.endOfContent == true || newDecks.isWorking == true)
+					return;
+				newDecks.isWorking = true;
+				$http.post(server.url + ":" + server.port + '/api/getNewStoreDecks', { currentPage: newDecks.page }).then(
+					function(response) {
+						// Success
+						if (response.data.newDecks)
+							addDecksToList(newDecks, response.data.newDecks);
+						newDecks.page += 1;
+						newDecks.isWorking = false;
+					}, function(response) {
+						// Fail
+						newDecks.isWorking = false;
 					}
-					userLastDate = response.data.nextDate;
-					isWorking = false;
-				}, function(response) {
-					// Fail
-					isWorking = false;
-				}
-			);
+				);
+			}
 		},
+
+		// Popular decks
+		popularDecks: {
+			// Return all the first most downloaded decks
+			getDecks: function() {
+				return popularDecks.decks;
+			},
+			// Return the title for this category
+			getTitle: function() {
+				return $translate.instant('DECKSTORE.Popular-decks');
+			},
+			// Update the popularDecks variable with the most recent decks on the store
+			getNextPage: function() {
+				// If we know there are no content anymore, return directly
+				if (popularDecks.endOfContent == true || popularDecks.isWorking == true)
+					return;
+				popularDecks.isWorking = true;
+				$http.post(server.url + ":" + server.port + '/api/getPopularStoreDecks', { currentPage: popularDecks.page }).then(
+					function(response) {
+						// Success
+						if (response.data.popularDecks)
+							addDecksToList(popularDecks, response.data.popularDecks);
+						popularDecks.page += 1;
+						popularDecks.isWorking = false;
+					}, function(response) {
+						// Fail
+						popularDecks.isWorking = false;
+					}
+				);
+			}
+		},
+
+		// User's decks
+		userDecks: {
+			// Return all the decks for the current user
+			getDecks: function() {
+				return userDecks.decks;
+			},
+			// Update the userDecks variable with the user's decks on the store
+			getNextPage: function() {
+				// If we know there are no content anymore, return directly
+				if (userDecks.endOfContent == true || userDecks.isWorking == true)
+					return;
+				userDecks.isWorking = true;
+				$http.post(server.url + ":" + server.port + '/api/getUserStoreDecks', { currentPage: userDecks.page }).then(
+					function(response) {
+						// Success
+						if (response.data.userDecks)
+							addDecksToList(userDecks, response.data.userDecks);
+						userDecks.page += 1;
+						userDecks.isWorking = false;
+					}, function(response) {
+						// Fail
+						userDecks.isWorking = false;
+					}
+				);
+			}
+		},
+
 		// Add a deck on the store
 		addDeckOnStore: function(deckId, description, price, successFct, errorFct) {
 			isWorking = true;
 			$http.post(server.url + ":" + server.port + '/api/putDeckOnStore', { infos: { _id: deckId, description: description, price: price } }).then(
 				function(response) {
 					// Success
+					if (response.data.storeElement)
+						DeckService.addOwnedDeck(response.data.storeElement);
 					isWorking = false;
 					successFct();
 				}, function(response) {
@@ -469,8 +595,9 @@ angular.module('services', [])
 		},
 		// Function to reset all the variables of this service
 		reset: function() {
-			userLastDate = undefined;
-			userDecks = [];
+			newDecks = { decks: [], page: 0, endOfContent: false };
+			popularDecks = { decks: [], page: 0, endOfContent: false };
+			userDecks = { decks: [], page: 0, endOfContent: false };
 		}
 	};
 });

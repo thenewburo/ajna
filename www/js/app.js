@@ -1,6 +1,7 @@
 // Ionic Starter App
 angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'pascalprecht.translate', 'ngSanitize', 'ngCookies'])
 
+// Linode address: 173.255.197.21
 .constant("server", { url: "http://173.255.197.21", port: "8080" })
 
 .run(function($ionicPlatform) {
@@ -121,6 +122,31 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'pa
                 controller: 'DeckstoreCtrl'
             }
         }
+    })
+
+    // storeService is one of the StoreService object
+    // it contains some functions to get the decks from the store
+    .state('menu.deckstoreDisplay', {
+        url: '/deckstoreDisplay',
+        params: { storeService: null },
+        views: {
+            'menuContent': {
+                templateUrl: 'templates/deckstoreDisplay.html',
+                controller: 'DeckstoreDisplayCtrl'
+            }
+        }
+    })
+
+    .state('menu.buyDeck', {
+        url: '/buyDeck',
+        cache: false,
+        params: { storeElement: null },
+        views: {
+            'menuContent': {
+                templateUrl: 'templates/buyDeck.html',
+                controller: 'BuyDeckCtrl'
+            }
+        }
     });
 
     // if none of the above states are matched, use this as the fallback
@@ -135,7 +161,8 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'pa
             "Success": "Success",
             "Yes": "Yes",
             "No": "No",
-            "Cancel": "Cancel"
+            "Cancel": "Cancel",
+            "Wait": "Please wait"
         },
         ONBOARD: {
             "Text-page1": "Create your own flashcards in few minutes.",
@@ -156,6 +183,7 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'pa
         },
         NEWACCOUNT: {
             "New-account": "New account",
+            "Creating": "Creating new account",
             "Name": "Name",
             "Email": "Email",
             "Account-created": "Your account has been created successfully",
@@ -207,9 +235,17 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'pa
             "Deckstore": "Deckstore",
             "Description": "Description",
             "Price": "Price",
+            "By": "by",
+            "Created-by": "created by",
+            "Currency": "$",
+            "Buy": "Buy",
+            "Free": "Free",
+            "Owned": "Owned",
             "See-all": "See all >",
             "Popular-decks": "Popular decks",
-            "New-decks": "New decks"
+            "New-decks": "New decks",
+            "Buy-deck": "Buy deck",
+            "Sure-buy-deck": "Are you sure you want to buy this deck?"
         },
         ERROR: {
             "Error": "Error",
@@ -221,7 +257,10 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'pa
             "No-deck-name": "Error, please enter a name for the deck",
             "Cannot-get-deck": "Error, impossible to find the deck",
             "Error-token": "Error, failed to authenticate the token",
-            "Error-deck-online": "Error, cannot delete a deck currently available on the store"
+            "Error-deck-online": "Error, cannot delete a deck currently available on the store",
+            "Error-cannot-sell": "Error, cannot put this deck on the store",
+            "Error-cannot-remove": "Error, cannot delete this deck from the store",
+            "Cannot-buy-deck": "Error, cannot buy this deck"
         }
     });
 

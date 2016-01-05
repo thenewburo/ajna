@@ -1,0 +1,29 @@
+<div class="displayDeckInStore">
+
+    <!-- Title and author name -->
+    <div class="deckHeader">
+        <h4>{{storeElement.deck.name}}</h4>
+        <p>{{'DECKSTORE.By' | translate}} {{storeElement.author.name}}</p>
+    </div>
+
+    <!-- Description -->
+    <div class="deckBody">
+        <p ng-show="showDescription == true">{{storeElement.description}}</p>
+    </div>
+
+    <!-- Buy/Download button -->
+    <div class="deckFooter">
+        <a ng-show="storeElement.price > 0 && !storeElement.isOwned" ng-click="goToBuyDeck(storeElement)">
+            <i class="icon ion-android-cart"></i>
+            {{storeElement.price}} {{'DECKSTORE.Currency' | translate}}
+        </a>
+        <a ng-show="storeElement.price <= 0 && !storeElement.isOwned" ng-click="goToBuyDeck(storeElement)">
+            <i class="icon ion-android-cart"></i>
+            {{'DECKSTORE.Free' | translate}}
+        </a>
+        <a ng-show="storeElement.isOwned" ng-click="goToBuyDeck(storeElement)">
+            {{'DECKSTORE.Owned' | translate}}
+        </a>
+    </div>
+
+</div>

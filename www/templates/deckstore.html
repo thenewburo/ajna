@@ -12,44 +12,50 @@
 	<ion-content scroll="false">
 
         <!-- Search -->
-        <div class="row row-left h-10 searchStore">
+        <div class="row h-10 searchStore">
         </div>
 
         <!-- New decks -->
-        <div class="h-30 decksStore newDecksStore">
+        <div class="decksStoreContainer newDecksStore">
             <div class="storeTitle">
                 <span>{{'DECKSTORE.New-decks' | translate}}</span>
             </div>
-            <div class="seeAllButton">
+            <div class="seeAllButton" ng-click="goToSeeAllNewStoreDecks()">
                 <span>{{'DECKSTORE.See-all' | translate}}</span>
             </div>
-
+            <div class="storeElement" ng-repeat="storeElement in getNewStoreDecks()" maintain-ratio-width>
+                <!-- Deck -->
+                <div store-element my-store-element="storeElement" show-description="false"></div>
+            </div>
         </div>
 
         <!-- Popular decks -->
-        <div class="h-30 decksStore popularDecksStore">
+        <div class="decksStoreContainer popularDecksStore">
             <div class="storeTitle">
                 <span>{{'DECKSTORE.Popular-decks' | translate}}</span>
             </div>
-            <div class="seeAllButton">
+            <div class="seeAllButton" ng-click="goToSeeAllPopularStoreDecks()">
                 <span>{{'DECKSTORE.See-all' | translate}}</span>
             </div>
-
+            <div class="storeElement" ng-repeat="storeElement in getPopularStoreDecks()" maintain-ratio-width>
+                <!-- Deck -->
+                <div store-element my-store-element="storeElement" show-description="false"></div>
+            </div>
         </div>
 
         <!-- User's decks -->
-        <div class="h-30 decksStore userDecksStore">
+        <div class="decksStoreContainer userDecksStore">
             <div class="storeTitle">
                 <span>{{'MYDECKS.My-decks' | translate}}</span>
             </div>
-            <div class="seeAllButton">
+            <div class="seeAllButton" ng-click="goToSeeAllUserStoreDecks()">
                 <span>{{'DECKSTORE.See-all' | translate}}</span>
             </div>
-            <div class="storeElement" ng-repeat="storeElement in getUserStoreDecks()" maintain-ratio>
-                {{storeElement.deck.name}}
+            <div class="storeElement" ng-repeat="storeElement in getUserStoreDecks()" maintain-ratio-width>
+                <!-- Deck -->
+                <div store-element my-store-element="storeElement" show-description="false"></div>
             </div>
         </div>
-        <!--<button class="button" ng-show="isWorking() == false && stillUserStoreDecks() == true" ng-click="getNextUserStoreDecks()">Next</button>-->
 
 	</ion-content>
 

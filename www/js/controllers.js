@@ -33,7 +33,7 @@ angular.module('controllers', [])
 	);
 })
 
-.controller('LoginCtrl', function($scope, $state, $translate, $ionicHistory, UserService, PopupService) {
+.controller('LoginCtrl', function($scope, $state, $translate, $ionicHistory, $ionicLoading, UserService, PopupService) {
 
 	// The user's login data
 	$scope.loginData = {};
@@ -54,6 +54,8 @@ angular.module('controllers', [])
 
 			// Everything is correct, we can try to connect but still check for an error
 			case 0:
+				// Display a loading screen
+				$ionicLoading.show({ template: $translate.instant('LOGIN.Sign-in') + ' ...' });
 				UserService.connect($scope.loginData, function(response) {
 					// Success
 					// Reset the fields
@@ -62,10 +64,15 @@ angular.module('controllers', [])
 					$ionicHistory.nextViewOptions({
 						disableBack: true
 					});
+					// Hide the loading screen
+					$ionicLoading.hide();
 					// Redirect to 'My decks' page
 					$state.go("menu.myDecks");
 				}, function(response) {
 					// Fail
+					// Hide the loading screen
+					$ionicLoading.hide();
+					// Display a popup
 					if (response.data != undefined && response.data.title != undefined && response.data.message != undefined)
 						PopupService.showAlert($translate.instant(response.data.title), $translate.instant(response.data.message));
 					else
@@ -83,7 +90,7 @@ angular.module('controllers', [])
 	};
 })
 
-.controller('NewAccountCtrl', function($scope, $state, $translate, UserService, PopupService) {
+.controller('NewAccountCtrl', function($scope, $state, $translate, $ionicLoading, UserService, PopupService) {
 	
 	// Variable to temporarily store the user's data
 	$scope.accountData = {};
@@ -111,14 +118,21 @@ angular.module('controllers', [])
 
 			// Everything is correct, we can try to create the account but still check if email address not already used
 			case 0:
+				// Display a loading screen
+				$ionicLoading.show({ template: $translate.instant('NEWACCOUNT.Creating') + ' ...' });
 				// Try to create an account
 				UserService.createAccount($scope.accountData, function(response) {
 					// Success
 					$scope.accountData = {};
+					// Hide the loading screen
+					$ionicLoading.hide();
+					// Redirect
 					$state.go("login");
 					PopupService.showAlert($translate.instant('NEWACCOUNT.New-account'), $translate.instant('NEWACCOUNT.Account-created'));
 				}, function(response) {
 					// Fail
+					// Hide the loading screen
+					$ionicLoading.hide();
 					if (response.data != undefined && response.data.title != undefined && response.data.message != undefined)
 						PopupService.showAlert($translate.instant(response.data.title), $translate.instant(response.data.message));
 				});
@@ -166,7 +180,7 @@ angular.module('controllers', [])
 	};
 })
 
-.controller('MyDecksCtrl', function($scope, $ionicPopover, $state, $ionicHistory, $translate, DeckService, TagService, PopupService) {
+.controller('MyDecksCtrl', function($scope, $ionicPopover, $state, $ionicHistory, $translate, $ionicLoading, DeckService, TagService, PopupService) {
 	// User's decks
 	$scope.myDecks = [];
 	DeckService.reset();
@@ -203,9 +217,17 @@ angular.module('controllers', [])
 					PopupService.showAlert($translate.instant('ERROR.Error'), $translate.instant('ERROR.Error-deck-online'));
 					return;
 				}
-				DeckService.removeDeck(deck);
-				// Ask our deckService to get all the decks to refresh the list
-				$scope.myDecks = DeckService.getDecks();
+				// Display a loading screen
+				$ionicLoading.show({ template: $translate.instant('UTILS.Wait') + ' ...' });
+				DeckService.removeDeck(deck, function() {
+					// Ask our deckService to get all the decks to refresh the list
+					$scope.myDecks = DeckService.getDecks();
+					// Hide the loading screen
+					$ionicLoading.hide();
+				}, function() {
+					// Hide the loading screen
+					$ionicLoading.hide();
+				});
 			}
 		);
 	};
@@ -265,7 +287,7 @@ angular.module('controllers', [])
 	};
 })
 
-.controller('CreateCardCtrl', function($scope, $stateParams, $state, $translate, $ionicHistory, $sce, $timeout, UserService, PopupService, TagService, DeckService, CardService) {
+.controller('CreateCardCtrl', function($scope, $stateParams, $state, $ionicLoading, $translate, $ionicHistory, $sce, $timeout, UserService, PopupService, TagService, DeckService, CardService) {
 	
 	$scope.currentCard = DeckService.newCard();
 	// Variable used to display the tags results (autocomplete) and store the user input
@@ -344,6 +366,8 @@ angular.module('controllers', [])
 		if ($scope.currentCard.type.value == "Fill in the blank")
 			reformAnswerFromBlanks();
 		if ($scope.currentCard.question.length > 0 && $scope.currentCard.answer.length > 0) {
+			// Display a loading screen
+			$ionicLoading.show({ template: $translate.instant('UTILS.Wait') + ' ...' });
 			if ($scope.creatingDeck) {
 				// Add the deck in our list of decks (we send a copy)
 				var newDeck = DeckService.addDeck(UserService.getEmail(), _.extend({}, $scope.currentDeck));
@@ -351,6 +375,8 @@ angular.module('controllers', [])
 				$scope.createDeck.promise.then(function() {
 					// If we cannot added the new deck, we display an error and return
 					if (newDeck._id == undefined) {
+						// Hide the loading screen
+						$ionicLoading.hide();
 						PopupService.showAlert($translate.instant('CREATECARD.Create-card'), $translate.instant('ERROR.Error-occurred'));
 						return;
 					}
@@ -362,6 +388,8 @@ angular.module('controllers', [])
 					// Reset data form
 					$scope.currentCard = DeckService.newCard();
 					$scope.search = TagService.newSearch();
+					// Hide the loading screen
+					$ionicLoading.hide();
 					// Make the next page the root history
 					$ionicHistory.nextViewOptions({
 						disableBack: true
@@ -375,7 +403,9 @@ angular.module('controllers', [])
 				// Reset data form
 				$scope.currentCard = DeckService.newCard();
 				$scope.search = TagService.newSearch();
-
+				// Hide the loading screen
+				$ionicLoading.hide();
+				// Redirect
 				$state.go("menu.displayDeck", { deckId: $scope.currentDeck._id });
 			}
 		}
@@ -444,7 +474,7 @@ angular.module('controllers', [])
 	};
 })
 
-.controller('DisplayDeckCtrl', function($scope, $stateParams, $state, $translate, $ionicPopover, PopupService, DeckService, StoreService) {
+.controller('DisplayDeckCtrl', function($scope, $stateParams, $state, $ionicLoading, $translate, $ionicPopover, PopupService, DeckService, StoreService) {
 	
 	// We get the deck sent in parameter (we will display that deck)
 	$scope.currentDeckId = $stateParams.deckId;
@@ -495,7 +525,15 @@ angular.module('controllers', [])
 			function() {},
 			// If the user pressed Yes
 			function() {
-				DeckService.removeCard(card, $scope.currentDeck);
+				// Display a loading screen
+				$ionicLoading.show({ template: $translate.instant('UTILS.Wait') + ' ...' });
+				DeckService.removeCard(card, $scope.currentDeck, function() {
+					// Hide the loading screen
+					$ionicLoading.hide();
+				}, function() {
+					// Hide the loading screen
+					$ionicLoading.hide();
+				});
 			}
 		);
 	};
@@ -522,6 +560,8 @@ angular.module('controllers', [])
 			function() {},
 			// If the user pressed Yes
 			function() {
+				// Display a loading screen
+				$ionicLoading.show({ template: $translate.instant('UTILS.Wait') + ' ...' });
 				// Get the price
 				var newPrice = 0;
 				if (price && price > 0)
@@ -531,7 +571,14 @@ angular.module('controllers', [])
 					function() {
 						// Success
 						$scope.currentDeck.isOnline = true;
-					}, function() {}
+						// Hide the loading screen
+						$ionicLoading.hide();
+					}, function() {
+						// Fail
+						// Hide the loading screen
+						$ionicLoading.hide();
+						PopupService.showAlert($translate.instant('DISPLAYDECK.Sell'), $translate.instant('ERROR.Error-cannot-sell'));
+					}
 				);
 				$scope.isSelling = false;
 			}
@@ -551,11 +598,20 @@ angular.module('controllers', [])
 			function() {},
 			// If the user pressed Yes
 			function() {
+				// Display a loading screen
+				$ionicLoading.show({ template: $translate.instant('UTILS.Wait') + ' ...' });
 				StoreService.removeDeckFromStore($scope.currentDeckId,
 					function() {
 						// Success
 						$scope.currentDeck.isOnline = false;
-					}, function() {}
+						// Hide the loading screen
+						$ionicLoading.hide();
+					}, function() {
+						// Fail
+						/// Hide the loading screen
+						$ionicLoading.hide();
+						PopupService.showAlert($translate.instant('DISPLAYDECK.Remove'), $translate.instant('ERROR.Error-cannot-remove'));
+					}
 				);
 			}
 		);
@@ -680,27 +736,121 @@ angular.module('controllers', [])
 	}
 })
 
-.controller('DeckstoreCtrl', function($scope, StoreService) {
+.controller('DeckstoreCtrl', function($scope, $state, StoreService, DeckService) {
 
-	// Ask the StoreService to update the user's decks in the store
-	StoreService.reset();
-	StoreService.getUserStoreDecksDatabase();
+	// Ask the StoreService to update all the decks
+	StoreService.newDecks.getNextPage();
+	StoreService.popularDecks.getNextPage();
+	StoreService.userDecks.getNextPage();
 
-	// Return a boolean if the StoreService is working
-	$scope.isWorking = function() {
-		return StoreService.isWorking();
+	// --- New decks ---
+	// Return the most recent decks in the store
+	$scope.getNewStoreDecks = function() {
+		return StoreService.newDecks.getDecks();
+	};
+	// Ask for the next page
+	$scope.getNextNewStoreDecks = function() {
+		StoreService.newDecks.getNextPage();
+	};
+	// Redirect the user to the 'See all' page
+	$scope.goToSeeAllNewStoreDecks = function() {
+		$state.go("menu.deckstoreDisplay", { storeService: StoreService.newDecks });
 	};
 
+	// --- Popular decks ---
+	// Return the most downloaded decks in the store
+	$scope.getPopularStoreDecks = function() {
+		return StoreService.popularDecks.getDecks();
+	};
+	// Ask for the next page
+	$scope.getNextPopularStoreDecks = function() {
+		StoreService.popularDecks.getNextPage();
+	};
+	// Redirect the user to the 'See all' page
+	$scope.goToSeeAllPopularStoreDecks = function() {
+		$state.go("menu.deckstoreDisplay", { storeService: StoreService.popularDecks });
+	};
+
+	// --- User's decks ---
 	// Return the user's decks currently in the store
 	$scope.getUserStoreDecks = function() {
-		return StoreService.getUserStoreDecks();
-	};
-	// Used to know if we still have decks to display
-	$scope.stillUserStoreDecks = function() {
-		return StoreService.stillUserStoreDecks();
+		return StoreService.userDecks.getDecks();
 	};
 	// Ask for the next page
 	$scope.getNextUserStoreDecks = function() {
-		StoreService.getUserStoreDecksDatabase();
+		StoreService.userDecks.getNextPage();
+	};
+	// Redirect the user to the 'See all' page
+	$scope.goToSeeAllUserStoreDecks = function() {
+		//$state.go("menu.deckstoreDisplay", { storeService: StoreService.userDecks });
+	};
+})
+
+.controller('DeckstoreDisplayCtrl', function($scope, $stateParams, $ionicScrollDelegate) {
+
+	// We get the store service sent in parameter (can be 'New decks', 'Popular decks' or 'User decks')
+	// this variable contains the good service, but we don't know which one (abstraction)
+	var storeService = $stateParams.storeService;
+
+	$scope.getTitle = function() {
+		if (storeService)
+			return storeService.getTitle();
+		return "";
+	};
+
+	$scope.getDecks = function() {
+		if (storeService)
+			return storeService.getDecks();
+		return [];
+	};
+
+	$scope.getNextPage = function() {
+		if (storeService)
+			storeService.getNextPage();
+	};
+
+	// This function is called everytime the user scroll
+	// we check if we are at the bottom, and display the next page if needed
+	$scope.isScrolling = function() {
+		if (($ionicScrollDelegate.$getByHandle('mainScroll').getScrollPosition().top + $('#deckstoreDisplayScroll').height() + 1) >= $('.seeAllDeckStore').height())
+			$scope.getNextPage();
+	}
+})
+
+.controller('BuyDeckCtrl', function($scope, $stateParams, $state, $translate, $ionicLoading, DeckService, PopupService, StoreService) {
+
+	// We get the store element the user wants to buy
+	$scope.storeElement = $stateParams.storeElement;
+	if ($scope.storeElement == null)
+		$state.go('menu.deckstore');
+
+	// Function called when the user click on Buy/Download
+	$scope.buyDeck = function(isOwned) {
+		// If we already own this deck, just do nothing
+		if (isOwned == true || $scope.storeElement == null)
+			return;
+		// Ask the user if he is sure
+		PopupService.showConfirm($translate.instant('DECKSTORE.Buy'), $translate.instant('DECKSTORE.Sure-buy-deck'),
+			// If the user pressed No
+			function() {},
+			// If the user pressed Yes
+			function() {
+
+				// Display a loading screen
+				$ionicLoading.show({ template: $translate.instant('UTILS.Wait') + ' ...' });
+				$scope.storeElement.isOwned = true;
+				DeckService.buyDeck($scope.storeElement, function() {
+					// Success
+					StoreService.setElementOwned($scope.storeElement);
+					// Hide the loading screen
+					$ionicLoading.hide();
+				}, function() {
+					// Fail
+					// Hide the loading screen
+					$ionicLoading.hide();
+					PopupService.showAlert($translate.instant('ERROR.Error'), $translate.instant('ERROR.Cannot-buy-deck'));
+				});
+			}
+		);
 	};
 });

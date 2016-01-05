@@ -7,5 +7,6 @@ module.exports = mongoose.model('User', new Schema({
 	email: { type: String, required: true, unique: true },
 	name: { type: String, required: true},
 	password: { type: String, required: true},
-	decks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Deck' }]
+	decks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Deck' }],
+	ownedDecks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Store' }]
 }));

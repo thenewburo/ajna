@@ -13,7 +13,7 @@
         <div class="list listNoBottomPadding">
             <!-- Deck name -->
             <div class="item">
-                <input type="text" ng-model="currentDeck.name" placeholder="{{'CREATEDECK.Deck-name' | translate}}">
+                <input type="text" maxlength="100" ng-model="currentDeck.name" placeholder="{{'CREATEDECK.Deck-name' | translate}}">
             </div>
             <!-- Tags -->
             <div class="item tagLabel" ng-show="currentDeck.tags.length > 0">
