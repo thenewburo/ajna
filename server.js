@@ -428,7 +428,7 @@ apiRoutes.post('/getNewStoreDecks', function(req, res) {
 				query = query.skip(req.body.currentPage * numberDecksPerPage);
 			query.populate('author').exec(function(err, decks) {
 				if (err) return res.sendStatus(400);
-				return res.status(200).json({ newDecks: decks });
+				return res.status(200).json({ decks: decks });
 			});
 		}
 	});
@@ -452,7 +452,7 @@ apiRoutes.post('/getPopularStoreDecks', function(req, res) {
 				query = query.skip(req.body.currentPage * numberDecksPerPage);
 			query.populate('author').exec(function(err, decks) {
 				if (err) return res.sendStatus(400);
-				return res.status(200).json({ popularDecks: decks });
+				return res.status(200).json({ decks: decks });
 			});
 		}
 	});
@@ -476,7 +476,7 @@ apiRoutes.post('/getUserStoreDecks', function(req, res) {
 				query = query.skip(req.body.currentPage * numberDecksPerPage);
 			query.populate('author').exec(function(err, decks) {
 				if (err) return res.sendStatus(400);
-				return res.status(200).json({ userDecks: decks });
+				return res.status(200).json({ decks: decks });
 			});
 		}
 	});

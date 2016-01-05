@@ -67,6 +67,7 @@ $fullScreenBackground: "../img/fullScreenBackground.png";
 // ---------------------------------------------------
 // ---------------------- Common ---------------------
 // ---------------------------------------------------
+html, body { background-color: black; }
 .row + .row { padding: 0; }
 .row.h-100 { height: 100%; }
 .row.h-80 { height: 80%; }

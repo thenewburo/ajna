@@ -739,9 +739,7 @@ angular.module('controllers', [])
 .controller('DeckstoreCtrl', function($scope, $state, StoreService, DeckService) {
 
 	// Ask the StoreService to update all the decks
-	StoreService.newDecks.getNextPage();
-	StoreService.popularDecks.getNextPage();
-	StoreService.userDecks.getNextPage();
+	StoreService.getFirstPage();
 
 	// --- New decks ---
 	// Return the most recent decks in the store

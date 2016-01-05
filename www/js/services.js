@@ -459,6 +459,26 @@ angular.module('services', [])
 		});
 	};
 
+	// Get the next page for the list in parameter
+	getNextPage = function(list) {
+		// If we know there are no content anymore or the service is already requesting the server, return directly
+		if (list.endOfContent == true || list.isWorking == true)
+			return;
+		list.isWorking = true;
+		$http.post(server.url + ":" + server.port + '/api/getNewStoreDecks', { currentPage: list.page }).then(
+			function(response) {
+				// Success
+				if (response.data.decks)
+					addDecksToList(list, response.data.decks);
+				list.page += 1;
+				list.isWorking = false;
+			}, function(response) {
+				// Fail
+				list.isWorking = false;
+			}
+		);
+	};
+
 	return {
 		// Return true if the service is working with the server, else return false
 		isWorking: function() {
@@ -470,6 +490,17 @@ angular.module('services', [])
 			setDeckOwned(newDecks.decks, storeElement);
 			setDeckOwned(popularDecks.decks, storeElement);
 			setDeckOwned(userDecks.decks, storeElement);
+		},
+
+		// Used for the first time we arrive in the deckstore
+		// for each list, we check if we have at least the first page
+		getFirstPage: function() {
+			if (newDecks.page == 0)
+				getNextPage(newDecks);
+			if (popularDecks.page == 0)
+				getNextPage(popularDecks);
+			if (userDecks.page == 0)
+				getNextPage(userDecks);
 		},
 
 		// New decks
@@ -484,22 +515,7 @@ angular.module('services', [])
 			},
 			// Update the newDecks variable with the most recent decks on the store
 			getNextPage: function() {
-				// If we know there are no content anymore or the service is already requesting the server, return directly
-				if (newDecks.endOfContent == true || newDecks.isWorking == true)
-					return;
-				newDecks.isWorking = true;
-				$http.post(server.url + ":" + server.port + '/api/getNewStoreDecks', { currentPage: newDecks.page }).then(
-					function(response) {
-						// Success
-						if (response.data.newDecks)
-							addDecksToList(newDecks, response.data.newDecks);
-						newDecks.page += 1;
-						newDecks.isWorking = false;
-					}, function(response) {
-						// Fail
-						newDecks.isWorking = false;
-					}
-				);
+				getNextPage(newDecks);
 			}
 		},
 
@@ -515,22 +531,7 @@ angular.module('services', [])
 			},
 			// Update the popularDecks variable with the most recent decks on the store
 			getNextPage: function() {
-				// If we know there are no content anymore, return directly
-				if (popularDecks.endOfContent == true || popularDecks.isWorking == true)
-					return;
-				popularDecks.isWorking = true;
-				$http.post(server.url + ":" + server.port + '/api/getPopularStoreDecks', { currentPage: popularDecks.page }).then(
-					function(response) {
-						// Success
-						if (response.data.popularDecks)
-							addDecksToList(popularDecks, response.data.popularDecks);
-						popularDecks.page += 1;
-						popularDecks.isWorking = false;
-					}, function(response) {
-						// Fail
-						popularDecks.isWorking = false;
-					}
-				);
+				getNextPage(popularDecks);
 			}
 		},
 
@@ -542,22 +543,7 @@ angular.module('services', [])
 			},
 			// Update the userDecks variable with the user's decks on the store
 			getNextPage: function() {
-				// If we know there are no content anymore, return directly
-				if (userDecks.endOfContent == true || userDecks.isWorking == true)
-					return;
-				userDecks.isWorking = true;
-				$http.post(server.url + ":" + server.port + '/api/getUserStoreDecks', { currentPage: userDecks.page }).then(
-					function(response) {
-						// Success
-						if (response.data.userDecks)
-							addDecksToList(userDecks, response.data.userDecks);
-						userDecks.page += 1;
-						userDecks.isWorking = false;
-					}, function(response) {
-						// Fail
-						userDecks.isWorking = false;
-					}
-				);
+				getNextPage(userDecks);
 			}
 		},
 

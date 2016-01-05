@@ -115,7 +115,6 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'pa
 
     .state('menu.deckstore', {
         url: '/deckstore',
-        cache: false,
         views: {
             'menuContent': {
                 templateUrl: 'templates/deckstore.html',
