@@ -13,10 +13,21 @@
 
         <!-- Title -->
         <div class="row deckTitle">
-            <div class="col-60 text-left">
+            <div class="col text-left">
                 <h2>{{storeElement.deck.name}}</h2>
             </div>
-            <div class="col-40 text-left">
+        </div>
+
+        <!-- Author -->
+        <div class="row deckAuthor">
+            <div class="col text-left">
+                <h4>{{'DECKSTORE.Created-by' | translate}} {{storeElement.author.name}}</h4>
+            </div>
+        </div>
+
+        <!-- Buy button -->
+        <div class="row deckBuyButton">
+            <div class="col text-right">
                 <button class="button button-stable" ng-click="buyDeck(storeElement.isOwned)">
                     <a ng-show="storeElement.price > 0 && !storeElement.isOwned">
                         <i class="icon ion-android-cart"></i>
@@ -30,13 +41,6 @@
                         {{'DECKSTORE.Owned' | translate}}
                     </a>
                 </button>
-            </div>
-        </div>
-
-        <!-- Author -->
-        <div class="row deckAuthor">
-            <div class="col text-left">
-                <h4>{{'DECKSTORE.Created-by' | translate}} {{storeElement.author.name}}</h4>
             </div>
         </div>
 

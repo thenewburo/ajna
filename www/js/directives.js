@@ -3,7 +3,7 @@ angular.module('directives', [])
 // Directives to maintain ratio
 .directive('maintainRatioWidth', function() {
 	return function(scope, element, attrs) {
-		angular.element(element).css('width', (element[0].offsetHeight - 20) + 'px');
+		angular.element(element).css('width', (element[0].offsetHeight) + 'px');
 	};
 })
 .directive('maintainRatioHeight', function() {
@@ -16,7 +16,7 @@ angular.module('directives', [])
 .directive('storeElement', function($state) {
 	return {
 		restrict: 'A',
-		templateUrl: '../templates/displayDeckInStore.html',
+		templateUrl: 'templates/displayDeckInStore.html',
 		scope: {
 			storeElement: '=myStoreElement',
 			showDescription: '=showDescription'

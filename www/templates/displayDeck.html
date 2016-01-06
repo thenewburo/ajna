@@ -40,8 +40,8 @@
 		<div class="row row-center text-center duoButtons">
 		    <div class="col-xs-0 col-sm-2 col-md-2 col-lg-3"></div>
 		    <div class="col-xs-6 col-sm-3 col-md-3 col-lg-2 col-bottom">
-		        <button ng-show="isWorking() == false && currentDeck.isOnline == false && currentDeck.cards.length > 0" ng-click="goToSellDeck(true)" class="button button-outline button-large button-energized">{{'DISPLAYDECK.Sell' | translate}}</button>
-		        <button ng-show="isWorking() == false && currentDeck.isOnline == true" ng-click="removeDeck()" class="button button-outline button-large button-energized">{{'DISPLAYDECK.Remove' | translate}}</button>
+		        <button ng-hide="isBoughtDeck == true" ng-show="isWorking() == false && currentDeck.isOnline == false && currentDeck.cards.length > 0" ng-click="goToSellDeck(true)" class="button button-outline button-large button-energized">{{'DISPLAYDECK.Sell' | translate}}</button>
+		        <button ng-hide="isBoughtDeck == true" ng-show="isWorking() == false && currentDeck.isOnline == true" ng-click="removeDeck()" class="button button-outline button-large button-energized">{{'DISPLAYDECK.Remove' | translate}}</button>
 		    </div>
 		    <div class="col-xs-0 col-sm-2 col-md-2 col-lg-2"></div>
 		    <div class="col-xs-6 col-sm-3 col-md-3 col-lg-2 col-bottom">
@@ -97,7 +97,7 @@
 	</ion-content>
 
 	<!-- Add card button -->
-	<div class="bar bar-footer bar-balanced addSomethingButton" ng-show="isSelling == false">
+	<div class="bar bar-footer bar-balanced addSomethingButton" ng-show="isSelling == false && isBoughtDeck == false">
 		<div class="row">
 			<div class="col col-center">
 				{{'CREATEDECK.Add-card' | translate}}

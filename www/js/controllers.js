@@ -154,8 +154,13 @@ angular.module('controllers', [])
 })
 
 .controller('MenuCtrl', function($scope, $state, $ionicHistory, UserService) {
-	
-	$scope.UserService = UserService;
+
+	$scope.getUsername = function() {
+		return UserService.getUsername();
+	};
+	$scope.getEmail = function() {
+		return UserService.getEmail();
+	};
 
 	// Redirect to "My decks" page
 	$scope.goToMyDecks = function() {
@@ -168,7 +173,12 @@ angular.module('controllers', [])
 	// Redirect to "Deckstore" page
 	$scope.goToDeckstore = function() {
 		$state.go("menu.deckstore");
-	}
+	};
+
+	// Redirect to "My account" page
+	$scope.goToMyAccount = function() {
+		$state.go("menu.myAccount");
+	};
 
 	// Disconnect the user
 	$scope.logout = function() {
@@ -180,6 +190,48 @@ angular.module('controllers', [])
 	};
 })
 
+.controller('MyAccountCtrl', function($scope, $state, $ionicHistory, UserService, DeckService) {
+	
+	DeckService.getInformationsDecks(function(){}, function() {
+		// Fail
+		$state.go("menu.myDecks");
+		$ionicHistory.nextViewOptions({
+			historyRoot: true
+		});
+	});
+
+	$scope.getUsername = function() {
+		return UserService.getUsername();
+	};
+	$scope.getEmail = function() {
+		return UserService.getEmail();
+	};
+
+	$scope.getNbDecks = function() {
+		return DeckService.getNbDecks();
+	};
+	$scope.getNbDecksSold = function() {
+		return DeckService.getNbDecksSold();
+	};
+	$scope.getNbDecksOnSale = function() {
+		return DeckService.getNbDecksOnSale();
+	};
+
+	// Disconnect the user
+	$scope.logout = function() {
+		UserService.disconnect();
+		$state.go("login");
+		$ionicHistory.nextViewOptions({
+			historyRoot: true
+		});
+	};
+
+	// Called when the user click the "connect with Paypal" button
+	$scope.connectPaypal = function() {
+
+	};
+})
+
 .controller('MyDecksCtrl', function($scope, $ionicPopover, $state, $ionicHistory, $translate, $ionicLoading, DeckService, TagService, PopupService) {
 	// User's decks
 	$scope.myDecks = [];
@@ -187,23 +239,27 @@ angular.module('controllers', [])
 	DeckService.getDecksDatabase();
 	// Get the tags
 	TagService.getAllTags();
+	// Variable to know which tab we are
+	$scope.myDecksTabsActivated = true;
 
 	// Get the number of unseen cards
 	$scope.numberUnseenCards = function(deck) {
 		return DeckService.getNbUnseenCards(deck);
 	};
 
-	// Get the user's deck
+	// Get the user's deck(s)
 	$scope.getDecks = function() {
 		return DeckService.getDecks();
 	};
 
+	// Get the user's owned deck(s)
+	$scope.getOwnedDecks = function() {
+		return DeckService.getOwnedDecks();
+	};
+
 	// Redirect to display a deck
-	$scope.displayDeck = function(deckId) {
-		$state.go("menu.displayDeck", { deckId: deckId });
-		$ionicHistory.nextViewOptions({
-			historyRoot: true
-		});
+	$scope.displayDeck = function(deck, isBoughtDeck) {
+		$state.go("menu.displayDeck", { deck: deck, isBoughtDeck: isBoughtDeck });
 	};
 
 	// Ask the user if he wants to delete the deck
@@ -406,7 +462,7 @@ angular.module('controllers', [])
 				// Hide the loading screen
 				$ionicLoading.hide();
 				// Redirect
-				$state.go("menu.displayDeck", { deckId: $scope.currentDeck._id });
+				$state.go("menu.displayDeck", { deck: $scope.currentDeck, isBoughtDeck: false });
 			}
 		}
 		else
@@ -474,10 +530,12 @@ angular.module('controllers', [])
 	};
 })
 
-.controller('DisplayDeckCtrl', function($scope, $stateParams, $state, $ionicLoading, $translate, $ionicPopover, PopupService, DeckService, StoreService) {
+.controller('DisplayDeckCtrl', function($scope, $stateParams, $state, $ionicLoading, $translate, $ionicPopover, $ionicHistory, PopupService, DeckService, StoreService) {
 	
 	// We get the deck sent in parameter (we will display that deck)
-	$scope.currentDeckId = $stateParams.deckId;
+	$scope.currentDeck = $stateParams.deck;
+	// and the boolean to know if it's a bought deck
+	$scope.isBoughtDeck = $stateParams.isBoughtDeck;
 
 	// Variable to display the sell/remove buttons
 	$scope.isWorking = false;
@@ -488,13 +546,14 @@ angular.module('controllers', [])
 	$scope.price = "";
 
 	// Check we successfully got the deck id
-	if ($scope.currentDeckId == undefined) {
+	if ($scope.currentDeck == undefined || $scope.isBoughtDeck == undefined) {
 		PopupService.showAlert($translate.instant('ERROR.Error'), $translate.instant('ERROR.Cannot-get-deck'));
+		// Make the next page the root history
+		$ionicHistory.nextViewOptions({
+			disableBack: true
+		});
 		$state.go("menu.myDecks");
 	}
-
-	// Use the deck ID to find the complete deck
-	$scope.currentDeck = DeckService.getDeckWithId($scope.currentDeckId);
 
 	// Get the number of unseen cards
 	$scope.numberUnseenCards = function(deck) {
@@ -567,7 +626,7 @@ angular.module('controllers', [])
 				if (price && price > 0)
 					newPrice = price;
 				// Put the deck on the store
-				StoreService.addDeckOnStore($scope.currentDeckId, description, newPrice,
+				StoreService.addDeckOnStore($scope.currentDeck._id, description, newPrice,
 					function() {
 						// Success
 						$scope.currentDeck.isOnline = true;
@@ -600,7 +659,7 @@ angular.module('controllers', [])
 			function() {
 				// Display a loading screen
 				$ionicLoading.show({ template: $translate.instant('UTILS.Wait') + ' ...' });
-				StoreService.removeDeckFromStore($scope.currentDeckId,
+				StoreService.removeDeckFromStore($scope.currentDeck._id,
 					function() {
 						// Success
 						$scope.currentDeck.isOnline = false;
@@ -637,7 +696,7 @@ angular.module('controllers', [])
 	});
 })
 
-.controller('DisplayCardCtrl', function($scope, $stateParams, $timeout, $translate, $state, CardService, PopupService, DeckService) {
+.controller('DisplayCardCtrl', function($scope, $stateParams, $timeout, $translate, $state, $ionicHistory, CardService, PopupService, DeckService) {
 	
 	// We get the deck sent in parameter (we will display that deck)
 	$scope.currentDeckId = $stateParams.deckId;
@@ -658,6 +717,10 @@ angular.module('controllers', [])
 	// Check we successfully got the deck id
 	if ($scope.currentDeckId == undefined) {
 		PopupService.showAlert($translate.instant('ERROR.Error'), $translate.instant('ERROR.Cannot-get-deck'));
+		// Make the next page the root history
+		$ionicHistory.nextViewOptions({
+			disableBack: true
+		});
 		$state.go("menu.myDecks");
 	}
 	// Check we successfully got the study mode boolean, else set default mode
@@ -721,6 +784,10 @@ angular.module('controllers', [])
 		$scope.currentCard = CardService.getNextCard(null, $scope.currentDeck, $scope.studyMode);
 		if ($scope.currentCard == null && $scope.currentDeckId != undefined) {
 			PopupService.showAlert($translate.instant('ERROR.Error'), $translate.instant('ERROR.Cannot-get-deck'));
+			// Make the next page the root history
+			$ionicHistory.nextViewOptions({
+				disableBack: true
+			});
 			$state.go("menu.myDecks");
 		}
 	}
@@ -739,7 +806,16 @@ angular.module('controllers', [])
 .controller('DeckstoreCtrl', function($scope, $state, StoreService, DeckService) {
 
 	// Ask the StoreService to update all the decks
+	StoreService.reset();
 	StoreService.getFirstPage();
+
+	// Search function
+	$scope.searchDeckstore = function(search) {
+		if (search && search.length > 0) {
+			StoreService.setSearch(search);
+			$state.go("menu.deckstoreDisplay", { storeService: StoreService.search });
+		}
+	};
 
 	// --- New decks ---
 	// Return the most recent decks in the store
@@ -780,11 +856,11 @@ angular.module('controllers', [])
 	};
 	// Redirect the user to the 'See all' page
 	$scope.goToSeeAllUserStoreDecks = function() {
-		//$state.go("menu.deckstoreDisplay", { storeService: StoreService.userDecks });
+		$state.go("menu.deckstoreDisplay", { storeService: StoreService.userDecks });
 	};
 })
 
-.controller('DeckstoreDisplayCtrl', function($scope, $stateParams, $ionicScrollDelegate) {
+.controller('DeckstoreDisplayCtrl', function($scope, $stateParams) {
 
 	// We get the store service sent in parameter (can be 'New decks', 'Popular decks' or 'User decks')
 	// this variable contains the good service, but we don't know which one (abstraction)
@@ -810,8 +886,13 @@ angular.module('controllers', [])
 	// This function is called everytime the user scroll
 	// we check if we are at the bottom, and display the next page if needed
 	$scope.isScrolling = function() {
-		if (($ionicScrollDelegate.$getByHandle('mainScroll').getScrollPosition().top + $('#deckstoreDisplayScroll').height() + 1) >= $('.seeAllDeckStore').height())
-			$scope.getNextPage();
+		if (storeService) {
+			storeService.getNextPage(function() {
+				$scope.$broadcast('scroll.infiniteScrollComplete');
+			}, function() {
+				$scope.$broadcast('scroll.infiniteScrollComplete');
+			});
+		}
 	}
 })
 

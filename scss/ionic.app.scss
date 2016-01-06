@@ -79,6 +79,10 @@ html, body { background-color: black; }
 .row.h-15 { height: 15%; }
 .row.h-10 { height: 10%; }
 
+body .loading-container .loading {
+	border-radius: 50px;
+}
+
 .list.listNoBottomPadding>.item { padding-bottom: 0; }
 
 $whiteCircleBackgrounLogoSizeXS: 100px;
@@ -259,6 +263,11 @@ ion-popover-view.popover {
 		@include full-background($onBoardBackgroundImage);
 		height: 100%;
 
+		.titleImg {
+			height: 80%;
+			margin-top: 10px;
+		}
+
 		.row + .row {
 			margin-top: 0;
 			margin-right: auto;
@@ -283,7 +292,10 @@ $transparentWhiteColor: rgba(255,255,255,0.7);
 {
 	@include full-background($loginBackgroundImage);
 
-	h1.title { color: white; }
+	.titleImg {
+		height: 80%;
+		margin-top: 10px;
+	}
 
 	.bar.bar-header {
 		background-color: transparent;
@@ -381,7 +393,7 @@ ion-side-menus {
 		ion-content {
 
 			&.scroll-content.has-header {
-				top: 40%;
+				top: 20%;
 			}
 
 			ion-list ion-item span {
@@ -395,7 +407,7 @@ ion-side-menus {
 
 		ion-header-bar.bar.bar-stable {
 			@include full-background($menuHeaderBackground);
-			height: 40%;
+			height: 20%;
 
 			h2 { color: white; font-size: 30px; margin-bottom: 0; }
 			span { color: $transparentWhiteColor; font-size: 15px; }
@@ -421,6 +433,66 @@ ion-side-menus {
 
 
 // ---------------------------------------------------
+// -------------------- My account -------------------
+// ---------------------------------------------------
+.myAccount {
+
+	ion-content {
+
+		h2 {
+			margin-bottom: 0;
+			margin-top: 5px;
+			margin-left: 10px;
+		}
+		h5 {
+			margin-top: 0;
+			margin-left: 17px;
+			color: #888;
+		}
+
+		.accountInfosValues .col {
+			padding-top: 20px;
+			padding-bottom: 0;
+			font-size: 16px;
+			font-weight: bold;
+			color: $energized;
+		}
+		.accountInfos .col {
+			font-size: 12px;
+			font-weight: bold;
+		}
+
+		hr {
+			height: 2px;
+			background-color: #ccc;
+			margin: 20px 10px;
+		}
+
+		button {
+			border-radius: $custom-button-radius;
+			width: 90%;
+			margin-left: 5%;
+
+			img {
+				width: 100px;
+				position: relative;
+				margin-left: 10px;
+				top: 8px;
+			}
+		}
+	}
+	
+	.bar-footer {
+		margin-bottom: 10px;
+
+		.row>.col>span {
+			padding: 5px 10px;
+		}
+	}
+}
+
+
+// ---------------------------------------------------
 // --------------------- My decks --------------------
 // ---------------------------------------------------
 .myDecks {
@@ -438,6 +510,12 @@ ion-side-menus {
 				margin-right: 5px;
 				margin-top: -5px;
 			}
+		}
+	}
+
+	.myDecksTabs {
+		a, a:hover, a:focus, a:active {
+			text-decoration: none;
 		}
 	}
 }
@@ -730,6 +808,11 @@ $deckDescriptionBackground: rgba(0,0,0,0.28);
 			background-color: $deckDescriptionBackground;
 			p { margin: 10px 0px; }
 		}
+		.deckBuyButton {
+			background-color: $deckTitleAuthorBackground;
+			margin-top: 0;
+			padding: 0px 10px 10px 0px;
+		}
 	}
 
 	ion-content {
@@ -738,6 +821,26 @@ $deckDescriptionBackground: rgba(0,0,0,0.28);
 
 		.searchStore {
 			background-color: $searchStoreBackground;
+
+			label {
+				background-color: transparent;
+				border: 0;
+				padding: 0;
+				width: 100%;
+				margin: 0px 10px;
+
+				form {
+					width: 100%;
+					
+					input {
+						color: white;
+						margin-top: 1px;
+						border-bottom: 1px solid rgba(255,255,255,0.3);
+						font-size: 14px;
+						height: 20px;
+					}
+				}
+			}
 		}
 
 		.newDecksStore {
@@ -770,9 +873,9 @@ $deckDescriptionBackground: rgba(0,0,0,0.28);
 					top: 0;
 					position: absolute;
 					width: 100%;
-					margin-left: $deckPadding;
-					margin-top: $deckPadding;
-					color: #444;
+					padding-left: $deckPadding;
+					padding-top: $deckPadding;
+					color: #888;
 
 					h4 {
 						font-size: 16px;
@@ -793,6 +896,8 @@ $deckDescriptionBackground: rgba(0,0,0,0.28);
 					margin-bottom: 3px;
 					text-align: center;
 					width: 100%;
+					border-top: 1px solid rgba(226, 116, 60, 0.3);
+
 					a, a:focus, a:hover { color: $energized; text-decoration: none; }
 				}
 			}
@@ -802,22 +907,26 @@ $deckDescriptionBackground: rgba(0,0,0,0.28);
 			width: 100%;
 			height: 30%;
 			white-space: nowrap;
-			overflow-x: auto;
-			overflow-y: hidden;
+			overflow: hidden;
+			z-index: 1;
+
+			.storeElementContainer {
+				height: 100%;
+				padding-bottom: 37px;
+			}
 
 			.storeElement {
 				height: 100%;
 				display: inline-block;
-				padding: $deckPadding;
-				padding-top: 26px;
+				padding: 0px 5px;
 			}
 		}
 
 		.seeAllDeckStore {
 			width: 100%;
+			height: 100%;
 			white-space: normal;
-			overflow-x: hidden;
-			overflow-y: auto;
+			overflow: hidden;
 
 			.storeElement {
 				float: left;
@@ -831,20 +940,11 @@ $deckDescriptionBackground: rgba(0,0,0,0.28);
 
 		.storeTitle,
 		.seeAllButton {
-			height: 20px;
+			z-index: 5;
+			height: 22px;
 			color: white;
 			font-size: 18px;
-			margin-bottom: -20px;
-			padding-left: 8px;
-			padding-top: 4px;
-			position: fixed;
-		}
-
-		.seeAllButton {
-			font-size: 12px;
-			padding-right: 8px;
-			padding-left: 0;
-			right: 0;
+			padding: 0;
 		}
 	}
 }

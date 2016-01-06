@@ -9,8 +9,8 @@
         <ion-header-bar class="bar-stable">
             <div class="row">
                 <div class="col col-bottom">
-                    <h2>{{UserService.getUsername()}}</h2>
-                    <span>{{UserService.getEmail()}}</span>
+                    <h2>{{getUsername()}}</h2>
+                    <span>{{getEmail()}}</span>
                 </div>
             </div>
         </ion-header-bar>
@@ -25,6 +25,11 @@
                 <ion-item menu-close ng-click="goToDeckstore()">
                     <span class="ion-android-cart"></span>
                     {{'DECKSTORE.Deckstore' | translate}}
+                </ion-item>
+                <!-- My account -->
+                <ion-item menu-close ng-click="goToMyAccount()">
+                    <span class="ion-android-person"></span>
+                    {{'MYACCOUNT.My-account' | translate}}
                 </ion-item>
                 <!-- Logout -->
                 <ion-item menu-close ng-click="logout()">

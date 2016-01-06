@@ -214,8 +214,15 @@ apiRoutes.post('/buyDeck', function(req, res) {
 			// Save the user in database
 			user.save(function(err) {
 				if (err) return res.sendStatus(400);
-				// User successfully updated
-				return res.sendStatus(200);
+				// User successfully updated, we can update the store element
+				Store.findOne({ _id: req.body.storeElement._id}, function(err, storeElement) {
+					if (err) return res.sendStatus(400);
+					storeElement.nbDownloads += 1;
+					storeElement.save(function(err) {
+						if (err) return res.sendStatus(400);
+						return res.sendStatus(200);
+					});
+				});
 			});
 		}
 	});
@@ -339,8 +346,10 @@ apiRoutes.post('/putDeckOnStore', function(req, res) {
 						// Create the new store element
 						var newStoreElement = new Store({
 							deckId: deck._id,
-							deck: { name: deck.name, tags: deck.tags, cards: deck.cards, createdTime: deck.createdTime },
-							author: user._id });
+							deckName: deck.name,
+							deck: { _id: deck._id, name: deck.name, tags: deck.tags, cards: deck.cards, createdTime: deck.createdTime },
+							author: user._id,
+							authorName: user.name });
 						// Update the price or description if needed
 						if (req.body.infos.description && req.body.infos.description.length > 0)
 							newStoreElement.description = req.body.infos.description;
@@ -407,8 +416,32 @@ apiRoutes.post('/removeDeckFromStore', function(req, res) {
 		}
 	});
 });
+// route to get the decks on the store with the search
+apiRoutes.post('/getSearchStoreDecks', function(req, res) {
+	// One of the fields is empty
+	if (req.decoded == undefined || req.decoded.email == undefined || req.decoded.email.length <= 0 || req.body.search == undefined)
+		return res.sendStatus(400);
 
-
+	// find the user
+	User.findOne({ email: req.decoded.email.toLowerCase() }, function(err, user) {
+    	if (err) return res.sendStatus(400);
+    	// User not found
+		if (!user)
+			return res.sendStatus(400);
+		// User found
+		else {
+			var query = Store.find({ isOnline: true, $or:[{ deckName: new RegExp(req.body.search, "i") }, { authorName: new RegExp(req.body.search, "i") }] })
+			.sort({ dateOfSale: -1 }).limit(numberDecksPerPage);
+			if (req.body.currentPage && req.body.currentPage >= 0)
+				query = query.skip(req.body.currentPage * numberDecksPerPage);
+			query.populate('author')
+			.exec(function(err, decks) {
+				if (err) return res.sendStatus(400);
+				return res.status(200).json({ decks: decks });
+			});
+		}
+	});
+});
 // route to get the new decks on the store
 apiRoutes.post('/getNewStoreDecks', function(req, res) {
 	// One of the fields is empty
@@ -477,6 +510,40 @@ apiRoutes.post('/getUserStoreDecks', function(req, res) {
 			query.populate('author').exec(function(err, decks) {
 				if (err) return res.sendStatus(400);
 				return res.status(200).json({ decks: decks });
+			});
+		}
+	});
+});
+
+
+// ----------------------------------
+// User
+// ----------------------------------
+// 
+// route to get user's decks informations
+apiRoutes.get('/getUserInfos', function(req, res) {
+	// One of the fields is empty
+	if (req.decoded == undefined || req.decoded.email == undefined || req.decoded.email.length <= 0)
+		return res.sendStatus(400);
+
+	// find the user
+	User.findOne({ email: req.decoded.email.toLowerCase() }, function(err, user) {
+    	if (err) return res.sendStatus(400);
+    	// User not found
+		if (!user)
+			return res.sendStatus(400);
+		// User found
+		else {
+			Store.find({ author: user._id, isOnline: true })
+			.exec(function(err, decks) {
+				if (err) return res.sendStatus(400);
+				var nbDecksSold = 0;
+				var nbDecksOnSale = 0;
+				for (curDeck in decks) {
+					nbDecksOnSale += 1;
+					nbDecksSold += decks[curDeck].nbDownloads;
+				}
+				return res.status(200).json({ nbDecksSold: nbDecksSold, nbDecksOnSale: nbDecksOnSale });
 			});
 		}
 	});

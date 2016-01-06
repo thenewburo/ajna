@@ -9,15 +9,19 @@
     </ion-nav-bar>
 
     <!-- Content -->
-	<ion-content id="deckstoreDisplayScroll" scroll="true" direction="y" on-scroll="isScrolling()" delegate-handle="mainScroll">
+	<ion-content id="deckstoreDisplayScroll">
 
         <!-- New decks -->
-        <div class="seeAllDeckStore">
+        <ion-scroll class="seeAllDeckStore" zooming="false" direction="y">
+
+            <!-- Deck -->
             <div class="storeElement" ng-repeat="storeElement in getDecks()" maintain-ratio-height>
-                <!-- Deck -->
                 <div store-element my-store-element="storeElement" show-description="true"></div>
             </div>
-        </div>
+
+            <ion-infinite-scroll on-infinite="isScrolling()" distance="1%"></ion-infinite-scroll>
+
+        </ion-scroll>
 
 	</ion-content>
 

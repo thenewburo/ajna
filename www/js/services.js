@@ -188,8 +188,10 @@ angular.module('services', [])
 // This factory is used to manage the decks
 .factory('DeckService', function($http, $rootScope, $q, server) {
 
-	var decks = {};
-	var ownedDecks = {};
+	var decks = [];
+	var ownedDecks = [];
+	var nbDecksSold = 0;
+	var nbDecksOnSale = 0;
 
 	return {
 		// Create an empty deck
@@ -203,11 +205,46 @@ angular.module('services', [])
 		addOwnedDeck: function(storeElement) {
 			ownedDecks.push(storeElement);
 		},
+		// Returns the number of decks the user has
+		getNbDecks: function() {
+			if (decks && decks.length)
+				return decks.length;
+			else
+				return 0;
+		},
+		// Returns how many decks are currently available on the store
+		getNbDecksOnSale: function() {
+			return nbDecksOnSale;
+		},
+		// Returns how many decks we sold
+		getNbDecksSold: function() {
+			return nbDecksSold;
+		},
+		// Returns an object with the number of decks on the store, and how many downloads in total
+		getInformationsDecks: function(successFct, errorFct) {
+			// Reset the variables
+			nbDecksSold = 0;
+			nbDecksOnSale = 0;
+			// Request informations to the server
+			$http.get(server.url + ":" + server.port + '/api/getUserInfos').then(
+				function(response) {
+					// Success
+					if (response.data.nbDecksSold)
+						nbDecksSold = response.data.nbDecksSold;
+					if (response.data.nbDecksOnSale)
+						nbDecksOnSale = response.data.nbDecksOnSale;
+					successFct();
+				}, function(response) {
+					// Fail
+					errorFct();
+				}
+			);
+		},
 		// Update the decks variable from the database
 		getDecksDatabase: function() {
 			// Reset the decks variable
-			decks = {};
-			ownedDecks = {};
+			decks = [];
+			ownedDecks = [];
 			// Request the server to get all the user's deck(s)
 			$http.get(server.url + ":" + server.port + '/api/getDecks').then(
 				function(response) {
@@ -256,11 +293,19 @@ angular.module('services', [])
 			var myDeck = null;
 			if (id == undefined)
 				return null;
-			// Find the deck in our deck list
+			// Search the deck in our deck list
 			angular.forEach(decks, function(curDeck) {
 				// We found the good deck to modify
 				if (curDeck._id == id) {
 					myDeck = curDeck;
+					return;
+				}
+			});
+			// Search the deck in our owned deck list
+			angular.forEach(ownedDecks, function(storeElement) {
+				// We found the good deck to modify
+				if (storeElement.deck._id == id) {
+					myDeck = storeElement.deck;
 					return;
 				}
 			});
@@ -344,8 +389,10 @@ angular.module('services', [])
 		},
 		// Function to reset all the variables of this service
 		reset: function() {
-			decks = {};
-			ownedDecks = {};
+			decks = [];
+			ownedDecks = [];
+			nbDecksSold = 0;
+			nbDecksOnSale = 0;
 		}
 	};
 })
@@ -426,12 +473,14 @@ angular.module('services', [])
 	// Variable used to display the sell/remove buttons
 	var isWorking = false;
 
-	// New decks, and date for the next page
-	var newDecks = { decks: [], page: 0, endOfContent: false, isWorking: false };
-	// Popular decks, and date for the next page
-	var popularDecks = { decks: [], page: 0, endOfContent: false, isWorking: false };
-	// User's decks, and date for the next page
-	var userDecks = { decks: [], page: 0, endOfContent: false, isWorking: false };
+	// Search decks
+	var searchDecks = { decks: [], page: 0, endOfContent: false, isWorking: false, request: "getSearchStoreDecks", search: null };
+	// New decks
+	var newDecks = { decks: [], page: 0, endOfContent: false, isWorking: false, request: "getNewStoreDecks" };
+	// Popular decks
+	var popularDecks = { decks: [], page: 0, endOfContent: false, isWorking: false, request: "getPopularStoreDecks" };
+	// User's decks
+	var userDecks = { decks: [], page: 0, endOfContent: false, isWorking: false, request: "getUserStoreDecks" };
 
 	// This function add all the decks in the list
 	addDecksToList = function(list, newDecks) {
@@ -460,21 +509,25 @@ angular.module('services', [])
 	};
 
 	// Get the next page for the list in parameter
-	getNextPage = function(list) {
+	getNextPage = function(list, successFct, errorFct) {
 		// If we know there are no content anymore or the service is already requesting the server, return directly
-		if (list.endOfContent == true || list.isWorking == true)
+		if (list.endOfContent == true || list.isWorking == true) {
+			successFct();
 			return;
+		}
 		list.isWorking = true;
-		$http.post(server.url + ":" + server.port + '/api/getNewStoreDecks', { currentPage: list.page }).then(
+		$http.post(server.url + ":" + server.port + '/api/' + list.request, { currentPage: list.page, search: list.search }).then(
 			function(response) {
 				// Success
 				if (response.data.decks)
 					addDecksToList(list, response.data.decks);
 				list.page += 1;
 				list.isWorking = false;
+				successFct();
 			}, function(response) {
 				// Fail
 				list.isWorking = false;
+				errorFct();
 			}
 		);
 	};
@@ -496,11 +549,33 @@ angular.module('services', [])
 		// for each list, we check if we have at least the first page
 		getFirstPage: function() {
 			if (newDecks.page == 0)
-				getNextPage(newDecks);
+				getNextPage(newDecks, function(){}, function(){});
 			if (popularDecks.page == 0)
-				getNextPage(popularDecks);
+				getNextPage(popularDecks, function(){}, function(){});
 			if (userDecks.page == 0)
-				getNextPage(userDecks);
+				getNextPage(userDecks, function(){}, function(){});
+		},
+
+		// Used to set the new search for the next query
+		setSearch: function(val) {
+			searchDecks.search = val;
+		},
+
+		// Search
+		search: {
+			// Return all the decks based on the search word
+			getDecks: function() {
+				return searchDecks.decks;
+			},
+			// Return the title for this category
+			getTitle: function() {
+				return $translate.instant('DECKSTORE.Search');
+			},
+			// Update the searchDecks variable with the decks found with the search word
+			getNextPage: function(successFct, errorFct) {
+				if (searchDecks.search && searchDecks.search.length > 0)
+					getNextPage(searchDecks, successFct, errorFct);
+			}
 		},
 
 		// New decks
@@ -514,8 +589,8 @@ angular.module('services', [])
 				return $translate.instant('DECKSTORE.New-decks');
 			},
 			// Update the newDecks variable with the most recent decks on the store
-			getNextPage: function() {
-				getNextPage(newDecks);
+			getNextPage: function(successFct, errorFct) {
+				getNextPage(newDecks, successFct, errorFct);
 			}
 		},
 
@@ -530,8 +605,8 @@ angular.module('services', [])
 				return $translate.instant('DECKSTORE.Popular-decks');
 			},
 			// Update the popularDecks variable with the most recent decks on the store
-			getNextPage: function() {
-				getNextPage(popularDecks);
+			getNextPage: function(successFct, errorFct) {
+				getNextPage(popularDecks, successFct, errorFct);
 			}
 		},
 
@@ -541,9 +616,13 @@ angular.module('services', [])
 			getDecks: function() {
 				return userDecks.decks;
 			},
+			// Return the title for this category
+			getTitle: function() {
+				return $translate.instant('MYDECKS.My-decks');
+			},
 			// Update the userDecks variable with the user's decks on the store
-			getNextPage: function() {
-				getNextPage(userDecks);
+			getNextPage: function(successFct, errorFct) {
+				getNextPage(userDecks, successFct, errorFct);
 			}
 		},
 
@@ -581,9 +660,10 @@ angular.module('services', [])
 		},
 		// Function to reset all the variables of this service
 		reset: function() {
-			newDecks = { decks: [], page: 0, endOfContent: false };
-			popularDecks = { decks: [], page: 0, endOfContent: false };
-			userDecks = { decks: [], page: 0, endOfContent: false };
+			searchDecks = { decks: [], page: 0, endOfContent: false, isWorking: false, request: "getSearchStoreDecks", search: null };
+			newDecks = { decks: [], page: 0, endOfContent: false, isWorking: false, request: "getNewStoreDecks" };
+			popularDecks = { decks: [], page: 0, endOfContent: false, isWorking: false, request: "getPopularStoreDecks" };
+			userDecks = { decks: [], page: 0, endOfContent: false, isWorking: false, request: "getUserStoreDecks" };
 		}
 	};
 });

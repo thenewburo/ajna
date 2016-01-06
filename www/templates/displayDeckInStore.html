@@ -1,4 +1,4 @@
-<div class="displayDeckInStore">
+<div class="displayDeckInStore" ng-click="goToBuyDeck(storeElement)">
 
     <!-- Title and author name -->
     <div class="deckHeader">
@@ -21,7 +21,7 @@
             <i class="icon ion-android-cart"></i>
             {{'DECKSTORE.Free' | translate}}
         </a>
-        <a ng-show="storeElement.isOwned" ng-click="goToBuyDeck(storeElement)">
+        <a ng-show="storeElement.isOwned">
             {{'DECKSTORE.Owned' | translate}}
         </a>
     </div>

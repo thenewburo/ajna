@@ -13,48 +13,66 @@
 
         <!-- Search -->
         <div class="row h-10 searchStore">
+            <label class="item item-input">
+                <i class="icon ion-search placeholder-icon"></i>
+                <form ng-submit="searchDeckstore(searchValue)">
+                    <input type="search" ng-model="searchValue" placeholder="{{'DECKSTORE.Search' | translate}}">
+                </form>
+            </label>
         </div>
 
         <!-- New decks -->
         <div class="decksStoreContainer newDecksStore">
-            <div class="storeTitle">
-                <span>{{'DECKSTORE.New-decks' | translate}}</span>
+            <div class="row">
+                <div class="col text-left storeTitle">
+                    <span>{{'DECKSTORE.New-decks' | translate}}</span>
+                </div>
+                <div class="col text-right seeAllButton" ng-click="goToSeeAllNewStoreDecks()">
+                    <span>{{'DECKSTORE.See-all' | translate}}</span>
+                </div>
             </div>
-            <div class="seeAllButton" ng-click="goToSeeAllNewStoreDecks()">
-                <span>{{'DECKSTORE.See-all' | translate}}</span>
-            </div>
-            <div class="storeElement" ng-repeat="storeElement in getNewStoreDecks()" maintain-ratio-width>
+            <ion-scroll class="storeElementContainer" zooming="false" direction="x">
                 <!-- Deck -->
-                <div store-element my-store-element="storeElement" show-description="false"></div>
-            </div>
+                <div class="storeElement" ng-repeat="storeElement in getNewStoreDecks()" maintain-ratio-width>
+                    <div store-element my-store-element="storeElement" show-description="false"></div>
+                </div>
+            </ion-scroll>
         </div>
 
         <!-- Popular decks -->
         <div class="decksStoreContainer popularDecksStore">
-            <div class="storeTitle">
-                <span>{{'DECKSTORE.Popular-decks' | translate}}</span>
+            <div class="row">
+                <div class="col text-left storeTitle">
+                    <span>{{'DECKSTORE.Popular-decks' | translate}}</span>
+                </div>
+                <div class="col text-right seeAllButton" ng-click="goToSeeAllPopularStoreDecks()">
+                    <span>{{'DECKSTORE.See-all' | translate}}</span>
+                </div>
             </div>
-            <div class="seeAllButton" ng-click="goToSeeAllPopularStoreDecks()">
-                <span>{{'DECKSTORE.See-all' | translate}}</span>
-            </div>
-            <div class="storeElement" ng-repeat="storeElement in getPopularStoreDecks()" maintain-ratio-width>
+            <ion-scroll class="storeElementContainer" zooming="false" direction="x">
                 <!-- Deck -->
-                <div store-element my-store-element="storeElement" show-description="false"></div>
-            </div>
+                <div class="storeElement" ng-repeat="storeElement in getPopularStoreDecks()" maintain-ratio-width>
+                    <div store-element my-store-element="storeElement" show-description="false"></div>
+                </div>
+            </ion-scroll>
         </div>
 
         <!-- User's decks -->
         <div class="decksStoreContainer userDecksStore">
-            <div class="storeTitle">
-                <span>{{'MYDECKS.My-decks' | translate}}</span>
+            <div class="row">
+                <div class="col text-left storeTitle">
+                    <span>{{'MYDECKS.My-decks' | translate}}</span>
+                </div>
+                <div class="col text-right seeAllButton" ng-click="goToSeeAllUserStoreDecks()">
+                    <span>{{'DECKSTORE.See-all' | translate}}</span>
+                </div>
             </div>
-            <div class="seeAllButton" ng-click="goToSeeAllUserStoreDecks()">
-                <span>{{'DECKSTORE.See-all' | translate}}</span>
-            </div>
-            <div class="storeElement" ng-repeat="storeElement in getUserStoreDecks()" maintain-ratio-width>
+            <ion-scroll class="storeElementContainer" zooming="false" direction="x">
                 <!-- Deck -->
-                <div store-element my-store-element="storeElement" show-description="false"></div>
-            </div>
+                <div class="storeElement" ng-repeat="storeElement in getUserStoreDecks()" maintain-ratio-width>
+                    <div store-element my-store-element="storeElement" show-description="false"></div>
+                </div>
+            </ion-scroll>
         </div>
 
 	</ion-content>

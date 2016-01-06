@@ -26,8 +26,10 @@
 
     <!-- Content -->
 	<ion-content>
-		<ul class="list">
-			<a ng-repeat="deck in getDecks()" class="item item-avatar" ng-click="displayDeck(deck._id)" on-hold="deleteDeck(deck)">
+
+		<!-- My deck(s) -->
+		<ul class="list" ng-show="myDecksTabsActivated == true">
+			<a ng-repeat="deck in getDecks()" class="item item-avatar" ng-click="displayDeck(deck, false)" on-hold="deleteDeck(deck)">
 				<h2>{{deck.name}}</h2>
 				<p>
 					<i class="ion-ios-eye-outline"></i>
@@ -35,10 +37,21 @@
 				</p>
 			</a>
 		</ul>
+
+		<!-- Owned deck(s) -->
+		<ul class="list" ng-show="myDecksTabsActivated == false">
+			<a ng-repeat="storeElement in getOwnedDecks()" class="item item-avatar" ng-click="displayDeck(storeElement.deck, true)">
+				<h2>{{storeElement.deck.name}}</h2>
+				<p>
+					<span>{{'DECKSTORE.Created-by' | translate}} {{storeElement.authorName}}</span>
+				</p>
+			</a>
+		</ul>
+
 	</ion-content>
 
 	<!-- Add deck button -->
-	<div class="bar bar-footer bar-balanced addSomethingButton">
+	<!-- <div class="bar bar-footer bar-balanced addSomethingButton">
 		<div class="row">
 			<div class="col col-center">
 				{{'MYDECKS.Add-deck' | translate}}
@@ -47,5 +60,24 @@
 				<i class="ion-plus"></i>
 			</button>
 		</div>
+	</div> -->
+
+	<!-- Tabs -->
+	<div class="tabs-striped tabs-color-energized myDecksTabs">
+		<div class="tabs tabs-icon-top">
+			<a class="tab-item" ng-class="myDecksTabsActivated == true ? 'active' : ''" ng-click="myDecksTabsActivated = true">
+				<i class="icon ion-home"></i>
+				{{'MYDECKS.My-decks' | translate}}
+			</a>
+			<a class="tab-item" ng-class="myDecksTabsActivated == false ? 'active' : ''" ng-click="myDecksTabsActivated = false">
+				<i class="icon ion-android-cart"></i>
+				{{'MYDECKS.Bought-decks' | translate}}
+			</a>
+			<a class="tab-item" ui-sref="menu.createDeck()">
+				<i class="icon ion-plus"></i>
+				{{'MYDECKS.Add-deck' | translate}}
+			</a>
+		</div>
 	</div>
+
 </ion-view>

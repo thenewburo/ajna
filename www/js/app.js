@@ -51,6 +51,17 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'pa
         controller: 'MenuCtrl'
     })
 
+    .state('menu.myAccount', {
+        url: '/My-account',
+        cache: false,
+        views: {
+            'menuContent': {
+                templateUrl: 'templates/myAccount.html',
+                controller: 'MyAccountCtrl'
+            }
+        }
+    })
+
     .state('menu.myDecks', {
         url: '/myDecks',
         cache: false,
@@ -77,7 +88,7 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'pa
     .state('menu.displayDeck', {
         url: '/displayDeck',
         cache: false,
-        params: { deckId: null },
+        params: { deck: null, isBoughtDeck: null },
         views: {
             'menuContent': {
                 templateUrl: 'templates/displayDeck.html',
@@ -115,6 +126,7 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'pa
 
     .state('menu.deckstore', {
         url: '/deckstore',
+        cache: false,
         views: {
             'menuContent': {
                 templateUrl: 'templates/deckstore.html',
@@ -161,7 +173,8 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'pa
             "Yes": "Yes",
             "No": "No",
             "Cancel": "Cancel",
-            "Wait": "Please wait"
+            "Wait": "Please wait",
+            "Cards": "Card(s)"
         },
         ONBOARD: {
             "Text-page1": "Create your own flashcards in few minutes.",
@@ -180,6 +193,13 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'pa
             "Sign-google": "Sign in with Google+",
             "Sign-twitter": "Sign in with Twitter"
         },
+        MYACCOUNT: {
+            "My-account": "My account",
+            "Decks": "Deck(s)",
+            "Decks-sold": "Deck(s) sold",
+            "Decks-on-sale": "Deck(s) on sale",
+            "Connect-with": "Connect with"
+        },
         NEWACCOUNT: {
             "New-account": "New account",
             "Creating": "Creating new account",
@@ -190,6 +210,7 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'pa
         },
         MYDECKS: {
             "My-decks": "My decks",
+            "Bought-decks": "Bought decks",
             "Unseen-cards": "unseen card(s)",
             "Add-deck": "Add a deck",
             "Refresh-decks": "Refresh decks",
@@ -244,7 +265,8 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'pa
             "Popular-decks": "Popular decks",
             "New-decks": "New decks",
             "Buy-deck": "Buy deck",
-            "Sure-buy-deck": "Are you sure you want to buy this deck?"
+            "Sure-buy-deck": "Are you sure you want to buy this deck?",
+            "Search": "Search"
         },
         ERROR: {
             "Error": "Error",
