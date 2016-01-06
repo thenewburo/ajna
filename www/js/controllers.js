@@ -33,7 +33,7 @@ angular.module('controllers', [])
 	);
 })
 
-.controller('LoginCtrl', function($scope, $state, $translate, $ionicHistory, $ionicLoading, UserService, PopupService) {
+.controller('LoginCtrl', function($scope, $state, $translate, $ionicHistory, $ionicLoading, UserService, PopupService, DeckService, TagService) {
 
 	// The user's login data
 	$scope.loginData = {};
@@ -58,6 +58,10 @@ angular.module('controllers', [])
 				$ionicLoading.show({ template: $translate.instant('LOGIN.Sign-in') + ' ...' });
 				UserService.connect($scope.loginData, function(response) {
 					// Success
+					// Get the user's decks
+					DeckService.getDecksDatabase();
+					// Get the tags
+					TagService.getAllTags();
 					// Reset the fields
 					$scope.loginData = {};
 					// Make the next page the root history
@@ -254,7 +258,7 @@ angular.module('controllers', [])
 
 	// Get the user's owned deck(s)
 	$scope.getOwnedDecks = function() {
-		return DeckService.getOwnedDecks();
+		return DeckService.getNotMineOwnedDecks();
 	};
 
 	// Redirect to display a deck

@@ -116,7 +116,7 @@ angular.module('services', [])
 })
 
 // This factory is used to manage the users
-.factory('UserService', function($http, $sanitize, server, DeckService, TagService) {
+.factory('UserService', function($http, $sanitize, server, TagService) {
 
 	// Our user variable
 	var user = {};
@@ -164,10 +164,6 @@ angular.module('services', [])
 						user = response.data;
 						// All the next http requests will have the token in the header
 						$http.defaults.headers.common['authorization'] = user.token;
-						// Get the user's decks
-						DeckService.getDecksDatabase();
-						// Get the tags
-						TagService.getAllTags();
 						successFct(response);
 					}
 					else
@@ -186,7 +182,7 @@ angular.module('services', [])
 })
 
 // This factory is used to manage the decks
-.factory('DeckService', function($http, $rootScope, $q, server) {
+.factory('DeckService', function($http, $rootScope, $q, server, UserService) {
 
 	var decks = [];
 	var ownedDecks = [];
@@ -263,6 +259,10 @@ angular.module('services', [])
 		// Returns all the owned decks
 		getOwnedDecks: function() {
 			return ownedDecks;
+		},
+		// Returns all the owned decks except mine
+		getNotMineOwnedDecks: function() {
+			return _.reject(ownedDecks, function(deck) { return deck.authorName == UserService.getUsername(); });
 		},
 		buyDeck: function(storeElement, successFct, errorFct) {
 			// Request the server to add a new deck
