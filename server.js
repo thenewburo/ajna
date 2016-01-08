@@ -110,6 +110,67 @@ app.post('/connect', function(req, res) {
 		}
 	});
 });
+// route to authenticate a user with Facebook
+app.post('/connectFacebook', function(req, res) {
+
+	// One of the fields is empty
+	if (req.body.email == undefined || req.body.email.length <= 0 || req.body.name == undefined || req.body.name.length <= 0 ||
+		req.body.facebookID == undefined || req.body.facebookID.length <= 0 || req.body.facebookToken == undefined || req.body.facebookToken.length <= 0)
+		return res.status(400).json({ title: "LOGIN.Sign-in", message: "ERROR.Cannot-connect" });
+
+	// find the user
+	User.findOne({ email: req.body.email.toLowerCase() }, function(err, user) {
+    	if (err) return res.status(400).json({ title: "LOGIN.Sign-in", message: "ERROR.Cannot-connect" });
+    	// User not found, we have to create a new one (the email address is free)
+		if (!user) {
+			User.findOne({ facebook.id: req.body.facebookID }, function(err, fbUser) {
+				if (err) return res.status(400).json({ title: "LOGIN.Sign-in", message: "ERROR.Cannot-connect" });
+				// Facebook user not found, we can create a new one
+				if (!fbUser) {
+					// Create the new user
+					var newUser = new User({ name: req.body.name, email: req.body.email.toLowerCase(), decks: [], facebook: { id: req.body.facebookID, token: req.body.facebookToken }});
+					// Save the user in database
+					newUser.save(function(err) {
+						if (err) return res.status(400).json({ title: "LOGIN.Sign-in", message: "ERROR.Cannot-connect" });
+						// User successfully created
+						// create a token
+						var token = jwt.sign({ name: newUser.name, email: newUser.email }, app.get('superSecret'), {
+							expiresIn: "24h" // expires in 24 hours
+						});
+						// return the information including token as JSON
+						return res.status(200).json({ name: newUser.name, email: newUser.email, token: token });
+					});
+				}
+				// Facebook user found
+				else {
+					// create a token
+					var token = jwt.sign({ name: fbUser.name, email: fbUser.email }, app.get('superSecret'), {
+						expiresIn: "24h" // expires in 24 hours
+					});
+					// return the information including token as JSON
+					return res.status(200).json({ name: fbUser.name, email: fbUser.email, token: token });
+				}
+			});
+		}
+		// User found
+		else {
+			// check if password matches
+			bcrypt.compare(req.body.password, user.password, function(err, result) {
+				// it matches
+				if (result) {
+					// create a token
+					var token = jwt.sign({ name: user.name, email: user.email }, app.get('superSecret'), {
+						expiresIn: "24h" // expires in 24 hours
+					});
+					// return the information including token as JSON
+					return res.status(200).json({ name: user.name, email: user.email, token: token });
+				}
+				else
+					return res.status(400).json({ title: "LOGIN.Sign-in", message: "ERROR.Cannot-connect" });
+			});
+		}
+	});
+});
 
 // =======================
 // API Routes ============

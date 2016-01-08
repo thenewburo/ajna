@@ -351,7 +351,7 @@ $transparentWhiteColor: rgba(255,255,255,0.7);
 			font-size: 16px;
 			text-align: left;
 
-			&.activated { background-color: transparent; }
+			&.activated { background-color: $energized; }
 
 			.socialMediaButtonLogo {
 				border-radius: $custom-button-radius;

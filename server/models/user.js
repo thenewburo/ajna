@@ -8,5 +8,9 @@ module.exports = mongoose.model('User', new Schema({
 	name: { type: String, required: true},
 	password: { type: String, required: true},
 	decks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Deck' }],
-	ownedDecks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Store' }]
+	ownedDecks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Store' }],
+	facebook: {
+		id: { type: String, unique: true },
+		token: { type: String }
+	}
 }));

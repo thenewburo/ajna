@@ -47,6 +47,35 @@ angular.module('controllers', [])
 		return 0;
 	};
 
+	// Function loaded when the user is connected
+	$scope.userConnected = function() {
+		// Get the user's decks
+		DeckService.getDecksDatabase();
+		// Get the tags
+		TagService.getAllTags();
+		// Reset the fields
+		$scope.loginData = {};
+		// Make the next page the root history
+		$ionicHistory.nextViewOptions({
+			disableBack: true
+		});
+		// Hide the loading screen
+		$ionicLoading.hide();
+		// Redirect to 'My decks' page
+		$state.go("menu.myDecks");
+	};
+
+	// Function loaded if we could not connect the user, and we have to display an error
+	$scope.userNotConnected = function(response) {
+		// Hide the loading screen
+		$ionicLoading.hide();
+		// Display a popup
+		if (response.data != undefined && response.data.title != undefined && response.data.message != undefined)
+			PopupService.showAlert($translate.instant(response.data.title), $translate.instant(response.data.message));
+		else
+			PopupService.showAlert($translate.instant('LOGIN.Sign-in'), $translate.instant('ERROR.Cannot-connect'));
+	}
+
 	// Perform the login action when the user submits the login form
 	$scope.login = function() {
 		// Check all the fields, then use the return code to execute the good actions
@@ -58,29 +87,10 @@ angular.module('controllers', [])
 				$ionicLoading.show({ template: $translate.instant('LOGIN.Sign-in') + ' ...' });
 				UserService.connect($scope.loginData, function(response) {
 					// Success
-					// Get the user's decks
-					DeckService.getDecksDatabase();
-					// Get the tags
-					TagService.getAllTags();
-					// Reset the fields
-					$scope.loginData = {};
-					// Make the next page the root history
-					$ionicHistory.nextViewOptions({
-						disableBack: true
-					});
-					// Hide the loading screen
-					$ionicLoading.hide();
-					// Redirect to 'My decks' page
-					$state.go("menu.myDecks");
+					$scope.userConnected();
 				}, function(response) {
 					// Fail
-					// Hide the loading screen
-					$ionicLoading.hide();
-					// Display a popup
-					if (response.data != undefined && response.data.title != undefined && response.data.message != undefined)
-						PopupService.showAlert($translate.instant(response.data.title), $translate.instant(response.data.message));
-					else
-						PopupService.showAlert($translate.instant('LOGIN.Sign-in'), $translate.instant('ERROR.Cannot-connect'));
+					$scope.userNotConnected(response);
 				});
 				break;
 
@@ -90,6 +100,48 @@ angular.module('controllers', [])
 				break;
 
 			default:
+		}
+	};
+
+	// Perform a Facebook login
+	$scope.loginFacebook = function() {
+		if (facebookConnectPlugin != undefined) {
+			// Display a loading screen
+			$ionicLoading.show({ template: $translate.instant('LOGIN.Sign-in') + ' ...' });
+			facebookConnectPlugin.login(["email"], function(res) {
+				// Success
+				if (response.authResponse && res.authResponse.userID && res.authResponse.accessToken) {
+					facebookConnectPlugin.api('/me', null,
+						function(response) {
+							if (response.email && response.name) {
+								// We have everything we need to connect / create the user
+								UserService.connectFacebook({ email: response.email, name: response.name, facebookID: res.authResponse.userID, facebookToken: res.authResponse.accessToken }, function(response) {
+									// Success
+									$scope.userConnected();
+								}, function(response) {
+									// Fail
+									$scope.userNotConnected(response);
+								});
+							}
+							else {
+								// Hide the loading screen
+								$ionicLoading.hide();
+								PopupService.showAlert($translate.instant('LOGIN.Sign-in'), $translate.instant('ERROR.Cannot-connect'));
+							}
+						}
+					);
+				}
+				else {
+					// Hide the loading screen
+					$ionicLoading.hide();
+					PopupService.showAlert($translate.instant('LOGIN.Sign-in'), $translate.instant('ERROR.Cannot-connect'));
+				}
+			}, function(res) {
+				// Fail
+				// Hide the loading screen
+				$ionicLoading.hide();
+				PopupService.showAlert($translate.instant('LOGIN.Sign-in'), $translate.instant('ERROR.Cannot-connect'));
+			});
 		}
 	};
 })

@@ -174,6 +174,32 @@ angular.module('services', [])
 				}
 			);
 		},
+		// Try to connect the user with Facebook, and returns a token if successfully
+		connectFacebook: function(curUser, successFct, errorFct) {
+			// To avoid script injection (remove dangerous html)
+			curUser.email = $sanitize(curUser.email);
+			curUser.name = $sanitize(curUser.name);
+			curUser.facebookID = $sanitize(curUser.facebookID);
+			curUser.facebookToken = $sanitize(curUser.facebookToken);
+			// Request the server to try to connect the user
+			$http.post(server.url + ":" + server.port + '/connectFacebook', curUser).then(
+				function(response) {
+					// Success
+					if (response.data != undefined) {
+						// Get the user's informations
+						user = response.data;
+						// All the next http requests will have the token in the header
+						$http.defaults.headers.common['authorization'] = user.token;
+						successFct(response);
+					}
+					else
+						errorFct(response);
+				}, function(response) {
+					// Fail
+					errorFct(response);
+				}
+			);
+		},
 		// Disconnect the user
 		disconnect: function() {
 			user = {};

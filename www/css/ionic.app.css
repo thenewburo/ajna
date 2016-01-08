@@ -379,7 +379,7 @@ ion-popover-view.popover {
       font-size: 16px;
       text-align: left; }
       .login ion-content .socialMediaButton.activated {
-        background-color: transparent; }
+        background-color: #e2743c; }
       .login ion-content .socialMediaButton .socialMediaButtonLogo {
         border-radius: 50px;
         font-size: 32px;
