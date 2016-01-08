@@ -123,7 +123,7 @@ app.post('/connectFacebook', function(req, res) {
     	if (err) return res.status(400).json({ title: "LOGIN.Sign-in", message: "ERROR.Cannot-connect" });
     	// User not found, we have to create a new one (the email address is free)
 		if (!user) {
-			User.findOne({ facebook.id: req.body.facebookID }, function(err, fbUser) {
+			User.findOne({ 'facebook.id': req.body.facebookID }, function(err, fbUser) {
 				if (err) return res.status(400).json({ title: "LOGIN.Sign-in", message: "ERROR.Cannot-connect" });
 				// Facebook user not found, we can create a new one
 				if (!fbUser) {
