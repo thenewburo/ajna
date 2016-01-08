@@ -110,17 +110,17 @@ angular.module('controllers', [])
 			$ionicLoading.show({ template: $translate.instant('LOGIN.Sign-in') + ' ...' });
 			facebookConnectPlugin.login(["email"], function(res) {
 				// Success
-				if (response.authResponse && res.authResponse.userID && res.authResponse.accessToken) {
-					facebookConnectPlugin.api('/me', null,
+				if (res.authResponse && res.authResponse.userID && res.authResponse.accessToken) {
+					facebookConnectPlugin.api('/me?fields=id,name,email', null,
 						function(response) {
 							if (response.email && response.name) {
 								// We have everything we need to connect / create the user
-								UserService.connectFacebook({ email: response.email, name: response.name, facebookID: res.authResponse.userID, facebookToken: res.authResponse.accessToken }, function(response) {
+								UserService.connectFacebook({ email: response.email, name: response.name, facebookID: res.authResponse.userID, facebookToken: res.authResponse.accessToken }, function(response2) {
 									// Success
 									$scope.userConnected();
-								}, function(response) {
+								}, function(response2) {
 									// Fail
-									$scope.userNotConnected(response);
+									$scope.userNotConnected(response2);
 								});
 							}
 							else {
@@ -132,6 +132,7 @@ angular.module('controllers', [])
 					);
 				}
 				else {
+					alert("Baaaa");
 					// Hide the loading screen
 					$ionicLoading.hide();
 					PopupService.showAlert($translate.instant('LOGIN.Sign-in'), $translate.instant('ERROR.Cannot-connect'));
