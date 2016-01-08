@@ -110,7 +110,6 @@ angular.module('controllers', [])
 			$ionicLoading.show({ template: $translate.instant('LOGIN.Sign-in') + ' ...' });
 			facebookConnectPlugin.login(["email"], function(res) {
 				// Success
-				alert(JSON.stringify(res.authResponse));
 				if (res.authResponse && res.authResponse.userID && res.authResponse.accessToken) {
 					facebookConnectPlugin.api('/me?fields=id,name,email', null,
 						function(response) {
