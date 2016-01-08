@@ -160,20 +160,12 @@ app.post('/connectFacebook', function(req, res) {
 		// User found
 		else {
 			console.log("trouve local");
-			// check if password matches
-			bcrypt.compare(req.body.password, user.password, function(err, result) {
-				// it matches
-				if (result) {
-					// create a token
-					var token = jwt.sign({ name: user.name, email: user.email }, app.get('superSecret'), {
-						expiresIn: "24h" // expires in 24 hours
-					});
-					// return the information including token as JSON
-					return res.status(200).json({ name: user.name, email: user.email, token: token });
-				}
-				else
-					return res.status(400).json({ title: "LOGIN.Sign-in", message: "ERROR.Cannot-connect" });
+			// create a token
+			var token = jwt.sign({ name: user.name, email: user.email }, app.get('superSecret'), {
+				expiresIn: "24h" // expires in 24 hours
 			});
+			// return the information including token as JSON
+			return res.status(200).json({ name: user.name, email: user.email, token: token });
 		}
 	});
 });
