@@ -203,6 +203,8 @@ angular.module('services', [])
 		// Disconnect the user
 		disconnect: function() {
 			user = {};
+			if (typeof facebookConnectPlugin !== 'undefined')
+				facebookConnectPlugin.logout(function(){}, function(){});
 		}
 	};
 })

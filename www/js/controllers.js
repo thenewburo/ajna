@@ -105,7 +105,7 @@ angular.module('controllers', [])
 
 	// Perform a Facebook login
 	$scope.loginFacebook = function() {
-		if (facebookConnectPlugin != undefined) {
+		if (typeof facebookConnectPlugin !== 'undefined') {
 			// Display a loading screen
 			$ionicLoading.show({ template: $translate.instant('LOGIN.Sign-in') + ' ...' });
 			facebookConnectPlugin.login(["email"], function(res) {
@@ -133,7 +133,6 @@ angular.module('controllers', [])
 					);
 				}
 				else {
-					alert("Baaaa");
 					// Hide the loading screen
 					$ionicLoading.hide();
 					PopupService.showAlert($translate.instant('LOGIN.Sign-in'), $translate.instant('ERROR.Cannot-connect'));
