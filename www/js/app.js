@@ -1,5 +1,5 @@
 // Ionic Starter App
-angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'pascalprecht.translate', 'ngSanitize', 'ngCookies', 'ngCordova'])
+angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'pascalprecht.translate', 'ngSanitize', 'ngCookies', 'ngCordova', 'ngCordovaOauth'])
 
 // Linode address: 173.255.197.21
 .constant("server", { url: "http://173.255.197.21", port: "8080" })

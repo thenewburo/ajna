@@ -147,10 +147,10 @@ angular.module('controllers', [])
 
 	$scope.loginGoogle = function() {
 		$ionicPlatform.ready(function() {
+			// Display a loading screen
+			$ionicLoading.show({ template: $translate.instant('LOGIN.Sign-in') + ' ...' });
 			$cordovaOauth.google("1089116189269-frvmssobgt8bl0uqel3her19ek5hpfg2.apps.googleusercontent.com", ["https://www.googleapis.com/auth/userinfo.email"]).then(function(result) {
 	            // Success
-				//alert(JSON.stringify(result));
-
 				$http.get('https://www.googleapis.com/oauth2/v2/userinfo?fields=id,email,name&access_token=' + result.access_token).then(
 					function(response) {
 						// Success
@@ -171,16 +171,38 @@ angular.module('controllers', [])
 						}
 					}, function(response) {
 						// Fail
-						alert("Cannot get user's informations");
+			            // Hide the loading screen
+						$ionicLoading.hide();
+						PopupService.showAlert($translate.instant('LOGIN.Sign-in'), $translate.instant('ERROR.Cannot-connect'));
 					}
 				);
-
 	        }, function(error) {
 	            // Fail
-				alert("Cannot connect with Google+ services");
+	            // Hide the loading screen
+				$ionicLoading.hide();
+				PopupService.showAlert($translate.instant('LOGIN.Sign-in'), $translate.instant('ERROR.Cannot-connect'));
 	        });
 		});
-	}
+	};
+
+	$scope.loginTwitter = function() {
+
+		$ionicPlatform.ready(function() {
+			// Display a loading screen
+			$ionicLoading.show({ template: $translate.instant('LOGIN.Sign-in') + ' ...' });
+			$cordovaOauth.twitter("o8qBj8kAyUGQfqLA9Y1f1efDr", "qUwK5QQcd4CMSVvnNCOS6LBR8Ye4T11aN5AiYzjvNIYbIJTHGP").then(function(result) {
+	            // Success
+	            // Hide the loading screen
+				$ionicLoading.hide();
+				alert(JSON.stringify(result));
+	        }, function(error) {
+	            // Fail
+	            // Hide the loading screen
+				$ionicLoading.hide();
+				PopupService.showAlert($translate.instant('LOGIN.Sign-in'), $translate.instant('ERROR.Cannot-connect'));
+	        });
+		});
+	};
 })
 
 .controller('NewAccountCtrl', function($scope, $state, $translate, $ionicLoading, UserService, PopupService) {
