@@ -33,7 +33,7 @@ angular.module('controllers', [])
 	);
 })
 
-.controller('LoginCtrl', function($scope, $state, $translate, $ionicHistory, $ionicLoading, UserService, PopupService, DeckService, TagService) {
+.controller('LoginCtrl', function($scope, $state, $translate, $ionicHistory, $ionicLoading, $ionicPlatform, $cordovaOauth, $http, UserService, PopupService, DeckService, TagService) {
 
 	// The user's login data
 	$scope.loginData = {};
@@ -110,12 +110,12 @@ angular.module('controllers', [])
 			$ionicLoading.show({ template: $translate.instant('LOGIN.Sign-in') + ' ...' });
 			facebookConnectPlugin.login(["email"], function(res) {
 				// Success
-				if (res.authResponse && res.authResponse.userID && res.authResponse.accessToken) {
+				if (res.authResponse && res.authResponse.userID) {
 					facebookConnectPlugin.api('/me?fields=id,name,email', null,
 						function(response) {
 							if (response.email && response.name) {
 								// We have everything we need to connect / create the user
-								UserService.connectFacebook({ email: response.email, name: response.name, facebookID: res.authResponse.userID, facebookToken: res.authResponse.accessToken }, function(response2) {
+								UserService.connectSocialMedia({ email: response.email, name: response.name, id: res.authResponse.userID, socialMedia: 'facebook' }, function(response2) {
 									// Success
 									$scope.userConnected();
 								}, function(response2) {
@@ -144,6 +144,43 @@ angular.module('controllers', [])
 			});
 		}
 	};
+
+	$scope.loginGoogle = function() {
+		$ionicPlatform.ready(function() {
+			$cordovaOauth.google("1089116189269-frvmssobgt8bl0uqel3her19ek5hpfg2.apps.googleusercontent.com", ["https://www.googleapis.com/auth/userinfo.email"]).then(function(result) {
+	            // Success
+				//alert(JSON.stringify(result));
+
+				$http.get('https://www.googleapis.com/oauth2/v2/userinfo?fields=id,email&access_token=' + result.access_token).then(
+					function(response) {
+						// Success
+						if (response && response.data && response.data.email && response.data.id) {
+							// We have everything we need to connect / create the user
+							UserService.connectSocialMedia({ email: response.email, name: response.name, id: res.authResponse.userID, socialMedia: 'google' }, function(response2) {
+								// Success
+								$scope.userConnected();
+							}, function(response2) {
+								// Fail
+								$scope.userNotConnected(response2);
+							});
+						}
+						else {
+							// Hide the loading screen
+							$ionicLoading.hide();
+							PopupService.showAlert($translate.instant('LOGIN.Sign-in'), $translate.instant('ERROR.Cannot-connect'));
+						}
+					}, function(response) {
+						// Fail
+						alert("Cannot get user's informations");
+					}
+				);
+
+	        }, function(error) {
+	            // Fail
+				alert("Cannot connect with Google+ services");
+	        });
+		});
+	}
 })
 
 .controller('NewAccountCtrl', function($scope, $state, $translate, $ionicLoading, UserService, PopupService) {

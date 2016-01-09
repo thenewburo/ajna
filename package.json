@@ -28,7 +28,9 @@
     "cordova-plugin-whitelist",
     "cordova-plugin-splashscreen",
     "cordova-plugin-statusbar",
-    "ionic-plugin-keyboard"
+    "ionic-plugin-keyboard",
+    "cordova-plugin-googleplayservices",
+    "cordova-plugin-inappbrowser", { "https://github.com/apache/cordova-plugin-inappbrowser" }
   ],
   "cordovaPlatforms": [
     "android"

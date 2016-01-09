@@ -111,23 +111,32 @@ app.post('/connect', function(req, res) {
 	});
 });
 // route to authenticate a user with Facebook
-app.post('/connectFacebook', function(req, res) {
+app.post('/connectSocialMedia', function(req, res) {
 
 	// One of the fields is empty
 	if (req.body.email == undefined || req.body.email.length <= 0 || req.body.name == undefined || req.body.name.length <= 0 ||
-		req.body.facebookID == undefined || req.body.facebookID.length <= 0 || req.body.facebookToken == undefined || req.body.facebookToken.length <= 0)
+		req.body.id == undefined || req.body.id.length <= 0 || req.body.socialMedia == undefined || req.body.socialMedia.length <= 0)
 		return res.status(400).json({ title: "LOGIN.Sign-in", message: "ERROR.Cannot-connect" });
 	// find the user
 	User.findOne({ email: req.body.email.toLowerCase() }, function(err, user) {
     	if (err) return res.status(400).json({ title: "LOGIN.Sign-in", message: "ERROR.Cannot-connect" });
     	// User not found, we have to create a new one (the email address is free)
 		if (!user) {
-			User.findOne({ 'facebook.id': req.body.facebookID }, function(err, fbUser) {
+			var search = req.body.socialMedia + ".id";
+			User.findOne({ search: req.body.id }, function(err, fbUser) {
 				if (err) return res.status(400).json({ title: "LOGIN.Sign-in", message: "ERROR.Cannot-connect" });
 				// Facebook user not found, we can create a new one
 				if (!fbUser) {
 					// Create the new user
-					var newUser = new User({ name: req.body.name, email: req.body.email.toLowerCase(), decks: [], facebook: { id: req.body.facebookID, token: req.body.facebookToken }});
+					var newUser = null;
+					if (req.body.socialMedia == "facebook")
+						newUser = new User({ name: req.body.name, email: req.body.email.toLowerCase(), decks: [], facebook: { id: req.body.id }});
+					else if (req.body.socialMedia == "google")
+						newUser = new User({ name: req.body.name, email: req.body.email.toLowerCase(), decks: [], google: { id: req.body.id }});
+					else if (req.body.socialMedia == "twitter")
+						newUser = new User({ name: req.body.name, email: req.body.email.toLowerCase(), decks: [], twitter: { id: req.body.id }});
+					if (newUser == null)
+						return res.status(400).json({ title: "LOGIN.Sign-in", message: "ERROR.Cannot-connect" });
 					// Save the user in database
 					newUser.save(function(err) {
 						if (err) return res.status(400).json({ title: "LOGIN.Sign-in", message: "ERROR.Cannot-connect" });
