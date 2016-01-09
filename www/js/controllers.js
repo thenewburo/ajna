@@ -151,12 +151,12 @@ angular.module('controllers', [])
 	            // Success
 				//alert(JSON.stringify(result));
 
-				$http.get('https://www.googleapis.com/oauth2/v2/userinfo?fields=id,email&access_token=' + result.access_token).then(
+				$http.get('https://www.googleapis.com/oauth2/v2/userinfo?fields=id,email,name&access_token=' + result.access_token).then(
 					function(response) {
 						// Success
 						if (response && response.data && response.data.email && response.data.id) {
 							// We have everything we need to connect / create the user
-							UserService.connectSocialMedia({ email: response.email, name: response.name, id: res.authResponse.userID, socialMedia: 'google' }, function(response2) {
+							UserService.connectSocialMedia({ email: response.data.email, name: response.data.name, id: response.data.id, socialMedia: 'google' }, function(response2) {
 								// Success
 								$scope.userConnected();
 							}, function(response2) {

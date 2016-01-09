@@ -162,12 +162,23 @@ app.post('/connectSocialMedia', function(req, res) {
 		}
 		// User found
 		else {
-			// create a token
-			var token = jwt.sign({ name: user.name, email: user.email }, app.get('superSecret'), {
-				expiresIn: "24h" // expires in 24 hours
+			// Update the user
+			if (req.body.socialMedia == "facebook")
+				user.facebook = { id: req.body.id };
+			else if (req.body.socialMedia == "google")
+				user.google = { id: req.body.id };
+			else if (req.body.socialMedia == "twitter")
+				user.twitter = { id: req.body.id };
+
+			user.save(function(err) {
+				if (err) return res.status(400).json({ title: "LOGIN.Sign-in", message: "ERROR.Cannot-connect" });
+				// create a token
+				var token = jwt.sign({ name: user.name, email: user.email }, app.get('superSecret'), {
+					expiresIn: "24h" // expires in 24 hours
+				});
+				// return the information including token as JSON
+				return res.status(200).json({ name: user.name, email: user.email, token: token });
 			});
-			// return the information including token as JSON
-			return res.status(200).json({ name: user.name, email: user.email, token: token });
 		}
 	});
 });
