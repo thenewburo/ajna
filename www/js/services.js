@@ -15,18 +15,44 @@ angular.module('services', [])
 })
 
 // This factory is used to read and write in the offline data file
-.factory('FileService', function(offlineData) {
+.factory('FileService', function($cordovaFile, offlineDataFile) {
+
+	// Contains the file content
+	var data = null;
+
 	return {
-		write: function(data) {
-			// If we don't have the file, return
-			if(offlineData == null)
+		// Write in the file the content of 'data' variable
+		writeData: function(newData) {
+			if (typeof cordova == "undefined")
 				return;
-			// Write in file
-			offlineData.createWriter(function(fileWriter) {
+			$cordovaFile.writeFile(cordova.file.dataDirectory, offlineDataFile, JSON.stringify(newData), true).then(function (result) {
 				// Success
-				fileWriter.write(JSON.stringify(offlineData));
-			}, function() {
-				// Fail
+				data = newData;
+			}, function (error) {
+				// Error
+			});
+		},
+		// Returns the file content
+		getData: function() {
+			return data;
+		},
+		// Reset the data
+		resetData: function() {
+			data = null;
+		},
+		// Read in the file to get the content
+		getDataInFile: function(doneFct) {
+			if (typeof cordova == "undefined") {
+				doneFct();
+				return;
+			}
+			$cordovaFile.readAsText(cordova.file.dataDirectory, offlineDataFile).then(function (result) {
+				// Success
+				data = JSON.parse(result);
+				doneFct();
+			}, function (error) {
+				// Error
+				doneFct();
 			});
 		}
 	};
@@ -64,12 +90,14 @@ angular.module('services', [])
 })
 
 // This factory is used to manage the tags for a deck or a card
-.factory('TagService', function($http, server) {
+.factory('TagService', function($http, server, UserService) {
 	// Get all the tags from our database
 	var tags = [];
 
 	return {
 		getAllTags: function() {
+			if (UserService.getOfflineMode() == true)
+				return;
 			// Request the server to get all the tags
 			$http.get(server.url + ":" + server.port + '/api/getTags').then(
 				function(response) {
@@ -134,10 +162,12 @@ angular.module('services', [])
 })
 
 // This factory is used to manage the users
-.factory('UserService', function($http, $sanitize, server, TagService) {
+.factory('UserService', function($http, $sanitize, server) {
 
 	// Our user variable
 	var user = {};
+	// Offline mode
+	var offlineMode = false;
 
 	return {
 		// Return the current username
@@ -168,8 +198,17 @@ angular.module('services', [])
 				}
 			);
 		},
+		// Change the offline mode
+		setOfflineMode: function(val) {
+			offlineMode = val;
+		},
+		// Returns if the user is in offline mode
+		getOfflineMode: function() {
+			return offlineMode;
+		},
 		// Try to connect the user, and returns a token if successfully
 		connect: function(curUser, successFct, errorFct) {
+			offlineMode = false;
 			// To avoid script injection (remove dangerous html)
 			curUser.email = $sanitize(curUser.email);
 			curUser.password = $sanitize(curUser.password);
@@ -194,6 +233,7 @@ angular.module('services', [])
 		},
 		// Try to connect the user with Facebook, and returns a token if successfully
 		connectSocialMedia: function(curUser, successFct, errorFct) {
+			offlineMode = false;
 			// To avoid script injection (remove dangerous html)
 			curUser.email = $sanitize(curUser.email);
 			curUser.name = $sanitize(curUser.name);
@@ -221,14 +261,15 @@ angular.module('services', [])
 		// Disconnect the user
 		disconnect: function() {
 			user = {};
-			if (typeof facebookConnectPlugin !== 'undefined')
+			if (typeof facebookConnectPlugin !== 'undefined' && offlineMode == false)
 				facebookConnectPlugin.logout(function(){}, function(){});
+			offlineMode = false;
 		}
 	};
 })
 
 // This factory is used to manage the decks
-.factory('DeckService', function($http, $rootScope, $q, server, UserService) {
+.factory('DeckService', function($http, $rootScope, $q, server, UserService, FileService) {
 
 	var decks = [];
 	var ownedDecks = [];
@@ -283,20 +324,34 @@ angular.module('services', [])
 			);
 		},
 		// Update the decks variable from the database
-		getDecksDatabase: function() {
+		getDecksDatabase: function(doneFct) {
 			// Reset the decks variable
 			decks = [];
 			ownedDecks = [];
-			// Request the server to get all the user's deck(s)
-			$http.get(server.url + ":" + server.port + '/api/getDecks').then(
-				function(response) {
-					// Success
-					if (response.data.decks)
-						decks = response.data.decks;
-					if (response.data.ownedDecks)
-						ownedDecks = response.data.ownedDecks;
-				}, function(response) {}
-			);
+			if (UserService.getOfflineMode() == true) {
+				FileService.getDataInFile(function() {
+					// Done
+					var res = FileService.getData();
+					if (res && res.decks)
+						decks = res.decks;
+					doneFct();
+				});
+			} else {
+				// Request the server to get all the user's deck(s)
+				$http.get(server.url + ":" + server.port + '/api/getDecks').then(
+					function(response) {
+						// Success
+						if (response.data.decks)
+							decks = response.data.decks;
+						if (response.data.ownedDecks)
+							ownedDecks = response.data.ownedDecks;
+						doneFct();
+					}, function(response) {
+						// Fail
+						doneFct();
+					}
+				);
+			}
 		},
 		// Returns all the decks
 		getDecks: function() {
@@ -361,35 +416,56 @@ angular.module('services', [])
 		addDeck: function(email, deck) {
 			// Used to notify the controller we are done
 			$rootScope.createDeck = $q.defer();
-			// Request the server to add a new deck
-			$http.post(server.url + ":" + server.port + '/api/addDeck', { deck: deck }).then(
-				function(response) {
-					// Success
-					deck._id = response.data.deck._id;
-					decks.push(response.data.deck);
-					$rootScope.createDeck.resolve();
-				}, function(response) {
-					// Fail
-					$rootScope.createDeck.resolve();
-				}
-			);
+			// If we are in offline mode
+			if (UserService.getOfflineMode() == true) {
+				// Generate a unique ID
+				deck._id = Math.floor(Date.now() / 1000);
+				deck.createdTime = Date.now();
+				deck.isOnline = false;
+				decks.push(deck);
+				FileService.writeData({ decks: decks });
+				$rootScope.createDeck.resolve();
+			} else {
+				// Request the server to add a new deck
+				$http.post(server.url + ":" + server.port + '/api/addDeck', { deck: deck }).then(
+					function(response) {
+						// Success
+						deck._id = response.data.deck._id;
+						decks.push(response.data.deck);
+						$rootScope.createDeck.resolve();
+					}, function(response) {
+						// Fail
+						$rootScope.createDeck.resolve();
+					}
+				);
+			}
 			return deck;
 		},
 		// Remove a deck
 		removeDeck: function(deck, successFct, errorFct) {
-			if (deck == null)
+			if (deck == null) {
+				errorFct();
 				return;
-			// Request the server to delete the deck
-			$http.post(server.url + ":" + server.port + '/api/deleteDeck', { deck: deck }).then(
-				function(response) {
-					// Success
-					decks = response.data.decks;
-					successFct();
-				}, function(response) {
-					// Fail
-					errorFct();
-				}
-			);
+			}
+			// If we are in offline mode
+			if (UserService.getOfflineMode() == true) {
+				decks = _.reject(decks, function(curDeck) { return curDeck._id == deck._id; });
+				FileService.writeData({ decks: decks });
+				successFct();
+			}
+			else {
+				// Request the server to delete the deck
+				$http.post(server.url + ":" + server.port + '/api/deleteDeck', { deck: deck }).then(
+					function(response) {
+						// Success
+						decks = response.data.decks;
+						successFct();
+					}, function(response) {
+						// Fail
+						errorFct();
+					}
+				);
+			}
 		},
 		// Add this card in the deck, and returns the deck up to date
 		addCard: function(card, curDeck) {
@@ -406,13 +482,18 @@ angular.module('services', [])
 			// If not, push it in the deck and in our deck object to update the view
 			if (alreadyIn == false) {
 				curDeck.cards.push(card);
-				$http.post(server.url + ":" + server.port + '/api/saveDeck', { deck: curDeck }).then(
-					function(response) {}, function(response) {
-						// Fail
-						// Remove the card, since we could not add it
-						curDeck = _.reject(curDeck.cards, function(curCard) { return curCard.question.toLowerCase() == card.question.toLowerCase(); });
-					}
-				);
+				// If the user is in offline mode
+				if (UserService.getOfflineMode() == true) {
+					FileService.writeData({ decks: decks });
+				} else {
+					$http.post(server.url + ":" + server.port + '/api/saveDeck', { deck: curDeck }).then(
+						function(response) {}, function(response) {
+							// Fail
+							// Remove the card, since we could not add it
+							curDeck = _.reject(curDeck.cards, function(curCard) { return curCard.question.toLowerCase() == card.question.toLowerCase(); });
+						}
+					);
+				}
 			}
 			return curDeck;
 		},
@@ -421,17 +502,23 @@ angular.module('services', [])
 			if (card == null || deck == null)
 				return;
 			deck.cards = _.reject(deck.cards, function(curCard) { return curCard.question.toLowerCase() == card.question.toLowerCase(); });
-			$http.post(server.url + ":" + server.port + '/api/saveDeck', { deck: deck }).then(
-				function(response) {
-					// Success
-					successFct();
-				}, function(response) {
-					// Fail
-					// Add the card, since we could not remove it
-					deck.cards.push(card);
-					errorFct();
-				}
-			);
+			// If the user is in offline mode
+			if (UserService.getOfflineMode() == true) {
+				FileService.writeData({ decks: decks });
+				successFct();
+			} else {
+				$http.post(server.url + ":" + server.port + '/api/saveDeck', { deck: deck }).then(
+					function(response) {
+						// Success
+						successFct();
+					}, function(response) {
+						// Fail
+						// Add the card, since we could not remove it
+						deck.cards.push(card);
+						errorFct();
+					}
+				);
+			}
 		},
 		// Function to reset all the variables of this service
 		reset: function() {

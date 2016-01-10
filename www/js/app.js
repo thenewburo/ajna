@@ -3,11 +3,9 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'pa
 
 // Linode address: 173.255.197.21
 .constant("server", { url: "http://173.255.197.21", port: "8080" })
+.constant("offlineDataFile", "data")
 
-// Offline data file
-.constant("offlineData", null)
-
-.run(function($ionicPlatform, offlineData) {
+.run(function($ionicPlatform) {
     $ionicPlatform.ready(function() {
         // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
         // for form inputs)
@@ -19,14 +17,12 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'pa
             StatusBar.hide();
         }
 
+        // Full screen mode
         ionic.Platform.isFullScreen = true;
-
-        if (typeof cordova != "undefined") {
-            window.resolveLocalFileSystemURL(cordova.file.dataDirectory, function(dir) {
-                dir.getFile("data", { create: true }, function(file) {
-                    offlineData = file;
-                });
-            });
+        // Hide navigation bar if needed
+        if (window.navigationbar) {
+            window.navigationbar.setUp(true);
+            window.navigationbar.hide();
         }
     });
 })
@@ -59,6 +55,7 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'pa
     .state('menu', {
         url: '/menu',
         abstract: true,
+        cache: false,
         templateUrl: 'templates/menu.html',
         controller: 'MenuCtrl'
     })
@@ -199,6 +196,7 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'pa
             "Username": "Username",
             "Password": "Password",
             "Sign-in": "Sign in",
+            "Go-offline": "Go offline",
             "Not-reg": "Don't have an account?",
             "Logout": "Logout",
             "Sign-facebook": "Sign in with Facebook",

@@ -16,7 +16,7 @@
 		<ion-popover-view class="myDecksPopover">
 			<ion-content>
 				<div class="list">
-					<a class="item popItem">{{'MYDECKS.Refresh-decks' | translate}}</a>
+					<a class="item popItem" ng-click="refreshDecks()">{{'MYDECKS.Refresh-decks' | translate}}</a>
 					<a class="item popItem">{{'MYDECKS.Import-deck' | translate}}</a>
 					<a class="item popItem lastItem">Other actions</a>
 				</div>
@@ -26,6 +26,13 @@
 
     <!-- Content -->
 	<ion-content>
+
+		<!-- Working spinner -->
+		<div class="row text-center" ng-show="gettingDecks == true">
+			<div class="col">
+				<ion-spinner class="spiral spinner-energized"></ion-spinner>
+			</div>
+		</div>
 
 		<!-- My deck(s) -->
 		<ul class="list" ng-show="myDecksTabsActivated == true">

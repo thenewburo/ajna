@@ -30,6 +30,7 @@
     "cordova-plugin-statusbar",
     "ionic-plugin-keyboard",
     "cordova-plugin-file",
+    "cordova-plugin-navigationbar",
     "cordova-plugin-googleplayservices",
     "cordova-plugin-inappbrowser", { "https://github.com/apache/cordova-plugin-inappbrowser" }
   ],

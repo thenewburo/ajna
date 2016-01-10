@@ -22,12 +22,12 @@
                     {{'MYDECKS.My-decks' | translate}}
                 </ion-item>
                 <!-- Deckstore -->
-                <ion-item menu-close ng-click="goToDeckstore()">
+                <ion-item menu-close ng-click="goToDeckstore()" ng-show="offlineMode == false">
                     <span class="ion-android-cart"></span>
                     {{'DECKSTORE.Deckstore' | translate}}
                 </ion-item>
                 <!-- My account -->
-                <ion-item menu-close ng-click="goToMyAccount()">
+                <ion-item menu-close ng-click="goToMyAccount()" ng-show="offlineMode == false">
                     <span class="ion-android-person"></span>
                     {{'MYACCOUNT.My-account' | translate}}
                 </ion-item>

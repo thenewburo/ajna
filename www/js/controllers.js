@@ -49,10 +49,6 @@ angular.module('controllers', [])
 
 	// Function loaded when the user is connected
 	$scope.userConnected = function() {
-		// Get the user's decks
-		DeckService.getDecksDatabase();
-		// Get the tags
-		TagService.getAllTags();
 		// Reset the fields
 		$scope.loginData = {};
 		// Make the next page the root history
@@ -203,6 +199,13 @@ angular.module('controllers', [])
 	        });
 		});
 	};
+
+	// If the user wants to use the application whitout internet connection
+	$scope.loginOffline = function() {
+		UserService.setOfflineMode(true);
+		$scope.userConnected();
+	};
+
 })
 
 .controller('NewAccountCtrl', function($scope, $state, $translate, $ionicLoading, UserService, PopupService) {
@@ -269,6 +272,8 @@ angular.module('controllers', [])
 })
 
 .controller('MenuCtrl', function($scope, $state, $ionicHistory, UserService) {
+
+	$scope.offlineMode = UserService.getOfflineMode();
 
 	$scope.getUsername = function() {
 		return UserService.getUsername();
@@ -347,15 +352,29 @@ angular.module('controllers', [])
 	};
 })
 
-.controller('MyDecksCtrl', function($scope, $ionicPopover, $state, $ionicHistory, $translate, $ionicLoading, DeckService, TagService, PopupService) {
+.controller('MyDecksCtrl', function($scope, $ionicPopover, $state, $ionicHistory, $translate, $ionicLoading, UserService, DeckService, TagService, PopupService) {
+	// Spinner when getting decks
+	$scope.gettingDecks = true;
 	// User's decks
 	$scope.myDecks = [];
-	DeckService.reset();
-	DeckService.getDecksDatabase();
-	// Get the tags
-	TagService.getAllTags();
 	// Variable to know which tab we are
 	$scope.myDecksTabsActivated = true;
+
+	// Initialization
+	DeckService.reset();
+	DeckService.getDecksDatabase(function() {
+		// Done
+		$scope.gettingDecks = false;
+	});
+	// Get the tags
+	TagService.getAllTags();
+
+	// Refresh after one seconde if we are in offline mode
+	if (UserService.getOfflineMode() == true) {
+		setTimeout(function(){
+			DeckService.getDecksDatabase(function() { $scope.gettingDecks = false; });
+		}, 1000);
+	}
 
 	// Get the number of unseen cards
 	$scope.numberUnseenCards = function(deck) {
@@ -413,6 +432,17 @@ angular.module('controllers', [])
 		$scope.popover.show($event);
 	};
 	$scope.closePopover = function() {
+		$scope.popover.hide();
+	};
+	$scope.refreshDecks = function() {
+		$scope.gettingDecks = true;
+		// Resfresh the decks
+		DeckService.reset();
+		DeckService.getDecksDatabase(function() {
+			// Done
+			$scope.gettingDecks = false;
+		});
+		// Close the popover
 		$scope.popover.hide();
 	};
 	//Cleanup the popover when we're done with it!
@@ -555,7 +585,6 @@ angular.module('controllers', [])
 					$scope.currentDeck = newDeck;
 					// Add the card in the deck
 					$scope.currentDeck = DeckService.addCard($scope.currentCard, $scope.currentDeck);
-					DeckService.getDecksDatabase();
 					// Reset data form
 					$scope.currentCard = DeckService.newCard();
 					$scope.search = TagService.newSearch();
@@ -645,12 +674,14 @@ angular.module('controllers', [])
 	};
 })
 
-.controller('DisplayDeckCtrl', function($scope, $stateParams, $state, $ionicLoading, $translate, $ionicPopover, $ionicHistory, PopupService, DeckService, StoreService) {
+.controller('DisplayDeckCtrl', function($scope, $stateParams, $state, $ionicLoading, $translate, $ionicPopover, $ionicHistory, PopupService, DeckService, StoreService, UserService) {
 	
 	// We get the deck sent in parameter (we will display that deck)
 	$scope.currentDeck = $stateParams.deck;
 	// and the boolean to know if it's a bought deck
 	$scope.isBoughtDeck = $stateParams.isBoughtDeck;
+	// Offline mode
+	$scope.offlineMode = UserService.getOfflineMode();
 
 	// Variable to display the sell/remove buttons
 	$scope.isWorking = false;
