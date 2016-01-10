@@ -76,7 +76,7 @@ app.post('/createAccount', function(req, res) {
 				console.log("g");
 				// Save the user in database
 				newUser.save(function(err) {
-					if (err) return res.status(400).json({ title: "NEWACCOUNT.New-account", message: "ERROR.Cannot-connect" });
+					if (err) { console.log(err); return res.status(400).json({ title: "NEWACCOUNT.New-account", message: "ERROR.Cannot-connect" }); }
 					console.log("h");
 					// User successfully created
 					res.sendStatus(200);
