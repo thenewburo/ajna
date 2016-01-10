@@ -45,31 +45,39 @@ app.all('*', function(req, res, next) {
 // route to create a new user in our database
 app.post('/createAccount', function(req, res) {
 	// One of the fields is empty
+	console.log("a");
 	if (req.body.username == undefined || req.body.username.length <= 0 ||
 		req.body.email == undefined || req.body.email.length <= 0 ||
 		req.body.password == undefined || req.body.password.length <= 0)
 		return res.status(400).json({ title: "NEWACCOUNT.New-account", message: "ERROR.Error-fields" });
+	console.log("b");
 	// Check email address is well formated
 	var patt = /\S+@\S+\.\S+/;
 	if (patt.test(req.body.email) == false)
 		return res.status(400).json({ title: "NEWACCOUNT.New-account", message: "ERROR.Email-incorrect" });
+	console.log("c");
 	// Check email address already used
 	User.findOne({ email: req.body.email }, function (err, person) {
 		if (err) return res.status(400).json({ title: "NEWACCOUNT.New-account", message: "ERROR.Error-occurred" });
+		console.log("d");
 		// The email is already used
 		if (person != null)
 			return res.status(400).json({ title: "NEWACCOUNT.New-account", message: "ERROR.Email-used" });
 		// Email is good, we can create the user
 		else {
+			console.log("e");
 			// Create the new user
 			var newUser = new User({ name: req.body.username, email: req.body.email.toLowerCase(), password: req.body.password, decks: [], ownedDecks: [] });
 			// bcrypt the password
 			bcrypt.hash(newUser.password, null, null, function(err, hash) {
+				console.log("f");
 				if (err) return res.status(400).json({ title: "NEWACCOUNT.New-account", message: "ERROR.Error-occurred" });
 				newUser.password = hash;
+				console.log("g");
 				// Save the user in database
 				newUser.save(function(err) {
 					if (err) return res.status(400).json({ title: "NEWACCOUNT.New-account", message: "ERROR.Cannot-connect" });
+					console.log("h");
 					// User successfully created
 					res.sendStatus(200);
 				});

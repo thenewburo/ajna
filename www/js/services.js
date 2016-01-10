@@ -3,7 +3,7 @@ angular.module('services', [])
 // This factory check the http response, and redirect if needed
 .factory('responseObserver', function responseObserver($q, $window) {
     return {
-        'responseError': function(errorResponse) {
+        responseError: function(errorResponse) {
             switch (errorResponse.status) {
 	            case 403:
 	                $window.location = '/#/login';
@@ -17,7 +17,18 @@ angular.module('services', [])
 // This factory is used to read and write in the offline data file
 .factory('FileService', function(offlineData) {
 	return {
-
+		write: function(data) {
+			// If we don't have the file, return
+			if(offlineData == null)
+				return;
+			// Write in file
+			offlineData.createWriter(function(fileWriter) {
+				// Success
+				fileWriter.write(JSON.stringify(offlineData));
+			}, function() {
+				// Fail
+			});
+		}
 	};
 })
 
