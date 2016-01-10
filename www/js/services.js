@@ -14,6 +14,13 @@ angular.module('services', [])
     };
 })
 
+// This factory is used to read and write in the offline data file
+.factory('FileService', function(offlineData) {
+	return {
+
+	};
+})
+
 // This factory is used to display popups
 .factory('PopupService', function($ionicPopup, $translate) {
 	return {

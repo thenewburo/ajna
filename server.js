@@ -62,7 +62,7 @@ app.post('/createAccount', function(req, res) {
 		// Email is good, we can create the user
 		else {
 			// Create the new user
-			var newUser = new User({ name: req.body.username, email: req.body.email.toLowerCase(), password: req.body.password, decks: [] });
+			var newUser = new User({ name: req.body.username, email: req.body.email.toLowerCase(), password: req.body.password, decks: [], ownedDecks: [] });
 			// bcrypt the password
 			bcrypt.hash(newUser.password, null, null, function(err, hash) {
 				if (err) return res.status(400).json({ title: "NEWACCOUNT.New-account", message: "ERROR.Error-occurred" });

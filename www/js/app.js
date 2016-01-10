@@ -4,7 +4,10 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'pa
 // Linode address: 173.255.197.21
 .constant("server", { url: "http://173.255.197.21", port: "8080" })
 
-.run(function($ionicPlatform) {
+// Offline data file
+.constant("offlineData", null)
+
+.run(function($ionicPlatform, offlineData) {
     $ionicPlatform.ready(function() {
         // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
         // for form inputs)
@@ -15,7 +18,16 @@ angular.module('starter', ['ionic', 'controllers', 'services', 'directives', 'pa
         if (window.StatusBar) {
             StatusBar.hide();
         }
+
         ionic.Platform.isFullScreen = true;
+
+        if (typeof cordova != "undefined") {
+            window.resolveLocalFileSystemURL(cordova.file.dataDirectory, function(dir) {
+                dir.getFile("data", { create: true }, function(file) {
+                    offlineData = file;
+                });
+            });
+        }
     });
 })
 

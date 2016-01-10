@@ -10,12 +10,12 @@ module.exports = mongoose.model('User', new Schema({
 	decks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Deck' }],
 	ownedDecks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Store' }],
 	facebook: {
-		id: { type: String, unique: true }
+		id: { type: String }
 	},
 	google: {
-		id: { type: String, unique: true }
+		id: { type: String }
 	},
 	twitter: {
-		id: { type: String, unique: true }
+		id: { type: String }
 	}
 }));
