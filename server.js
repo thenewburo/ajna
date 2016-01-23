@@ -1,6 +1,7 @@
 var express     = require('express');
 var app         = express();
-var port 		= 8080;
+var port 		= process.env.PORT || 8080;
+var ip			= process.env.IP;
 var bodyParser  = require('body-parser');
 var morgan      = require('morgan');
 var mongoose    = require('mongoose');
@@ -38,6 +39,9 @@ app.all('*', function(req, res, next) {
 	res.header('Access-Control-Allow-Headers', 'Content-Type');
 	next();
 });
+
+app.use(express.static(__dirname + '/www'));
+
 
 // =======================
 // Routes ================
@@ -642,5 +646,8 @@ app.use('/api', apiRoutes);
 // =======================
 // Start the server ======
 // =======================
-app.listen(port);
+if (ip)
+	app.listen(port, ip);
+else
+	app.listen(port);
 console.log("Running at Port " + port + " ...");
